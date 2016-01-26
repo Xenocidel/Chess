@@ -99,201 +99,185 @@ void printLoc(piece *p){
 /*returns pointer with available cellID positions*/
 /* WARNING: You cannot find the length of a pointer, so at the very end put a -2 as a null terminator and look for it on the receiving end */
 int *checkAvailMoves(piece *p){
-	int num=0;				/*number of available moves*/
 	switch(p->type){
-		case pawn:
-		{	/*this bracket is to allow variable declarations within the case*/
-			int frontchk = -1;      /*pawn can move forward*/
-			int leftchk = -1;       /*pawn can capture diagonally left*/
-			int rightchk = -1;      /*pawn can capture diagonally right*/
-			int front2chk = -1;     /*pawn can move 2 spaces forward if it hasn't moved before*/
-			int epleftchk = -1;         /*pawn can en passant left*/
-			int eprightchk = -1;		/*pawn can en passant right*/
-			
-			if (p->player == white){	/*the else block reverses direction of the pawn*/
-				cell *front = getCell((p->loc->cellID)+8, p->loc->board);
-				cell *front2 = getCell((p->loc->cellID)+16, p->loc->board);
-				cell *left = getCell((p->loc->cellID)+7, p->loc->board);
-				cell *right = getCell((p->loc->cellID)+9, p->loc->board);
-				/*DEBUG MESSAGES*/
-				printf("DEBUG: white pawn cell locs:\n");
-				printf("DEBUG: front: %d\n", front->cellID);
-				printf("DEBUG: front2: %d\n", front2->cellID);
-				printf("DEBUG: left: %d\n", left->cellID);
-				printf("DEBUG: right: %d\n", right->cellID);
-				
-				/*first move jump 2*/
-				if (p->hasMoved == false){
-					if (front2->piece == NULL && front->piece == NULL){ /*if both front locations are empty (can't jump over a piece)*/
-						num++;
-						front2chk = front2->cellID;
-					}
-				}
-				/*basic forward movement of pawn*/
-				if (front->piece == NULL){
-					num++;
-					frontchk = front->cellID;
-				}
-				
-				if (front->cellID%8 != 0){ /*runs when not on left edge*/
-					/*standard left diagonal capture*/
-					if (!p->epFlag){
-						if (left->piece != NULL){ /*if piece exists*/
-							if (left->piece->player != p->player){ /*if its the opponent piece*/
-								num++;
-								leftchk = left->cellID;
-							}
-						}
-					}
-					/*en passant left capture*/
-					else{
-						cell *epleft = p->loc-1;
-						if (epleft->piece != NULL){ /*if piece exists*/
-							if (epleft->piece->player != p->player){ /*if its the opponent piece*/
-								num++;
-								epleftchk = epleft->cellID;
-							}
-						}
-					}
-				}
-				
-				if ((right->cellID)%8 != 0){ /*runs when not on right edge*/
-					/*standard right diagonal capture*/
-					if (!p->epFlag){
-						if (right->piece != NULL){ /*if piece exists*/
-							if (right->piece->player != p->player){ /*if its the opponent piece*/
-								num++;
-								rightchk = right->cellID;
-							}
-						}
-					}
-					/*en passant right capture*/
-					else{
-						cell *epright = p->loc+1;
-						if (epright->piece != NULL){ /*if piece exists*/
-							if (epright->piece->player != p->player){ /*if its the opponent piece*/
-								num++;
-								eprightchk = epright->cellID;
-							}
-						}
-					}
-				}
-			}
-			else{
-				cell *front = getCell((p->loc->cellID)-8, p->loc->board);
-				cell *front2 = getCell((p->loc->cellID)-16, p->loc->board);
-				cell *left = getCell((p->loc->cellID)-9, p->loc->board);
-				cell *right = getCell((p->loc->cellID)-7, p->loc->board);
-				/*first move jump 2*/
-				if (p->hasMoved == false){
-					if (front2->piece == NULL && front->piece == NULL){ /*if both front locations are empty (can't jump over a piece)*/
-						num++;
-						front2chk = front2->cellID;
-					}
-				}
-				/*basic forward movement of pawn*/
-				if (front->piece == NULL){		
-					num++;
-					frontchk = front->cellID;
-				}
-				
-				if (front->cellID%8 != 0){ /*runs when not on left edge*/
-					/*standard left diagonal capture*/
-					if (!p->epFlag){
-						if (left->piece != NULL){ /*if piece exists*/
-							if (left->piece->player != p->player){ /*if its the opponent piece*/
-								num++;
-								leftchk = left->cellID;
-							}
-						}
-					}
-					/*en passant left capture*/
-					else{
-						cell *epleft = p->loc-1;
-						if (epleft->piece != NULL){ /*if piece exists*/
-							if (epleft->piece->player != p->player){ /*if its the opponent piece*/
-								num++;
-								epleftchk = epleft->cellID;
-							}
-						}
-					}
-				}
-				
-				if ((right->cellID)%8 != 0){ /*runs when not on right edge*/
-					/*standard right diagonal capture*/
-					if (!p->epFlag){
-						if (right->piece != NULL){ /*if piece exists*/
-							if (right->piece->player != p->player){ /*if its the opponent piece*/
-								num++;
-								rightchk = right->cellID;
-							}
-						}
-					}
-					/*en passant right capture*/
-					else{
-						cell *epright = p->loc+1;
-						if (epright->piece != NULL){ /*if piece exists*/
-							if (epright->piece->player != p->player){ /*if its the opponent piece*/
-								num++;
-								eprightchk = epright->cellID;
-							}
-						}
-					}
-				}
-			}
-				
-			/*if no available moves, print error and return null*/
-			if (num==0){
-				printp(available, p);
-				return NULL;
-			}
-			/*DEBUG MESSAGE*/
-			printf("DEBUG: %d available moves calculated\n", num);
-			/*compile all available moves*/
-			int *ans;
-			ans = malloc(sizeof(int) * (num+1));
-			int i;
-			for (i=num; i>0; i--){
-				if (frontchk > 0){
-					*ans = frontchk;
-					printf("DEBUG: frontchk (%d) stored in address %p\n", *ans, ans);
-					frontchk = -2;
-					ans++;
-				}
-				if (leftchk > 0){
-					*ans = leftchk;
-					leftchk = -2;
-					ans++;
-				}
-				if (rightchk > 0){
-					*ans = rightchk;
-					rightchk = -2;
-					ans++;
-				}
-				if (front2chk > 0){
-					*ans = front2chk;
-					printf("DEBUG: front2chk (%d) stored in address %p\n", *ans, ans);
-					front2chk = -2;
-					ans++;
-				}
-				if (epleftchk > 0){
-					*ans = epleftchk;
-					epleftchk = -2;
-					ans++;
-				}
-				if (eprightchk > 0){
-					*ans = eprightchk;
-					eprightchk = -2;
-					ans++;
-				}
-			}
-			*ans = -2;
-			ans -= num;
-			/*still need to figure out a way to free ans*/
-			return ans;
-			break; /*end of pawn*/
-		}
+		case pawn: return checkPawnMoves(p);
+		
 	}
 	
 	return NULL;
+}
+
+int *checkPawnMoves(piece *p){
+/*this bracket is to allow variable declarations within the case*/
+	int num=0;				/*number of available moves*/
+	int frontchk = -1;      /*pawn can move forward*/
+	int leftchk = -1;       /*pawn can capture diagonally left*/
+	int rightchk = -1;      /*pawn can capture diagonally right*/
+	int front2chk = -1;     /*pawn can move 2 spaces forward if it hasn't moved before*/
+	int epleftchk = -1;         /*pawn can en passant left*/
+	int eprightchk = -1;		/*pawn can en passant right*/
+	
+	if (p->player == white){	/*the else block reverses direction of the pawn*/
+		assert((p->loc->cellID)+8);	/* the pawn should always be able to move forward */
+		cell *front = getCell((p->loc->cellID)+8, p->loc->board);
+		cell *front2 = getCell((p->loc->cellID)+16, p->loc->board);
+		cell *left = getCell((p->loc->cellID)+7, p->loc->board);
+		cell *right = getCell((p->loc->cellID)+9, p->loc->board);
+		cell *epleft = getCell((p->loc->cellID)-1, p->loc->board);
+		cell *epright = getCell((p->loc->cellID)+1, p->loc->board);
+		/*DEBUG MESSAGES*/
+		printf("DEBUG: white pawn cell locs:\n");
+		printf("DEBUG: front: %d\n", front->cellID);
+		printf("DEBUG: front2: %d\n", front2->cellID);
+		printf("DEBUG: left: %d\n", left->cellID);
+		printf("DEBUG: right: %d\n", right->cellID);
+		
+		/*first move jump 2*/
+		if (p->hasMoved == false){
+			if (front2->piece == NULL && front->piece == NULL){ /*if both front locations are empty (can't jump over a piece)*/
+				num++;
+				front2chk = front2->cellID;
+			}
+		}
+		/*basic forward movement of pawn*/
+		if (front->piece == NULL){
+			num++;
+			frontchk = front->cellID;
+		}
+		
+		if (front->cellID%8 != 0){ /*runs when not on left edge*/
+			/*standard left diagonal capture*/
+			if (left->piece != NULL){ /*if piece exists, necessary to avoid seg fault*/
+				if (left->piece->player != p->player){ /*if its the opponent piece*/
+					num++;
+					leftchk = left->cellID;
+				}
+			}
+			if (epleft->piece != NULL){
+				if (epleft->piece->epFlag == 1){ /*en passant capture left */
+					num++;
+					epleftchk = left->cellID;	/*not epleft because pawn captures diagonally */
+				}
+			}
+		}
+		
+		if ((right->cellID)%8 != 0){ /*runs when not on right edge*/
+			/*standard right diagonal capture*/
+			if (right->piece != NULL){ /*if piece exists, necessary to avoid seg fault*/
+				if (right->piece->player != p->player){ /*if its the opponent piece*/
+					num++;
+					rightchk = right->cellID;
+				}
+			}
+			if (epright->piece != NULL){
+				if (epright->piece->epFlag == 1){ /*en passant capture right */
+					num++;
+					eprightchk = right->cellID;	/*not epright because pawn captures diagonally */
+				}
+			}
+		}
+	}
+	else{
+		assert((p->loc->cellID)-8);	/* the pawn should always be able to move forward */
+		cell *front = getCell((p->loc->cellID)-8, p->loc->board);
+		cell *front2 = getCell((p->loc->cellID)-16, p->loc->board);
+		cell *left = getCell((p->loc->cellID)-9, p->loc->board);
+		cell *right = getCell((p->loc->cellID)-7, p->loc->board);
+		cell *epleft = getCell((p->loc->cellID)+1, p->loc->board);
+		cell *epright = getCell((p->loc->cellID)-1, p->loc->board);
+		/*first move jump 2*/
+		if (p->hasMoved == false){
+			if (front2->piece == NULL && front->piece == NULL){ /*if both front locations are empty (can't jump over a piece)*/
+				num++;
+				front2chk = front2->cellID;
+			}
+		}
+		/*basic forward movement of pawn*/
+		if (front->piece == NULL){		
+			num++;
+			frontchk = front->cellID;
+		}
+		
+		if (front->cellID%8 != 0){ /*runs when not on left edge*/
+			/*standard left diagonal capture*/
+			if (left->piece != NULL){ /*if piece exists, necessary to avoid seg fault*/
+				if (left->piece->player != p->player){ /*if its the opponent piece*/
+					num++;
+					leftchk = left->cellID;
+				}
+			}
+			if (epleft->piece != NULL){
+				if (epleft->piece->epFlag == 1){ /*en passant capture left */
+					num++;
+					epleftchk = left->cellID;	/*not epleft because pawn captures diagonally */
+				}
+			}
+		}
+		
+		if ((right->cellID)%8 != 0){ /*runs when not on right edge*/
+			/*standard right diagonal capture*/
+			if (right->piece != NULL){ /*if piece exists, necessary to avoid seg fault*/
+				if (right->piece->player != p->player){ /*if its the opponent piece*/
+					num++;
+					rightchk = right->cellID;
+				}
+			}
+			if (epright->piece != NULL){
+				if (epright->piece->epFlag == 1){ /*en passant capture right */
+					num++;
+					eprightchk = right->cellID;	/*not epright because pawn captures diagonally */
+				}
+			}
+		}
+	}
+		
+	/*if no available moves, print error and return null*/
+	if (num==0){
+		printp(available, p);
+		return NULL;
+	}
+	/*DEBUG MESSAGE*/
+	printf("DEBUG: %d available moves calculated\n", num);
+	/*compile all available moves*/
+	int *ans;
+	ans = malloc(sizeof(int) * (num+1));
+	int i;
+	for (i=num; i>0; i--){
+		if (frontchk > 0){
+			*ans = frontchk;
+			printf("DEBUG: frontchk (%d) stored in address %p\n", *ans, ans);
+			frontchk = -2;
+			ans++;
+		}
+		if (leftchk > 0){
+			*ans = leftchk;
+			leftchk = -2;
+			ans++;
+		}
+		if (rightchk > 0){
+			*ans = rightchk;
+			rightchk = -2;
+			ans++;
+		}
+		if (front2chk > 0){
+			*ans = front2chk;
+			printf("DEBUG: front2chk (%d) stored in address %p\n", *ans, ans);
+			front2chk = -2;
+			ans++;
+		}
+		if (epleftchk > 0){
+			*ans = epleftchk;
+			epleftchk = -2;
+			ans++;
+		}
+		if (eprightchk > 0){
+			*ans = eprightchk;
+			eprightchk = -2;
+			ans++;
+		}
+	}
+	*ans = -2;
+	ans -= num;
+	/*still need to figure out a way to free ans*/
+	return ans;
 }

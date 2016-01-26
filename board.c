@@ -76,7 +76,7 @@ cell *getCell(int cellID, board *board){
 		case 61: return CELL61;
 		case 62: return CELL62;
 		case 63: return CELL63;
-		default: printf("Invalid cellID. Program terminating...\n"); exit(1);
+		default: return NULL;
 	}
 }
 
