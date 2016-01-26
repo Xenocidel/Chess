@@ -5,7 +5,7 @@
 #include "cell.h"
 /*Hello*/
 void deleteBoard(board *board){
-	int i;
+	assert(board);
 	free(board);
 }
 

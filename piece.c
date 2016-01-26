@@ -29,74 +29,76 @@ void deletePiece(piece *p){
 
 void printLoc(piece *p){
 	switch (p->loc->cellID){
-		case 0 : printf("a1\n\n"); break;
-		case 8 : printf("a2\n\n"); break;
-		case 16: printf("a3\n\n"); break;
-		case 24: printf("a4\n\n"); break;
-		case 32: printf("a5\n\n"); break;
-		case 40: printf("a6\n\n"); break;
-		case 48: printf("a7\n\n"); break;
-		case 56: printf("a8\n\n"); break;
-		case 1 : printf("b1\n\n"); break;
-		case 9 : printf("b2\n\n"); break;
-		case 17: printf("b3\n\n"); break;
-		case 25: printf("b4\n\n"); break;
-		case 33: printf("b5\n\n"); break;
-		case 41: printf("b6\n\n"); break;
-		case 49: printf("b7\n\n"); break;
-		case 57: printf("b8\n\n"); break;
-		case 2 : printf("c1\n\n"); break;
-		case 10: printf("c2\n\n"); break;
-		case 18: printf("c3\n\n"); break;
-		case 26: printf("c4\n\n"); break;
-		case 34: printf("c5\n\n"); break;
-		case 42: printf("c6\n\n"); break;
-		case 50: printf("c7\n\n"); break;
-		case 58: printf("c8\n\n"); break;
-		case 3 : printf("d1\n\n"); break;
-		case 11: printf("d2\n\n"); break;
-		case 19: printf("d3\n\n"); break;
-		case 27: printf("d4\n\n"); break;
-		case 35: printf("d5\n\n"); break;
-		case 43: printf("d6\n\n"); break;
-		case 51: printf("d7\n\n"); break;
-		case 59: printf("d8\n\n"); break;
-		case 4 : printf("e1\n\n"); break;
-		case 12: printf("e2\n\n"); break;
-		case 20: printf("e3\n\n"); break;
-		case 28: printf("e4\n\n"); break;
-		case 36: printf("e5\n\n"); break;
-		case 44: printf("e6\n\n"); break;
-		case 52: printf("e7\n\n"); break;
-		case 60: printf("e8\n\n"); break;
-		case 5 : printf("f1\n\n"); break;
-		case 13: printf("f2\n\n"); break;
-		case 21: printf("f3\n\n"); break;
-		case 29: printf("f4\n\n"); break;
-		case 37: printf("f5\n\n"); break;
-		case 45: printf("f6\n\n"); break;
-		case 53: printf("f7\n\n"); break;
-		case 61: printf("f8\n\n"); break;
-		case 6 : printf("g1\n\n"); break;
-		case 14: printf("g2\n\n"); break;
-		case 22: printf("g3\n\n"); break;
-		case 30: printf("g4\n\n"); break;
-		case 38: printf("g5\n\n"); break;
-		case 46: printf("g6\n\n"); break;
-		case 54: printf("g7\n\n"); break;
-		case 62: printf("g8\n\n"); break;
-		case 7 : printf("h1\n\n"); break;
-		case 15: printf("h2\n\n"); break;
-		case 23: printf("h3\n\n"); break;
-		case 31: printf("h4\n\n"); break;
-		case 39: printf("h5\n\n"); break;
-		case 47: printf("h6\n\n"); break;
-		case 55: printf("h7\n\n"); break;
-		case 63: printf("h8\n\n"); break;
+		case 0 : printf("a1\n"); break;
+		case 8 : printf("a2\n"); break;
+		case 16: printf("a3\n"); break;
+		case 24: printf("a4\n"); break;
+		case 32: printf("a5\n"); break;
+		case 40: printf("a6\n"); break;
+		case 48: printf("a7\n"); break;
+		case 56: printf("a8\n"); break;
+		case 1 : printf("b1\n"); break;
+		case 9 : printf("b2\n"); break;
+		case 17: printf("b3\n"); break;
+		case 25: printf("b4\n"); break;
+		case 33: printf("b5\n"); break;
+		case 41: printf("b6\n"); break;
+		case 49: printf("b7\n"); break;
+		case 57: printf("b8\n"); break;
+		case 2 : printf("c1\n"); break;
+		case 10: printf("c2\n"); break;
+		case 18: printf("c3\n"); break;
+		case 26: printf("c4\n"); break;
+		case 34: printf("c5\n"); break;
+		case 42: printf("c6\n"); break;
+		case 50: printf("c7\n"); break;
+		case 58: printf("c8\n"); break;
+		case 3 : printf("d1\n"); break;
+		case 11: printf("d2\n"); break;
+		case 19: printf("d3\n"); break;
+		case 27: printf("d4\n"); break;
+		case 35: printf("d5\n"); break;
+		case 43: printf("d6\n"); break;
+		case 51: printf("d7\n"); break;
+		case 59: printf("d8\n"); break;
+		case 4 : printf("e1\n"); break;
+		case 12: printf("e2\n"); break;
+		case 20: printf("e3\n"); break;
+		case 28: printf("e4\n"); break;
+		case 36: printf("e5\n"); break;
+		case 44: printf("e6\n"); break;
+		case 52: printf("e7\n"); break;
+		case 60: printf("e8\n"); break;
+		case 5 : printf("f1\n"); break;
+		case 13: printf("f2\n"); break;
+		case 21: printf("f3\n"); break;
+		case 29: printf("f4\n"); break;
+		case 37: printf("f5\n"); break;
+		case 45: printf("f6\n"); break;
+		case 53: printf("f7\n"); break;
+		case 61: printf("f8\n"); break;
+		case 6 : printf("g1\n"); break;
+		case 14: printf("g2\n"); break;
+		case 22: printf("g3\n"); break;
+		case 30: printf("g4\n"); break;
+		case 38: printf("g5\n"); break;
+		case 46: printf("g6\n"); break;
+		case 54: printf("g7\n"); break;
+		case 62: printf("g8\n"); break;
+		case 7 : printf("h1\n"); break;
+		case 15: printf("h2\n"); break;
+		case 23: printf("h3\n"); break;
+		case 31: printf("h4\n"); break;
+		case 39: printf("h5\n"); break;
+		case 47: printf("h6\n"); break;
+		case 55: printf("h7\n"); break;
+		case 63: printf("h8\n"); break;
 	}		
 }
 
-int *checkAvailMoves(piece *p){	/*returns pointer with available cellID positions*/
+/*returns pointer with available cellID positions*/
+/* WARNING: You cannot find the length of a pointer, so at the very end put a -2 as a null terminator and look for it on the receiving end */
+int *checkAvailMoves(piece *p){
 	int num=0;				/*number of available moves*/
 	switch(p->type){
 		case pawn:
@@ -249,8 +251,7 @@ int *checkAvailMoves(piece *p){	/*returns pointer with available cellID position
 			printf("DEBUG: %d available moves calculated\n", num);
 			/*compile all available moves*/
 			int *ans;
-			ans = malloc(sizeof(int) * num);
-			printf("DEBUG: ans pointer created with size %lu bytes\n", (unsigned long) sizeof(*ans));
+			ans = malloc(sizeof(int) * (num+1));
 			int i;
 			for (i=num; i>0; i--){
 				if (frontchk > 0){
@@ -286,6 +287,7 @@ int *checkAvailMoves(piece *p){	/*returns pointer with available cellID position
 					ans++;
 				}
 			}
+			*ans = -2;
 			ans -= num;
 			/*still need to figure out a way to free ans*/
 			return ans;

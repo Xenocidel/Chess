@@ -15,14 +15,9 @@ int main(){
 	printLoc(p1);
 	printf("Testing basic pawn movement...\n");
 	int *p1moves = checkAvailMoves(p1);
-	int numMoves = sizeof(*p1moves)/sizeof(int);
-	printf("%d available moves for pawn in cell 8\n", numMoves);
-	while(numMoves > 0){
+	while(*p1moves != -2){
 		printf("Pawn in cell 8 can move to cell %d\n", *p1moves);
-		if (numMoves > 0){
-			p1moves++;
-		}
-		numMoves--;
+		p1moves++;
 	}
 	/*capture while on left edge and obstacle in front*/
 	piece *p2 = createPiece(black, pawn, CELL16);
@@ -33,14 +28,9 @@ int main(){
 	printLoc(p3);
 	printf("Testing pawn basic capture movement...\n");
 	int *p1moves2 = checkAvailMoves(p1);
-	int numMoves2 = sizeof(*p1moves2)/sizeof(int);
-	printf("%d available moves for pawn in cell 8\n", numMoves2);
-	while(numMoves2 > 0){
+	while(*p1moves2 != -2){
 		printf("Pawn in cell 8 can move to cell %d\n", *p1moves2);
-		if (numMoves2 > 0){
-			p1moves++;
-		}
-		numMoves2--;
+		p1moves2++;
 	}
 	
 	/*clean up all the mallocs*/
