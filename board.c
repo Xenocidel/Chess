@@ -3,7 +3,7 @@
 #include <assert.h>
 #include "board.h"
 #include "cell.h"
-
+/*Hello*/
 void deleteBoard(board *board){
 	int i;
 	free(board);
