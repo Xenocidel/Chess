@@ -8,12 +8,13 @@
 #include "piece.h"
 
 void pawnTest(board *board);
+void bishopTest(board *board);
 
 int main(){
 	board *board = createNewGame();
 	
 	pawnTest(board);
-	
+	bishopTest(board);
 	
 	/*clean up all the mallocs*/
 	deleteAllCells(board);	/*deletes all pieces as well*/
@@ -98,4 +99,36 @@ void pawnTest(board *board){
 	}
 	
 	/* END OF PAWN TEST */
+}
+
+void bishopTest(board *board){
+	board *board = createNewGame();
+	/* Test free movement */
+	piece *b1 = createPiece(white, bishop, CELL11);
+	printf("A %d (%d) has been created in cell %d\n", b1->type, b1->player, b1->loc->cellID);
+	printLoc(b1);
+	printf("Testing basic bishop movements...\n");
+	int *b1moves = checkAvailMoves(b1);
+	while(*b1moves != -2){
+		printf("Bishop (cell 11) can move to cell %d\n", *b1moves);
+		b1moves++;
+	}
+	b1moves = NULL;
+	/* Test for option to capture enemy and not move to invalid position */
+	piece *b2 = createPiece(white, bishop, CELL43);
+	printf("A %d (%d) has been created in cell %d\n", b2->type, b2->player, b2->loc->cellID);
+	printLoc(b2);
+	piece *b3 = createPiece(black, bishop, CELL34);
+	printf("A %d (%d) has been created in cell %d\n", b3->type, b3->player, b3->loc->cellID);
+	printLoc(b3);
+	piece *b4 = createPiece(white, bishop, CELL36);
+	printf("A %d (%d) has been created in cell %d\n", b4->type, b4->player, b4->loc->cellID);
+	printLoc(b4);
+	printf("Testing capture movements and blocking movements...\n");
+	int *b2moves = checkAvailMoves(b2);
+	while(*b2moves != -2){
+		printf("Bishop (cell 43) can move to cell %d\n", *b2moves);
+		b2moves++;
+	}
+	b2moves = NULL;
 }
