@@ -229,6 +229,82 @@ int *checkPawnMoves(piece *p){
 				}
 			}
 		}
+		case rook:
+		{
+			/*Integer Arrays that store the cellID's that the rook can move to*/
+			int frontchk[7] = { frontchk1, frontchk2, frontchk3, frontchk4, frontchk5, frontchk6, frontchk7 };
+			int backchk[7] =  { backchk1, backchk2, backchk3, backchk4, backchk5, backchk6, backchk7};
+
+			if (p->player == white) {
+
+				cell *front = getCell((p->loc->cellID) + 8, p->loc->board);
+				int chkCellFront = 0;						/*Integer that tracks rook's available forward spaces*/
+
+				while (front->piece == NULL) {			/*Finds the rook's available moves onto empty squares*/
+					num++;
+					frontchk[chkCellFront] = front->cellID;
+					front->cellID = front->cellID + 8;
+					chkCellFront++;
+				}
+
+				if (front->piece->player != white) { /*Finds if the rook can move to a capturable piece*/
+					num++;
+					frontchk[chkCellFront] = front->cellID;
+				}
+
+				
+				cell *back = getCell((p->loc->cellID) - 8, p->loc->board);
+				int chkCellBack = 0;					/*Integer that tracks rook's available backwards spaces*/
+
+				while (back->piece == NULL) {			/*Finds the rook's available backwards moves onto empty squares*/
+					num++;
+					backchk[chkCellBack] = back->cellID;
+					back->cellID = back->cellID - 8;
+					chkCellBack++;
+				}
+
+				if (front->piece->player != white) { /*Finds if the rook can move to a capturable piece*/
+					num++;
+					backchk[chkCellBack] = back->cellID;
+				}
+
+			}
+
+			else if (p->player == black) {
+
+				cell *front = getCell((p->loc->cellID) - 8, p->loc->board);
+				int chkCellFront = 0;						/*Integer that tracks rook's available forward spaces*/
+
+				while (front->piece == NULL) {			/*Finds the rook's available moves onto empty squares*/
+					num++;
+					frontchk[chkCellFront] = front->cellID;
+					front->cellID = front->cellID - 8;
+					chkCellFront++;
+				}
+
+				if (front->piece->player != black) { /*Finds if the rook can move to a capturable piece*/
+					num++;
+					frontchk[chkCellFront] = front->cellID;
+				}
+
+
+				cell *back = getCell((p->loc->cellID) + 8, p->loc->board);
+				int chkCellBack = 0;					/*Integer that tracks rook's available backwards spaces*/
+
+				while (back->piece == NULL) {			/*Finds the rook's available backwards moves onto empty squares*/
+					num++;
+					backchk[chkCellBack] = back->cellID;
+					back->cellID = back->cellID + 8;
+					chkCellBack++;
+				}
+
+				if (front->piece->player != white) { /*Finds if the rook can move to a capturable piece*/
+					num++;
+					backchk[chkCellBack] = back->cellID;
+				}
+
+			}
+		}
 	}
 		
 	/*if no available moves, print error and return null*/
