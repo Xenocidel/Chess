@@ -6,10 +6,11 @@
 #include "defs.h"
 
 int main(){
-	int in_game; 		
+	int in_game;
 	int mode=-1;	 	/*range 1-3*/
 	int diff=-1; 		/*range 0-3, 0 if pvp*/
 	int timer=-1;		/*range 0, 5, 10, 20*/
+	int side=-1;        /*range '0' for white, '1' for black*/
 	char confirm='n';	/*range 'n', 'y'*/
 	char modeS[26];
 	char diffS[26];
@@ -28,6 +29,8 @@ int main(){
 					break;
 				case 2:
 					printf("Player versus Computer selected\n");
+					printf("Choose a side: white(0) or black(1)?\n");
+					scanf("%d", &side);
 					break;
 				case 3:
 					printf("Computer versus Computer selected\n");
@@ -136,7 +139,7 @@ int main(){
 		printf("%s", diffS);
 		printf("\nTimer: %s\n\n", timerS);
 		scanf(" %c", &confirm);
-		
+
 		if (confirm == 'y' || confirm == 'Y'){
 			in_game = 1;
 		}
@@ -148,8 +151,8 @@ int main(){
 		else{
 			printe(selection);
 		}
-		
+
 	}
-	
+
 	return 0;
 }
