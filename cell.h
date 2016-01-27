@@ -16,5 +16,6 @@ struct cell *createCell(int cellID, board *board);
 void replacePiece(struct cell *cell, piece *p);
 void deleteCell(struct cell *cell);	/*deletes all pieces as well*/
 void deleteAllCells(board *board); /*used at program shutdown, delete board separately*/
+void updatePrintPiece(struct cell *cell);
 
 #endif

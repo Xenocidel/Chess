@@ -281,3 +281,560 @@ int *checkPawnMoves(piece *p){
 	/*still need to figure out a way to free ans*/
 	return ans;
 }
+int *checkKingMoves(struct piece *p){
+	int count;
+	char q[8] = { '0', '0', '0', '0', '0', '0', '0', '0' };
+	count = 0;
+	cell *temp;
+
+	/*
+	if (p->castleFlag==1&&
+	}
+	else if("King is white"&&r1==0&&k==0){
+	}
+	else if ("King is white"&&r2==0&&k==0){
+
+	}
+	else if("King is black"&&r1==0&&r2==0&&k==0){
+
+	}
+	else if("King is black"&&r1==0&&k==0){
+
+	}
+	else if("king is black"&&r2==0&&k==0){
+
+	}*/
+	/*Works when the king is on position "0"*/
+	if (p->loc->cellID == 0){
+		/*temperary pointer to a cell that the king can move to*/
+		temp = getCell(1, p->loc->board);
+		/*makes sure that the cell the king is moving to has another piece*/
+		if (temp->piece){
+			/*makes sure that that piece is not of the same color*/
+			if (temp->piece->player != p->player){
+				/*enables the move*/
+				q[count] = 1;
+					count++;
+
+			}
+		}
+		/*enables the move if there is no piece on that cell*/
+		else{
+			q[count] = 1;
+			count++;
+		}
+		/*repeates the process for the other possible moves of the king*/
+		temp = getCell(8, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = 8;
+				count++;
+			}
+		}
+		else{
+			q[count] = 8;
+			count++;
+		}
+		temp = getCell(9, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = 9;
+				count++;
+				/*insert how to display the next move*/
+			}
+		}
+		else{
+			q[count] = 9;
+			count++;
+		}
+	}
+	/*Works when the king is in position "7"*/
+	else if (p->loc->cellID == 7){
+		/*temperary pointer to a cell that the king can move to*/
+		temp = getCell(6, p->loc->board);
+		/*makes sure that the cell the king is moving to has another piece*/
+		if (temp->piece){
+			/*makes sure that that piece is not of the same color*/
+			if (temp->piece->player != p->player){
+				/*enables the move*/
+				q[count] = 6;
+				count++;
+			}
+		}
+		/*enables the move if there is no piece on that cell*/
+		else{
+			q[count] = 6;
+			count++;
+		}
+		/*repeates the process for the other possible moves of the king*/
+		temp = getCell(14, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = 14;
+				count++;
+			}
+		}
+		else{
+			q[count] = 14;
+			count++;
+		}
+		temp = getCell(15, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = 15;
+				count++;
+			}
+		}
+		else{
+			q[count] = 15;
+			count++;
+		}
+	}
+	/*Works when the king is in position "56"*/
+	else if (p->loc->cellID == 56){
+		/*temperary pointer to a cell that the king can move to*/
+		temp = getCell(48, p->loc->board);
+		/*makes sure that the cell the king is moving to has another piece*/
+		if (temp->piece){
+			/*makes sure that that piece is not of the same color*/
+			if (temp->piece->player != p->player){
+				/*enables the move*/
+				q[count] = 48;
+				count++;
+			}
+		}
+		/*enables the move if there is no piece on that cell*/
+		else{
+			q[count] = 48;
+			count++;
+		}
+		/*repeates the process for the other possible moves of the king*/
+		temp = getCell(49, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = 49;
+				count++;
+			}
+		}
+		else{
+			q[count] = 49;
+			count++;
+		}
+		temp = getCell(57, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = 57;
+				count++;
+			}
+		}
+		else{
+			q[count] = 57;
+			count++;
+		}
+
+	}
+	/*Works when the king is in position "62"*/
+	else if (p->loc->cellID == 62){
+		/*temperary pointer to a cell that the king can move to*/
+		temp = getCell(1, p->loc->board);
+		/*makes sure that the cell the king is moving to has another piece*/
+		if (temp->piece){
+			/*makes sure that that piece is not of the same color*/
+			if (temp->piece->player != p->player){
+				/*enables the move*/
+				q[count] = 54;
+				count++;
+			}
+		}
+		/*enables the move if there is no piece on that cell*/
+		else{
+			q[count] = 54;
+			count++;
+		}
+		/*repeates the process for the other possible moves of the king*/
+		temp = getCell(8, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = 55;
+				count++;
+			}
+		}
+		else{
+			q[count] = 55;
+			count++;
+		}
+		temp = getCell(9, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = 62;
+				count++;
+			}
+		}
+		else{
+			q[count] = 62;
+			count++;
+		}
+	}
+	/*Works when the king is on the left most column of the board*/
+	else if (p->loc->cellID % 8 == 0){
+		/*temperary pointer to a cell that the king can move to*/
+		temp = getCell(p->loc->cellID + 1, p->loc->board);
+		/*makes sure that the cell the king is moving to has another piece*/
+		if (temp->piece){
+			/*makes sure that that piece is not of the same color*/
+			if (temp->piece->player != p->player){
+				/*enables the move*/
+				q[count] = p->loc->cellID + 1;
+				count++;
+			}
+		}
+		/*enables the move if there is no piece on that cell*/
+		else{
+			q[count] = p->loc->cellID + 1;
+			count++;
+		}
+		/*repeates the process for the other possible moves of the king*/
+		temp = getCell(p->loc->cellID + 8, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = p->loc->cellID + 8;
+				count++;
+			}
+		}
+		else{
+			q[count] = p->loc->cellID + 8;
+			count++;
+		}
+		temp = getCell(p->loc->cellID + 9, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = p->loc->cellID + 9;
+				count++;
+			}
+		}
+		else{
+			q[count] = p->loc->cellID + 9;
+			count++;
+		}
+		temp = getCell(p->loc->cellID - 8, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = p->loc->cellID - 8;
+				count++;
+			}
+		}
+		else{
+			q[count] = p->loc->cellID - 8;
+			count++;
+		}
+		temp = getCell(p->loc->cellID - 7, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = p->loc->cellID - 7;
+				count++;
+			}
+		}
+		else{
+			q[count] = p->loc->cellID - 7;
+			count++;
+		}
+	}
+	/*Works when the king is in the right most column of the board*/
+	else if ((p->loc->cellID + 1) % 8 == 0){
+		/*temperary pointer to a cell that the king can move to*/
+		temp = getCell(p->loc->cellID - 1, p->loc->board);
+		/*makes sure that the cell the king is moving to has another piece*/
+		if (temp->piece){
+			/*makes sure that that piece is not of the same color*/
+			if (temp->piece->player != p->player){
+				/*enables the move*/
+				q[count] = p->loc->cellID - 1;
+				count++;
+			}
+		}
+		/*enables the move if there is no piece on that cell*/
+		else{
+			q[count] = p->loc->cellID - 1;
+			count++;
+		}
+		/*repeates the process for the other possible moves of the king*/
+		temp = getCell(p->loc->cellID + 8, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = p->loc->cellID + 8;
+				count++;
+			}
+		}
+		else{
+			q[count] = p->loc->cellID + 8;
+			count++;
+		}
+		temp = getCell(p->loc->cellID + 7, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = p->loc->cellID + 7;
+				count++;
+			}
+		}
+		else{
+			q[count] = p->loc->cellID + 7;
+			count++;
+		}
+		temp = getCell(p->loc->cellID - 8, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = p->loc->cellID - 8;
+				count++;
+			}
+		}
+		else{
+			q[count] = p->loc->cellID - 8;
+			count++;
+		}
+		temp = getCell(p->loc->cellID - 9, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = p->loc->cellID - 9;
+				count++;
+			}
+		}
+		else{
+			q[count] = p->loc->cellID - 9;
+			count++;
+		}
+	}
+	/*Works when the king is on the white starting row*/
+	else if (0 < p->loc->cellID && p->loc->cellID < 7){
+		/*temperary pointer to a cell that the king can move to*/
+		temp = getCell(p->loc->cellID - 1, p->loc->board);
+		/*makes sure that the cell the king is moving to has another piece*/
+		if (temp->piece){
+			/*makes sure that that piece is not of the same color*/
+			if (temp->piece->player != p->player){
+				/*enables the move*/
+				q[count] = p->loc->cellID - 1;
+				count++;
+			}
+		}
+		/*enables the move if there is no piece on that cell*/
+		else{
+			q[count] = p->loc->cellID - 1;
+			count++;
+		}
+		/*repeates the process for the other possible moves of the king*/
+		temp = getCell(p->loc->cellID + 8, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = p->loc->cellID + 8;
+				count++;
+			}
+		}
+		else{
+			q[count] = p->loc->cellID + 8;
+			count++;
+		}
+		temp = getCell(p->loc->cellID + 7, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = p->loc->cellID + 7;
+				count++;
+			}
+		}
+		else{
+			q[count] = p->loc->cellID + 7;
+			count++;
+		}
+		temp = getCell(p->loc->cellID + 1, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = p->loc->cellID + 1;
+				count++;
+			}
+		}
+		else{
+			q[count] = p->loc->cellID + 1;
+			count++;
+		}
+		temp = getCell(p->loc->cellID + 9, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = p->loc->cellID + 9;
+				count++;
+			}
+		}
+		else{
+			q[count] = p->loc->cellID + 9;
+			count++;
+		}
+	}
+	/*This occurs when the king is in the black starting row*/
+	else if (56 < p->loc->cellID && p->loc->cellID < 63){
+		/*temperary pointer to a cell that the king can move to*/
+		temp = getCell(p->loc->cellID - 1, p->loc->board);
+		/*makes sure that the cell the king is moving to has another piece*/
+		if (temp->piece){
+			/*makes sure that that piece is not of the same color*/
+			if (temp->piece->player != p->player){
+				/*enables the move*/
+				q[count] = p->loc->cellID - 1;
+				count++;
+			}
+		}
+		/*enables the move if there is no piece on that cell*/
+		else{
+			q[count] = p->loc->cellID - 1;
+			count++;
+		}
+		/*repeates the process for the other possible moves of the king*/
+		temp = getCell(p->loc->cellID - 8, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = p->loc->cellID - 8;
+				count++;
+			}
+		}
+		else{
+			q[count] = p->loc->cellID - 8;
+			count++;
+		}
+		temp = getCell(p->loc->cellID - 7, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = p->loc->cellID - 7;
+				count++;
+			}
+		}
+		else{
+			q[count] = p->loc->cellID - 7;
+			count++;
+		}
+		temp = getCell(p->loc->cellID + 1, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = p->loc->cellID + 1;
+				count++;
+			}
+		}
+		else{
+			q[count] = p->loc->cellID + 1;
+			count++;
+		}
+		temp = getCell(p->loc->cellID - 9, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = p->loc->cellID - 9;
+				count++;
+			}
+		}
+		else{
+			q[count] = p->loc->cellID - 9;
+			count++;
+		}
+	}
+	else{
+		/*temperary pointer to a cell that the king can move to*/
+		temp = getCell(p->loc->cellID - 1, p->loc->board);
+		/*makes sure that the cell the king is moving to has another piece*/
+		if (temp->piece){
+			/*makes sure that that piece is not of the same color*/
+			if (temp->piece->player != p->player){
+				/*enables the move*/
+				q[count] = p->loc->cellID - 1;
+				count++;
+			}
+		}
+		/*enables the move if there is no piece on that cell*/
+		else{
+			q[count] = p->loc->cellID - 1;
+			count++;
+		}
+		/*repeates the process for the other possible moves of the king*/
+		temp = getCell(p->loc->cellID - 8, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = p->loc->cellID - 8;
+				count++;
+			}
+		}
+		else{
+			q[count] = p->loc->cellID - 8;
+			count++;
+		}
+		temp = getCell(p->loc->cellID - 7, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = p->loc->cellID - 7;
+				count++;
+			}
+		}
+		else{
+			q[count] = p->loc->cellID - 7;
+			count++;
+		}
+		temp = getCell(p->loc->cellID + 1, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = p->loc->cellID + 1;
+				count++;
+			}
+		}
+		else{
+			q[count] = p->loc->cellID + 1;
+			count++;
+		}
+		temp = getCell(p->loc->cellID - 9, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = p->loc->cellID - 9;
+				count++;
+			}
+		}
+		else{
+			q[count] = p->loc->cellID - 9;
+			count++;
+		}
+		temp = getCell(p->loc->cellID + 7, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = p->loc->cellID + 7;
+				count++;
+			}
+		}
+		else{
+			q[count] = p->loc->cellID + 7;
+			count++;
+		}
+		temp = getCell(p->loc->cellID + 9, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = p->loc->cellID + 9;
+				count++;
+			}
+		}
+		else{
+			q[count] = p->loc->cellID + 9;
+			count++;
+		}
+		temp = getCell(p->loc->cellID + 8, p->loc->board);
+		if (temp->piece){
+			if (temp->piece->player != p->player){
+				q[count] = p->loc->cellID + 8;
+				count++;
+			}
+		}
+		else{
+			q[count] = p->loc->cellID + 8;
+			count++;
+		}
+	}
+	int *answer = malloc(sizeof(int)*count + 1);
+	int k;
+	for (k = 0; k<count; k++){
+		*answer = q[k];
+		answer++;
+	}
+	*answer = -2;
+	answer -= count;
+	free(temp);
+	return answer;
+}

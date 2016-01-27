@@ -31,3 +31,56 @@ void deleteAllCells(board *board){
 		deleteCell(getCell(i, board));
 	}
 }
+void updatePrintPiece(cell *cell){
+	if (cell->piece == NULL){
+		cell->printPiece = ' ';
+	}
+	else{
+		switch (cell->piece->player){
+		case black:
+			switch (cell->piece->type){
+			case queen:
+				cell->printPiece = 'q';
+				break;
+			case king:
+				cell->printPiece = 'k';
+				break;
+			case knight:
+				cell->printPiece = 'n';
+				break;
+			case rook:
+				cell->printPiece = 'r';
+				break;
+			case bishop:
+				cell->printPiece = 'b';
+				break;
+			case pawn:
+				cell->printPiece = 'p';
+				break;
+			}
+			break;
+		case white:
+			switch (cell->piece->type){
+			case queen:
+				cell->printPiece = 'Q';
+				break;
+			case king:
+				cell->printPiece = 'K';
+				break;
+			case knight:
+				cell->printPiece = 'N';
+				break;
+			case rook:
+				cell->printPiece = 'R';
+				break;
+			case bishop:
+				cell->printPiece = 'B';
+				break;
+			case pawn:
+				cell->printPiece = 'P';
+				break;
+			}
+			break;
+		}
+	}
+}
