@@ -1,0 +1,8 @@
+To run the game, please follow the instructions below.
+1) Navigate to the "bin" directory by typing: cd bin
+2) Run the program by typing: chess
+3) Quit the program at any time while in-game by typing: quit
+
+If you would like to see the full user manual, please follow the instructions below.
+1) Navigate to the "doc" directory by typing: cd doc
+2) Open the manual by typing: evince Chess_UserManual.pdf

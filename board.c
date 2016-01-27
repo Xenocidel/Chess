@@ -1,9 +1,29 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                                 Chess                                        *
+*               Copyright (C) 2016  nøl / C Gets Degrees                       *
+*                                                                              *
+*    This program is free software; you can redistribute it and/or modify      *
+*    it under the terms of the GNU General Public License as published by      *
+*    the Free Software Foundation; either version 2 of the License, or         *
+*    (at your option) any later version.                                       *
+*                                                                              *
+*    You should have received a copy of the GNU General Public License         *
+*    along with this program; if not, write to the Free Software               *
+*    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA *
+*                                                                              *                                                       *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+/*
+ *
+ * Created on 2016-01-13
+ *
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 #include "board.h"
 #include "cell.h"
-/*Hello*/
+
 void deleteBoard(board *board){
 	assert(board);
 	free(board);
@@ -80,7 +100,43 @@ cell *getCell(int cellID, board *board){
 	}
 }
 
-board *createNewGame(){		/*creates an empty board*/
+board *createNewGame(){
+	board *board = createBoard();
+	createPiece(white, rook, CELL0);
+	createPiece(white, knight, CELL1);
+	createBoard(white, bishop, CELL2);
+	createBoard(white, queen, CELL3);
+	createBoard(white, king, CELL4);
+	createBoard(white, bishop, CELL5);
+	createBoard(white, knight, CELL6);
+	createBoard(white, rook, CELL7);
+	createBoard(white, pawn, CELL8);
+	createBoard(white, pawn, CELL9);
+	createBoard(white, pawn, CELL10);
+	createBoard(white, pawn, CELL11);
+	createBoard(white, pawn, CELL12);
+	createBoard(white, pawn, CELL13);
+	createBoard(white, pawn, CELL14);
+	createBoard(white, pawn, CELL15);
+	createPiece(black, rook, CELL56);
+	createPiece(black, knight, CELL57);
+	createBoard(black, bishop, CELL58);
+	createBoard(black, queen, CELL59);
+	createBoard(black, king, CELL60);
+	createBoard(black, bishop, CELL61);
+	createBoard(black, knight, CELL62);
+	createBoard(black, rook, CELL63);
+	createBoard(black, pawn, CELL48);
+	createBoard(black, pawn, CELL49);
+	createBoard(black, pawn, CELL50);
+	createBoard(black, pawn, CELL51);
+	createBoard(black, pawn, CELL52);
+	createBoard(black, pawn, CELL53);
+	createBoard(black, pawn, CELL54);
+	createBoard(black, pawn, CELL55);
+}
+
+board *createBoard(){		/*creates an empty board*/
 	board *ans = malloc(sizeof(board));
 	ans->minus1 = createCell(-1, ans);
 	ans->cell0  = createCell(0 , ans);

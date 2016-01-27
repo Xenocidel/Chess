@@ -1,0 +1,17 @@
+To run the provided pre-compiled executable, please follow the instructions below.
+1) Navigate to the "bin" directory by typing: cd bin
+2) Run the program by typing: chess
+3) Quit the program at any time while in-game by typing: quit
+
+To compile the source code, please follow the instructions below.
+1) To compile the game executable, type "make" in the root directory
+2) To compile the comprehensive test module, type "make test" in the root directory
+3) To delete all previously compiled libaries and generated executables, type "make clean" in the root directory
+
+If you would like to see the API and software specification, please follow the instructions below.
+1) Navigate to the "doc" directory
+2) Open the manual by typing: evince Chess_SoftwareSpec.pdf
+
+If you would like to see the full user manual, please follow the instructions below.
+1) Navigate to the "doc" directory by typing: cd doc
+2) Open the manual by typing: evince Chess_UserManual.pdf
