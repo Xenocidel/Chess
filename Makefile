@@ -10,6 +10,7 @@ DEBUG  = -g -DDEBUG
 
 #targets
 install: Chess
+test: MovesTest
 clean:
 	rm -f *.o *.a Chess MovesTest
 

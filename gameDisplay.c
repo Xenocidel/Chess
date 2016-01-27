@@ -1,5 +1,26 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                                 Chess                                        *
+*               Copyright (C) 2016  nøl / C Gets Degrees                       *
+*                                                                              *
+*    This program is free software; you can redistribute it and/or modify      *
+*    it under the terms of the GNU General Public License as published by      *
+*    the Free Software Foundation; either version 2 of the License, or         *
+*    (at your option) any later version.                                       *
+*                                                                              *
+*    You should have received a copy of the GNU General Public License         *
+*    along with this program; if not, write to the Free Software               *
+*    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA *
+*                                                                              *                                                       *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+/*
+ *
+ * Created on 2016-01-06
+ *
+ */
+
 #include "gameDisplay.h"
-void updateBoard(){
+void updateGameDisplay(){
 	printf("    a   b   c   d   e   f   g   h\n");
 	printf("  +---+---+---+---+---+---+---+---+n");
 	printf("8 | %c | %c | %c | %c | %c | %c | %c | %c | 8\n", CELL56.printPiece, CELL57.printPiece, CELL58.printPiece, CELL59.printPiece, CELL60.printPiece, CELL61.printPiece, CELL62.printPiece, CELL63.printPiece);
@@ -19,8 +40,4 @@ void updateBoard(){
 	printf("1 | %c | %c | %c | %c | %c | %c | %c | %c | 1\n", CELL0.printPiece, CELL1.printPiece, CELL2.printPiece, CELL3.printPiece, CELL4.printPiece, CELL5.printPiece, CELL6.printPiece, CELL7.printPiece);
 	printf("  +---+---+---+---+---+---+---+---+n");
 	printf("    a   b   c   d   e   f   g   h\n");
-}
-
-void handleInput(char *argv[]){
-	
 }
