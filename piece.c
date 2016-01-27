@@ -125,12 +125,6 @@ int *checkPawnMoves(piece *p){
 		cell *right = getCell((p->loc->cellID)+9, p->loc->board);
 		cell *epleft = getCell((p->loc->cellID)-1, p->loc->board);
 		cell *epright = getCell((p->loc->cellID)+1, p->loc->board);
-		/*DEBUG MESSAGES*/
-		printf("DEBUG: white pawn cell locs:\n");
-		printf("DEBUG: front: %d\n", front->cellID);
-		printf("DEBUG: front2: %d\n", front2->cellID);
-		printf("DEBUG: left: %d\n", left->cellID);
-		printf("DEBUG: right: %d\n", right->cellID);
 		
 		/*first move jump 2*/
 		if (p->hasMoved == false){
@@ -236,8 +230,6 @@ int *checkPawnMoves(piece *p){
 		printp(available, p);
 		return NULL;
 	}
-	/*DEBUG MESSAGE*/
-	printf("DEBUG: %d available moves calculated\n", num);
 	/*compile all available moves*/
 	int *ans;
 	ans = malloc(sizeof(int) * (num+1));
@@ -245,7 +237,6 @@ int *checkPawnMoves(piece *p){
 	for (i=num; i>0; i--){
 		if (frontchk > 0){
 			*ans = frontchk;
-			printf("DEBUG: frontchk (%d) stored in address %p\n", *ans, ans);
 			frontchk = -2;
 			ans++;
 		}
@@ -261,7 +252,6 @@ int *checkPawnMoves(piece *p){
 		}
 		if (front2chk > 0){
 			*ans = front2chk;
-			printf("DEBUG: front2chk (%d) stored in address %p\n", *ans, ans);
 			front2chk = -2;
 			ans++;
 		}
