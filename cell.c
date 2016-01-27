@@ -16,6 +16,9 @@ cell *createCell(int cellID, board *board){
 
 void replacePiece(cell *cell, piece *p){
 	cell->piece = p;
+	p->prev = p->loc;
+	p->loc = cell;
+	p->prev->piece = NULL;
 }
 
 void deleteCell(cell *cell){	/*used at program shutdown, be sure to delete board separately*/
