@@ -537,21 +537,19 @@ int *checkKnightMoves(piece *p){
 }
 	
 int *checkKingMoves(struct piece *p){
-	int count;
-	char q[8] = { '0', '0', '0', '0', '0', '0', '0', '0' };
-	count = 0;
-	cell *temp;
+	int count = 0;
+	int q[8] = { '0', '0', '0', '0', '0', '0', '0', '0' };
 	/*Works when the king is on position "0"*/
 	if (p->loc->cellID == 0){
 		/*temperary pointer to a cell that the king can move to*/
-		temp = getCell(1, p->loc->board);
+		cell *temp = getCell(1, p->loc->board);
 		/*makes sure that the cell the king is moving to has another piece*/
 		if (temp->piece){
 			/*makes sure that that piece is not of the same color*/
 			if (temp->piece->player != p->player){
 				/*enables the move*/
 				q[count] = 1;
-					count++;
+				count++;
 
 			}
 		}
@@ -588,7 +586,7 @@ int *checkKingMoves(struct piece *p){
 	/*Works when the king is in position "7"*/
 	else if (p->loc->cellID == 7){
 		/*temperary pointer to a cell that the king can move to*/
-		temp = getCell(6, p->loc->board);
+		cell *temp = getCell(6, p->loc->board);
 		/*makes sure that the cell the king is moving to has another piece*/
 		if (temp->piece){
 			/*makes sure that that piece is not of the same color*/
@@ -630,7 +628,7 @@ int *checkKingMoves(struct piece *p){
 	/*Works when the king is in position "56"*/
 	else if (p->loc->cellID == 56){
 		/*temperary pointer to a cell that the king can move to*/
-		temp = getCell(48, p->loc->board);
+		cell *temp = getCell(48, p->loc->board);
 		/*makes sure that the cell the king is moving to has another piece*/
 		if (temp->piece){
 			/*makes sure that that piece is not of the same color*/
@@ -670,10 +668,10 @@ int *checkKingMoves(struct piece *p){
 		}
 
 	}
-	/*Works when the king is in position "62"*/
-	else if (p->loc->cellID == 62){
+	/*Works when the king is in position "63"*/
+	else if (p->loc->cellID == 63){
 		/*temperary pointer to a cell that the king can move to*/
-		temp = getCell(1, p->loc->board);
+		cell *temp = getCell(1, p->loc->board);
 		/*makes sure that the cell the king is moving to has another piece*/
 		if (temp->piece){
 			/*makes sure that that piece is not of the same color*/
@@ -715,7 +713,7 @@ int *checkKingMoves(struct piece *p){
 	/*Works when the king is on the left most column of the board*/
 	else if (p->loc->cellID % 8 == 0){
 		/*temperary pointer to a cell that the king can move to*/
-		temp = getCell(p->loc->cellID + 1, p->loc->board);
+		cell *temp = getCell(p->loc->cellID + 1, p->loc->board);
 		/*makes sure that the cell the king is moving to has another piece*/
 		if (temp->piece){
 			/*makes sure that that piece is not of the same color*/
@@ -779,7 +777,7 @@ int *checkKingMoves(struct piece *p){
 	/*Works when the king is in the right most column of the board*/
 	else if ((p->loc->cellID + 1) % 8 == 0){
 		/*temperary pointer to a cell that the king can move to*/
-		temp = getCell(p->loc->cellID - 1, p->loc->board);
+		cell *temp = getCell(p->loc->cellID - 1, p->loc->board);
 		/*makes sure that the cell the king is moving to has another piece*/
 		if (temp->piece){
 			/*makes sure that that piece is not of the same color*/
@@ -843,7 +841,7 @@ int *checkKingMoves(struct piece *p){
 	/*Works when the king is on the white starting row*/
 	else if (0 < p->loc->cellID && p->loc->cellID < 7){
 		/*temperary pointer to a cell that the king can move to*/
-		temp = getCell(p->loc->cellID - 1, p->loc->board);
+		cell *temp = getCell(p->loc->cellID - 1, p->loc->board);
 		/*makes sure that the cell the king is moving to has another piece*/
 		if (temp->piece){
 			/*makes sure that that piece is not of the same color*/
@@ -945,7 +943,7 @@ int *checkKingMoves(struct piece *p){
 	/*This occurs when the king is in the black starting row*/
 	else if (56 < p->loc->cellID && p->loc->cellID < 63){
 		/*temperary pointer to a cell that the king can move to*/
-		temp = getCell(p->loc->cellID - 1, p->loc->board);
+		cell *temp = getCell(p->loc->cellID - 1, p->loc->board);
 		/*makes sure that the cell the king is moving to has another piece*/
 		if (temp->piece){
 			/*makes sure that that piece is not of the same color*/
@@ -1046,7 +1044,7 @@ int *checkKingMoves(struct piece *p){
 	}
 	else{
 		/*temperary pointer to a cell that the king can move to*/
-		temp = getCell(p->loc->cellID - 1, p->loc->board);
+		cell *temp = getCell(p->loc->cellID - 1, p->loc->board);
 		/*makes sure that the cell the king is moving to has another piece*/
 		if (temp->piece){
 			/*makes sure that that piece is not of the same color*/
@@ -1140,15 +1138,15 @@ int *checkKingMoves(struct piece *p){
 			count++;
 		}
 	}
-	int *answer = malloc(sizeof(int)*count + 1);
+	int *answer = malloc(sizeof(int)*(count + 2));
 	int k;
 	for (k = 0; k<count; k++){
 		*answer = q[k];
 		answer++;
 	}
+	printf("count is %d\n", count);
 	*answer = -2;
 	answer -= count;
-	free(temp);
 	return answer;
 }
 
