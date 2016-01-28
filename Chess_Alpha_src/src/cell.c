@@ -32,7 +32,6 @@ cell *createCell(int cellID, board *board){
 	ans->cellID = cellID;
 	ans->piece = NULL;
 	ans->board = board;
-	ans->printPiece = ' ';
 	return ans;
 }
 
