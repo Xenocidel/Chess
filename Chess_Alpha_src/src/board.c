@@ -134,10 +134,6 @@ board *createNewGame(){
 	createBoard(black, pawn, CELL53);
 	createBoard(black, pawn, CELL54);
 	createBoard(black, pawn, CELL55);
-	int i;
-	for (i=0; i<64; i++){
-		updatePrintPiece(getCell(i, board));
-	}
 	return board;
 }
 

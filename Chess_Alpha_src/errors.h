@@ -1,13 +1,6 @@
-Authors: nøl / C Gets Degrees
-
-This project was developed as an assignment in the Winter of 2016. It is the intellectual property of nøl and C Gets Degrees, a group of students at the University of California, Irvine and should not be used, copied, or distributed for commercial or other non-personal use.
-
-Please see license.txt for the GNU General Public License.
-
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                                 Chess                                        *
-*               Copyright (C) 2016  nøl / C Gets Degrees                       *
+*               Copyright (C) 2016  nÃ¸l / C Gets Degrees                       *
 *                                                                              *
 *    This program is free software; you can redistribute it and/or modify      *
 *    it under the terms of the GNU General Public License as published by      *
@@ -17,5 +10,20 @@ Please see license.txt for the GNU General Public License.
 *    You should have received a copy of the GNU General Public License         *
 *    along with this program; if not, write to the Free Software               *
 *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA *
-*                                                                              *
+*                                                                              *                                                       *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+/*
+ *
+ * Created on 2016-01-13
+ *
+ */
+
+#ifndef ERRORS_H_INCLUDED_
+#define ERRORS_H_INCLUDED_
+#include "piece.h"
+
+void printe(int code);
+void printp(int code, piece *p);
+
+#endif

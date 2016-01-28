@@ -19,42 +19,24 @@
  *
  */
 
-#ifndef PIECE_H_INCLUDED_
-#define PIECE_H_INCLUDED_
-#include "cell.h"
+#ifndef CELL_H_INCLUDED_
+#define CELL_H_INCLUDED_
+#include "piece.h"
+#include "board.h"
 
-typedef struct cell cell;
-struct piece{
-	enum player { black, white } player;
-	enum type {
-			pawn,
-			knight,
-			king,
-			queen,
-			rook,
-			bishop } type;
-	enum hasMoved { false, true } hasMoved;
-	int castleFlag;
-	int epFlag;
-	cell *loc;
-	cell *prev;
-};
+typedef struct piece piece;
+typedef struct board board;
+struct cell{
+	char printPiece;
+	int cellID;		/*range from -1 to 63. -1 for captured pieces.*/
+	piece *piece;
+	board *board;
+} ;
 
-struct piece *createPiece(enum player player, enum type type, cell *cell);
-void deletePiece(struct piece *p);
-void printLoc(struct piece *p);
-int *checkAvailMoves (struct piece *p);
-int *checkPawnMoves  (struct piece *p);
-int *checkKnightMoves(struct piece *p);
-int *checkKingMoves  (struct piece *p);
-int *checkQueenMoves (struct piece *p);
-int *checkRookMoves  (struct piece *p);
-int *checkBishopMoves(struct piece *p);
-int movePiece (struct piece *p, cell *target);
-int movePawn  (struct piece *p, cell *target, int *avail);
-int moveKnight(struct piece *p, cell *target, int *avail);
-int moveKing  (struct piece *p, cell *target, int *avail);
-int moveQueen (struct piece *p, cell *target, int *avail);
-int moveRook  (struct piece *p, cell *target, int *avail);
-int moveBishop(struct piece *p, cell *target, int *avail);
+struct cell *createCell(int cellID, board *board);
+void replacePiece(struct cell *cell, piece *p);
+void deleteCell(struct cell *cell);	/*deletes all pieces as well*/
+void deleteAllCells(board *board); /*used at program shutdown, delete board separately*/
+void updatePrintPiece(struct cell *cell);
+
 #endif

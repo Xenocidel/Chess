@@ -25,10 +25,9 @@
 #include <string.h>
 #include "errors.h"
 #include "defs.h"
-#include "gameDisplay.h"
 
 int main(){
-	int in_game=0;
+	int in_game;
 	int mode=-1;	 	/*range 1-3*/
 	int diff=-1; 		/*range 0-3, 0 if pvp*/
 	int timer=-1;		/*range 0, 5, 10, 20*/
@@ -37,7 +36,7 @@ int main(){
 	char modeS[26];
 	char diffS[26];
 	char timerS[26];
-	do{	/*game setup*/
+	while (!in_game){	/*game setup*/
 		printf("\nChess v1.0 by nøl / C Gets Degrees\n\n");
 		while (mode < 1){
 			printf("Please select game mode:\n");
@@ -51,20 +50,8 @@ int main(){
 					break;
 				case 2:
 					printf("Player versus Computer selected\n");
-					printf("Choose a side: White(0) or Black(1)?\n");
+					printf("Choose a side: white(0) or black(1)?\n");
 					scanf("%d", &side);
-					switch(side){
-						case 0:
-							printf("White selected\n");
-							break;
-						case 1:
-							printf("Black selected\n");
-							break;
-						default:
-							printe(selection);
-							side = -1;
-							break;
-					}
 					break;
 				case 3:
 					printf("Computer versus Computer selected\n");
@@ -187,9 +174,6 @@ int main(){
 		}
 
 	}
-	while(!in_game);
-	board *board = createNewGame();
-	/*while(in_game)*/
-		updateGameDisplay(board);
+
 	return 0;
 }
