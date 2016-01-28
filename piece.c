@@ -286,6 +286,24 @@ int *checkKingMoves(struct piece *p){
 	char q[8] = { '0', '0', '0', '0', '0', '0', '0', '0' };
 	count = 0;
 	cell *temp;
+
+	/*
+	if (p->castleFlag==1&&
+	}
+	else if("King is white"&&r1==0&&k==0){
+	}
+	else if ("King is white"&&r2==0&&k==0){
+
+	}
+	else if("King is black"&&r1==0&&r2==0&&k==0){
+
+	}
+	else if("King is black"&&r1==0&&k==0){
+
+	}
+	else if("king is black"&&r2==0&&k==0){
+
+	}*/
 	/*Works when the king is on position "0"*/
 	if (p->loc->cellID == 0){
 		/*temperary pointer to a cell that the king can move to*/
@@ -602,27 +620,6 @@ int *checkKingMoves(struct piece *p){
 		else{
 			q[count] = p->loc->cellID - 1;
 			count++;
-			/*Start of checking for castling on white left side*/
-			if (p->hasMoved == 0){
-				temp = getCell(p->loc->cellID - 2, p->loc->board);
-				/*checks to see if there is a piece two spaces to the left of the king*/
-				if (temp->piece == 0){
-					temp = getCell(p->loc->cellID - 3, p->loc->board);
-					/*checks to see if there is a piece three spaces to the left of the king*/
-					if (temp->piece == 0){
-						temp = getCell(p->loc->cellID - 4, p->loc->board);
-						/*checks to see if there is a piece 4 spaces to the left of the king*/
-						if (temp->piece){
-							/*checks to see if that piece is a rook and has not moved*/
-							if (temp->piece->hasMoved == 0){
-								/*allows the castling*/
-								q[count] = p->loc->cellID - 2;
-								count++;
-							}
-						}
-					}
-				}
-			}
 		}
 		/*repeates the process for the other possible moves of the king*/
 		temp = getCell(p->loc->cellID + 8, p->loc->board);
@@ -657,23 +654,6 @@ int *checkKingMoves(struct piece *p){
 		else{
 			q[count] = p->loc->cellID + 1;
 			count++;
-			/*Start of checking for castling on white right side*/
-			if (p->hasMoved == 0){
-				temp = getCell(p->loc->cellID + 2, p->loc->board);
-				/*checks to see if there is a piece 2 spaces to the right of the king*/
-				if (temp->piece == 0){
-					temp = getCell(p->loc->cellID + 3, p->loc->board);
-					/*checks to see if there is a piece 3 spaces to the right of the king*/
-					if (temp->piece){
-						/*checks to see if that piece is a rook and has not moved*/
-						if (temp->piece->hasMoved == 0){
-							/*allows the castling*/
-							q[count] = p->loc->cellID + 2;
-							count++;
-						}
-					}
-				}
-			}
 		}
 		temp = getCell(p->loc->cellID + 9, p->loc->board);
 		if (temp->piece){
@@ -704,27 +684,6 @@ int *checkKingMoves(struct piece *p){
 		else{
 			q[count] = p->loc->cellID - 1;
 			count++;
-			/*Start of checking for castling on black right side*/
-			if (p->hasMoved == 0){
-				temp = getCell(p->loc->cellID - 2, p->loc->board);
-				/*checks to see if there is a piece two spaces to the right of the king*/
-				if (temp->piece == 0){
-					temp = getCell(p->loc->cellID - 3, p->loc->board);
-					/*checks to see if there is a piece three spaces to the right of the king*/
-					if (temp->piece == 0){
-						temp = getCell(p->loc->cellID - 4, p->loc->board);
-						/*checks to see if there is a piece 4 spaces to the right of the king*/
-						if (temp->piece){
-							/*checks to see if that piece is a rook and has not moved*/
-							if (temp->piece->hasMoved == 0){
-								/*allows the castling*/
-								q[count] = p->loc->cellID - 2;
-								count++;
-							}
-						}
-					}
-				}
-			}
 		}
 		/*repeates the process for the other possible moves of the king*/
 		temp = getCell(p->loc->cellID - 8, p->loc->board);
@@ -759,23 +718,6 @@ int *checkKingMoves(struct piece *p){
 		else{
 			q[count] = p->loc->cellID + 1;
 			count++;
-			/*Start of checking for castling on black left side*/
-			if (p->hasMoved == 0){
-				temp = getCell(p->loc->cellID + 2, p->loc->board);
-				/*checks to see if there is a piece 2 spaces to the left of the king*/
-				if (temp->piece == 0){
-					temp = getCell(p->loc->cellID + 3, p->loc->board);
-					/*checks to see if there is a piece 3 spaces to the left of the king*/
-					if (temp->piece){
-						/*checks to see if that piece is a rook and has not moved*/
-						if (temp->piece->hasMoved == 0){
-							/*allows the castling*/
-							q[count] = p->loc->cellID + 2;
-							count++;
-						}
-					}
-				}
-			}
 		}
 		temp = getCell(p->loc->cellID - 9, p->loc->board);
 		if (temp->piece){
