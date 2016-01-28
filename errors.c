@@ -39,17 +39,16 @@ void printe(int code){
 		case 2:
 			printf("Invalid selection. Please try again.\n\n");
 			break;
+		case 3:
+			printf("Invalid entry. Please try again.\n\n");
+			break;
 		default:
 			printf("Unknown error has occured. Program terminating...\n\n");
-			exit(1);
+			exit(2);
 	}
 }
 /*print error function with specific piece location; function name has been changed to printp since C doesn't support overloading*/
-void printp(int code, piece *p){
-	if (code!=3){
-		printf("Unknown error has occured. Program terminating...\n");
-		exit(1);
-	}
+void printp(piece *p){
 	switch(p->type){
 		case pawn:
 			printf("No available moves for Pawn at");

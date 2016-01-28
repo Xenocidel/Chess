@@ -22,11 +22,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 #include "gameDisplay.h"
 #include "piece.h"
 #include "board.h"
 #include "errors.h"
 #include "defs.h"
+
+int turn=0;
+int pieceSelected=0;
 
 void updateGameDisplay(board *board){
 	printf("    a   b   c   d   e   f   g   h\n");
@@ -49,105 +53,125 @@ void updateGameDisplay(board *board){
 	printf("  +---+---+---+---+---+---+---+---+\n");
 	printf("    a   b   c   d   e   f   g   h\n");
 	printf("\n\n");
-	printMessage();
-	int tmp;
-	scanf("%d", &tmp);
-	printf("This concludes the alpha preview of Chess. Please run MovesTest if you wish to test game logic.\n\n");
+	printMessage(turn);
+	
 	/*handleInput();*/
 }
 
-void printMessage(){
-	printf("White's turn\n");
-	printf("Please select a piece by typing its location like a1\n");
+void printMessage(int turn){ /* for turns: white = even, black = odd */
+	if (turn == 0){
+		printf("Select a piece by typing its location like: a1\nAlternatively, you may directly move a piece by typing its location and its destination like: a2 a3");
+	}
+	if (turn%2 == 0){
+		printf("White's turn\n");
+	}
+	else{
+		printf("Black's turn\n");
+	}
 	
+	printf("\n>");
 }
 /*
 void handleInput(){
-	char loc[3];
-	fgets(loc, 2, stdin);
+	char *loc;
+	fgets(loc, 5, stdin);
 	int cellID = toID(loc);
 	if (cellID == -2){
-		printe(selection);
+		printe(entry);
 	}
 	if (cellID == -3){
 		exit(0);
 	}
+	if (strlen(loc) == 4){
+		loc+=2;
+		
+	}
+	switch (movePiece(cellID->piece, destCell)){
+		case -2:
+			printp(cellID->piece);
+			break;
+		case 1:
+			pawnPromotion(cellID->piece);
+			break;
+		
+	}
 }
-int toID(char loc[]){
 
-	if (loc == "a1") return 0;
-	if (loc == "b1") return 1;
-	if (loc == "c1") return 2;
-	if (loc == "d1") return 3;
-	if (loc == "e1") return 4;
-	if (loc == "f1") return 5;
-	if (loc == "g1") return 6;
-	if (loc == "h1") return 7;
+int toID(char *loc){ 
+	if (strncmp("quit", loc, 4) == 0 || strncmp("exit", loc, 4 == 0))
+		return -3;
 	
-	if (loc == "a2") return 8;
-	if (loc == "b2") return 9;
-	if (loc == "c2") return 10;
-	if (loc == "d2") return 11;
-	if (loc == "e2") return 12;
-	if (loc == "f2") return 13;
-	if (loc == "g2") return 14;
-	if (loc == "h2") return 15;
+	if (2 == strlen(loc) && strncmp("a1", loc, 2) == 0) return 0;
+	if (2 == strlen(loc) && strncmp("b1", loc, 2) == 0) return 1;
+	if (2 == strlen(loc) && strncmp("c1", loc, 2) == 0) return 2;
+	if (2 == strlen(loc) && strncmp("d1", loc, 2) == 0) return 3;
+	if (2 == strlen(loc) && strncmp("e1", loc, 2) == 0) return 4;
+	if (2 == strlen(loc) && strncmp("f1", loc, 2) == 0) return 5;
+	if (2 == strlen(loc) && strncmp("g1", loc, 2) == 0) return 6;
+	if (2 == strlen(loc) && strncmp("h1", loc, 2) == 0) return 7;
 	
-	if (loc == "a3") return 16;
-	if (loc == "b3") return 17;
-	if (loc == "c3") return 18;
-	if (loc == "d3") return 19;
-	if (loc == "e3") return 20;
-	if (loc == "f3") return 21;
-	if (loc == "g3") return 22;
-	if (loc == "h3") return 23;
+	if (2 == strlen(loc) && strncmp("a2", loc, 2) == 0) return 8;
+	if (2 == strlen(loc) && strncmp("b2", loc, 2) == 0) return 9;
+	if (2 == strlen(loc) && strncmp("c2", loc, 2) == 0) return 10;
+	if (2 == strlen(loc) && strncmp("d2", loc, 2) == 0) return 11;
+	if (2 == strlen(loc) && strncmp("e2", loc, 2) == 0) return 12;
+	if (2 == strlen(loc) && strncmp("f2", loc, 2) == 0) return 13;
+	if (2 == strlen(loc) && strncmp("g2", loc, 2) == 0) return 14;
+	if (2 == strlen(loc) && strncmp("h2", loc, 2) == 0) return 15;
+
+	if (2 == strlen(loc) && strncmp("a3", loc, 2) == 0) return 16;
+	if (2 == strlen(loc) && strncmp("b3", loc, 2) == 0) return 17;
+	if (2 == strlen(loc) && strncmp("c3", loc, 2) == 0) return 18;
+	if (2 == strlen(loc) && strncmp("d3", loc, 2) == 0) return 19;
+	if (2 == strlen(loc) && strncmp("e3", loc, 2) == 0) return 20;
+	if (2 == strlen(loc) && strncmp("f3", loc, 2) == 0) return 21;
+	if (2 == strlen(loc) && strncmp("g3", loc, 2) == 0) return 22;
+	if (2 == strlen(loc) && strncmp("h3", loc, 2) == 0) return 23;
 	
-	if (loc == "a4") return 24;
-	if (loc == "b4") return 25;
-	if (loc == "c4") return 26;
-	if (loc == "d4") return 27;
-	if (loc == "e4") return 28;
-	if (loc == "f4") return 29;
-	if (loc == "g4") return 30;
-	if (loc == "h4") return 31;
+	if (2 == strlen(loc) && strncmp("a4", loc, 2) == 0) return 24;
+	if (2 == strlen(loc) && strncmp("b4", loc, 2) == 0) return 25;
+	if (2 == strlen(loc) && strncmp("c4", loc, 2) == 0) return 26;
+	if (2 == strlen(loc) && strncmp("d4", loc, 2) == 0) return 27;
+	if (2 == strlen(loc) && strncmp("e4", loc, 2) == 0) return 28;
+	if (2 == strlen(loc) && strncmp("f4", loc, 2) == 0) return 29;
+	if (2 == strlen(loc) && strncmp("g4", loc, 2) == 0) return 30;
+	if (2 == strlen(loc) && strncmp("h4", loc, 2) == 0) return 31;
 	
-	if (loc == "a5") return 32;
-	if (loc == "b5") return 33;
-	if (loc == "c5") return 34;
-	if (loc == "d5") return 35;
-	if (loc == "e5") return 36;
-	if (loc == "f5") return 37;
-	if (loc == "g5") return 38;
-	if (loc == "h5") return 39;
+	if (2 == strlen(loc) && strncmp("a5", loc, 2) == 0) return 32;
+	if (2 == strlen(loc) && strncmp("b5", loc, 2) == 0) return 33;
+	if (2 == strlen(loc) && strncmp("c5", loc, 2) == 0) return 34;
+	if (2 == strlen(loc) && strncmp("d5", loc, 2) == 0) return 35;
+	if (2 == strlen(loc) && strncmp("e5", loc, 2) == 0) return 36;
+	if (2 == strlen(loc) && strncmp("f5", loc, 2) == 0) return 37;
+	if (2 == strlen(loc) && strncmp("g5", loc, 2) == 0) return 38;
+	if (2 == strlen(loc) && strncmp("h5", loc, 2) == 0) return 39;
 	
-	if (loc == "a6") return 40;
-	if (loc == "b6") return 41;
-	if (loc == "c6") return 42;
-	if (loc == "d6") return 43;
-	if (loc == "e6") return 44;
-	if (loc == "f6") return 45;
-	if (loc == "g6") return 46;
-	if (loc == "h6") return 47;
+	if (2 == strlen(loc) && strncmp("a6", loc, 2) == 0) return 40;
+	if (2 == strlen(loc) && strncmp("b6", loc, 2) == 0) return 41;
+	if (2 == strlen(loc) && strncmp("c6", loc, 2) == 0) return 42;
+	if (2 == strlen(loc) && strncmp("d6", loc, 2) == 0) return 43;
+	if (2 == strlen(loc) && strncmp("e6", loc, 2) == 0) return 44;
+	if (2 == strlen(loc) && strncmp("f6", loc, 2) == 0) return 45;
+	if (2 == strlen(loc) && strncmp("g6", loc, 2) == 0) return 46;
+	if (2 == strlen(loc) && strncmp("h6", loc, 2) == 0) return 47;
 	
-	if (loc == "a7") return 48;
-	if (loc == "b7") return 49;
-	if (loc == "c7") return 50;
-	if (loc == "d7") return 51;
-	if (loc == "e7") return 52;
-	if (loc == "f7") return 53;
-	if (loc == "g7") return 54;
-	if (loc == "h7") return 55;
+	if (2 == strlen(loc) && strncmp("a7", loc, 2) == 0) return 48;
+	if (2 == strlen(loc) && strncmp("b7", loc, 2) == 0) return 49;
+	if (2 == strlen(loc) && strncmp("c7", loc, 2) == 0) return 50;
+	if (2 == strlen(loc) && strncmp("d7", loc, 2) == 0) return 51;
+	if (2 == strlen(loc) && strncmp("e7", loc, 2) == 0) return 52;
+	if (2 == strlen(loc) && strncmp("f7", loc, 2) == 0) return 53;
+	if (2 == strlen(loc) && strncmp("g7", loc, 2) == 0) return 54;
+	if (2 == strlen(loc) && strncmp("h7", loc, 2) == 0) return 55;
 	
-	if (loc == "a8") return 56;
-	if (loc == "b8") return 57;
-	if (loc == "c8") return 58;
-	if (loc == "d8") return 59;
-	if (loc == "e8") return 60;
-	if (loc == "f8") return 61;
-	if (loc == "g8") return 62;
-	if (loc == "h8") return 63;
-	
-	if (loc == "qu" || loc == "ex") return -3;
+	if (2 == strlen(loc) && strncmp("a8", loc, 2) == 0) return 56;
+	if (2 == strlen(loc) && strncmp("b8", loc, 2) == 0) return 57;
+	if (2 == strlen(loc) && strncmp("c8", loc, 2) == 0) return 58;
+	if (2 == strlen(loc) && strncmp("d8", loc, 2) == 0) return 59;
+	if (2 == strlen(loc) && strncmp("e8", loc, 2) == 0) return 60;
+	if (2 == strlen(loc) && strncmp("f8", loc, 2) == 0) return 61;
+	if (2 == strlen(loc) && strncmp("g8", loc, 2) == 0) return 62;
+	if (2 == strlen(loc) && strncmp("h8", loc, 2) == 0) return 63;
 	
 	return -2;
 }
