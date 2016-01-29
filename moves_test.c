@@ -225,3 +225,18 @@ void kingTest(board *board){
 		k9moves++;
 	}
 }
+
+void rookTest(board *board)
+{
+  /*testing basic forward movement*/
+  piece *r1 = createPiece(white, rook, CELL21);
+  printf("A type:%d player:(%d) has been created in cell %d\n", r1->type, r1->player, r1->loc->cellID);
+  printLoc(r1);
+  printf("Testing basic rook movements...\n");
+	int *r1moves = checkAvailMoves(r1);
+	while(*r1moves != -2){
+		printf("Rook (cell 21) can move to cell %d\n", *r1moves);
+		r1moves++;
+  }
+  r1moves = NULL;
+}
