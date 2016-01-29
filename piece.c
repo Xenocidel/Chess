@@ -2087,24 +2087,27 @@ int *checkQueenMoves(piece *p){
 }
 
 
-int movePiece(piece *p, cell *target){ /* also handles captures. returns 0 if move is valid, -1 if move is invalid */
+int movePiece(piece *p, cell *target){ /* also handles captures. returns 0 if move is valid, -1 if move is invalid, -2 if no available moves, 1 for a pawn promotion */
 	assert(p);
 	assert(target);
 	assert(target->cellID <= 63);
 	assert(target->cellID >= 0);
 	int *avail = checkAvailMoves(p);
+	if (avail == NULL){
+		return -2
+	}
 	switch (p->type){
 		case pawn: return movePawn(p, target, avail);
 		break;
-		case knight:
+		case knight: return moveKnight(p, target, avail);
 		break;
-		case king:
+		case king: return moveKing(p, target, avail);
 		break;
-		case queen:
+		case queen: return moveQueen(p, target, avail);
 		break;
-		case rook:
+		case rook: return moveRook(p, target, avail);
 		break;
-		case bishop:
+		case bishop:return moveBishop(p, target, avail);
 		break;
 	}
 	return -1;
@@ -2112,7 +2115,7 @@ int movePiece(piece *p, cell *target){ /* also handles captures. returns 0 if mo
 
 int movePawn(piece *p, cell *target, int *avail){
 	assert(target);
-	int valid = -1; /* -1 is invalid, 0 is valid */
+	int valid = -1; /* -1 is invalid, 0 is valid, 1 is promotion */
 	while (*avail != -2){
 		if (target->cellID == *avail){
 			valid = 0;
@@ -2128,7 +2131,28 @@ int movePawn(piece *p, cell *target, int *avail){
 	}
 	replacePiece(target, p);
 	updatePrintPiece(target);
+	if (target->cellID < 8 || target->cellID > 55){
+		valid = 1; /* pawn is to be promoted */
+	}
 	return valid;
 }
 
+int moveKnight(piece *p, cell *target, int *avail){
+	
+}
 
+int moveKing(piece *p, cell *target, int *avail){
+	
+}
+
+int moveQueen(piece *p, cell *target, int *avail){
+	
+}
+
+int moveRook(piece *p, cell *target, int *avail){
+	
+}
+
+int moveBishop(piece *p, cell *target, int *avail){
+	
+}
