@@ -30,12 +30,14 @@
 
 void pawnTest(board *board);
 void bishopTest(board *board);
+void bishopTest(board *board);
 
 int main(){
 	board *board = createBoard();
 	
 	pawnTest(board);
 	bishopTest(board);
+	kingTest(board);
 	
 	/*clean up all the mallocs*/
 	deleteAllCells(board);	/*deletes all pieces as well*/
@@ -156,4 +158,70 @@ void bishopTest(board *board){
 		b2moves++;
 	}
 	b2moves = NULL;
+}
+void kingTest(board *board){
+	piece *k1 = createPiece(white, king, CELL0);
+	piece *k2 = createPiece(white, king, CELL7);
+	piece *k3 = createPiece(white, king, CELL56);
+	piece *k4 = createPiece(white, king, CELL63);
+	piece *k5 = createPiece(white, king, CELL32);
+	piece *k6 = createPiece(white, king, CELL39);
+	piece *k7 = createPiece(white, king, CELL59);
+	piece *k8 = createPiece(white, king, CELL4);
+	piece *k9 = createPiece(white, king, CELL21);
+	printf("Running Test 1: Cell 0\n");
+	int *k1moves = checkAvailMoves(k1);
+	printf("%d", *k1moves);
+	while (*k1moves != -2){
+		printf("King in Cell 0 can move to %d\n", *k1moves);
+		k1moves++;
+	}
+	printf("\n\nRunning Test 2: Cell 7\n");
+	int *k2moves = checkAvailMoves(k2);
+	while (*k2moves != -2){
+		printf("King in Cell 7 can move to %d\n", *k2moves);
+		k2moves++;
+	}
+	printf("\n\nRunning Test 3: Cell 56\n");
+	int *k3moves = checkAvailMoves(k3);
+	while (*k3moves != -2){
+		printf("King in Cell 56 can move to %d\n", *k3moves);
+		k3moves++;
+	}
+	printf("\n\nRunning Test 4: Cell 63\n");
+	int *k4moves = checkAvailMoves(k4);
+	while (*k4moves != -2){
+		printf("King in Cell 63 can move to %d\n", *k4moves);
+		k4moves++;
+	}
+	printf("\n\nRunning Test 5: Cell 32\n");
+	int *k5moves = checkAvailMoves(k5);
+	while (*k5moves != -2){
+		printf("King in Cell 32 can move to %d\n", *k5moves);
+		k5moves++;
+	}
+	printf("\n\nRunning Test 6: Cell 39\n");
+	int *k6moves = checkAvailMoves(k6);
+	while (*k6moves != -2){
+		printf("King in Cell 39 can move to %d\n", *k6moves);
+		k6moves++;
+	}
+	printf("\n\nRunning Test 7: Cell 59\n");
+	int *k7moves = checkAvailMoves(k7);
+	while (*k7moves != -2){
+		printf("King in Cell 59 can move to %d\n", *k7moves);
+		k7moves++;
+	}
+	printf("\n\nRunning Test 8: Cell 4\n");
+	int *k8moves = checkAvailMoves(k8);
+	while (*k8moves != -2){
+		printf("King in Cell 4 can move to %d\n", *k8moves);
+		k8moves++;
+	}
+	printf("\n\nRunning Test 9: Cell 21\n");
+	int *k9moves = checkAvailMoves(k9);
+	while (*k9moves != -2){
+		printf("King in Cell 21 can move to %d\n", *k9moves);
+		k9moves++;
+	}
 }
