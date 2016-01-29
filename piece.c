@@ -1219,439 +1219,221 @@ int *checkKingMoves(piece *p){
 	return answer;
 }
 
-int *checkRookMoves(piece *p)
-    {
-        int fwd, rght, lft, bck, num= 0;
-        int frontchk,frontchk2,frontchk3,frontchk4,frontchk5,frontchk6,frontchk7 = -1;
-        int leftchk,leftchk2,leftchk3,leftchk4,leftchk5,leftchk6,leftchk7 = -1;
-        int rightchk,rightchk2,rightchk3,rightchk4,rightchk5,rightchk6,rightchk7 = -1;
-        int backchk,backchk2,backchk3,backchk4,backchk5,backchk6,backchk7 = -1;
-        /*int obs;*/
-        if (p->player == white)
-        {
-            /*the available moves for a Rook, not including edge detection.*/
-            cell *front = getCell((p->loc->cellID)+8, p->loc->board);
-            cell *front2 = getCell((p->loc->cellID)+16, p->loc->board);
-            cell *front3 = getCell((p->loc->cellID)+24, p->loc->board);
-            cell *front4 = getCell((p->loc->cellID)+32, p->loc->board);
-            cell *front5 = getCell((p->loc->cellID)+40, p->loc->board);
-            cell *front6 = getCell((p->loc->cellID)+48, p->loc->board);
-            cell *front7 = getCell((p->loc->cellID)+56, p->loc->board);
-            cell *right = getCell((p->loc->cellID)+1, p->loc->board);
-            cell *right2 = getCell((p->loc->cellID)+2, p->loc->board);
-            cell *right3 = getCell((p->loc->cellID)+3, p->loc->board);
-            cell *right4 = getCell((p->loc->cellID)+4, p->loc->board);
-            cell *right5 = getCell((p->loc->cellID)+5, p->loc->board);
-            cell *right6 = getCell((p->loc->cellID)+6, p->loc->board);
-            cell *right7 = getCell((p->loc->cellID)+7, p->loc->board);
-            cell *left = getCell((p->loc->cellID)-1, p->loc->board);
-            cell *left2 = getCell((p->loc->cellID)-2, p->loc->board);
-            cell *left3 = getCell((p->loc->cellID)-3, p->loc->board);
-            cell *left4 = getCell((p->loc->cellID)-4, p->loc->board);
-            cell *left5 = getCell((p->loc->cellID)-5, p->loc->board);
-            cell *left6 = getCell((p->loc->cellID)-6, p->loc->board);
-            cell *left7 = getCell((p->loc->cellID)-7, p->loc->board);
-            cell *back = getCell((p->loc->cellID)-8, p->loc->board);
-            cell *back2 = getCell((p->loc->cellID)-16, p->loc->board);
-            cell *back3 = getCell((p->loc->cellID)-24, p->loc->board);
-            cell *back4 = getCell((p->loc->cellID)-32, p->loc->board);
-            cell *back5 = getCell((p->loc->cellID)-40, p->loc->board);
-            cell *back6 = getCell((p->loc->cellID)-48, p->loc->board);
-            cell *back7 = getCell((p->loc->cellID)-56, p->loc->board);
-
-
-            /*basic forward movement of Rook*/
-            if (front->piece == NULL)
-            {
-                fwd++;
-                frontchk = front->cellID;
-            }
-            if (front2->piece == NULL)
-            {
-                fwd++;
-                frontchk2 = front2->cellID;
-            }
-            if (front3->piece == NULL)
-            {
-                fwd++;
-                frontchk3 = front3->cellID;
-            }
-            if (front4->piece == NULL)
-            {
-                fwd++;
-                frontchk4 = front4->cellID;
-            }
-            if (front5->piece == NULL)
-            {
-                fwd++;
-                frontchk5 = front5->cellID;
-            }
-            if (front6->piece == NULL)
-            {
-                fwd++;
-                frontchk6 = front6->cellID;
-            }
-            if (front7->piece == NULL)
-            {
-                fwd++;
-                frontchk7 = front7->cellID;
-            }
-
-            /*basic right movement of the Rook*/
-            if (right->piece == NULL)
-            {
-                rght++;
-                rightchk = right->cellID;
-            }
-            if (right2->piece == NULL)
-            {
-                rght++;
-                rightchk2 = right2->cellID;
-            }
-            if (right3->piece == NULL)
-            {
-                rght++;
-                rightchk3 = right3->cellID;
-            }
-            if (right4->piece == NULL)
-            {
-                rght++;
-                rightchk4 = right4->cellID;
-            }
-            if (right5->piece == NULL)
-            {
-                rght++;
-                rightchk5 = right5->cellID;
-            }
-            if (right6->piece == NULL)
-            {
-                rght++;
-                rightchk6 = right6->cellID;
-            }
-            if (right7->piece == NULL)
-            {
-                rght++;
-                rightchk7 = right7->cellID;
-            }
-
-            /*basic left movement of the Rook*/
-            if (left->piece == NULL)
-            {
-                lft++;
-                leftchk = left->cellID;
-            }
-            if (left2->piece == NULL)
-            {
-                lft++;
-                leftchk2 = left2->cellID;
-            }
-            if (left3->piece == NULL)
-            {
-                lft++;
-                leftchk3 = left3->cellID;
-            }
-            if (left4->piece == NULL)
-            {
-                lft++;
-                leftchk4 = left4->cellID;
-            }
-            if (left5->piece == NULL)
-            {
-                lft++;
-                leftchk5 = left5->cellID;
-            }
-            if (left6->piece == NULL)
-            {
-                lft++;
-                leftchk6 = left6->cellID;
-            }
-            if (left7->piece == NULL)
-            {
-                lft++;
-                leftchk7 = left7->cellID;
-            }
-
-            /*basic backwards movement of the rook*/
-            if (back->piece == NULL)
-            {
-                bck++;
-                backchk = back->cellID;
-            }
-            if (back2->piece == NULL)
-            {
-                bck++;
-                backchk2 = back2->cellID;
-            }
-            if (back3->piece == NULL)
-            {
-                bck++;
-                backchk3 = back3->cellID;
-            }
-            if (back4->piece == NULL)
-            {
-                bck++;
-                backchk4 = back4->cellID;
-            }
-            if (back5->piece == NULL)
-            {
-                bck++;
-                backchk5 = back5->cellID;
-            }
-            if (back6->piece == NULL)
-            {
-                bck++;
-                backchk6 = back6->cellID;
-            }
-            if (back7->piece == NULL)
-            {
-                bck++;
-                backchk7 = back7->cellID;
-            }
-
-            /*when the rook is on the left edge*/
-            if (front->cellID%8 == 0)
-            {
-                lft = 0;
-            }
-
-            /*when the rook is on the right edge*/
-            if (front->cellID%8 == 7)
-            {
-                rght = 0;
-            }
-
-        }
-        else
-        {
-            cell *front = getCell((p-> loc -> cellID)-8, p -> loc -> board);
-            cell *front2 = getCell((p -> loc -> cellID)-16, p -> loc -> board);
-            cell *front3 = getCell((p -> loc -> cellID)-24, p -> loc -> board);
-            cell *front4 = getCell((p -> loc -> cellID)-32, p -> loc -> board);
-            cell *front5 = getCell((p -> loc -> cellID)-40, p -> loc -> board);
-            cell *front6 = getCell((p -> loc -> cellID)-48, p -> loc -> board);
-            cell *front7 = getCell((p -> loc -> cellID)-56, p -> loc -> board);
-            cell *right = getCell((p -> loc -> cellID)-1, p -> loc -> board);
-            cell *right2 = getCell((p -> loc -> cellID)-2, p -> loc -> board);
-            cell *right3 = getCell((p -> loc -> cellID)-3, p -> loc -> board);
-            cell *right4 = getCell((p -> loc -> cellID)-4, p -> loc -> board);
-            cell *right5 = getCell((p -> loc -> cellID)-5, p -> loc -> board);
-            cell *right6 = getCell((p -> loc -> cellID)-6, p -> loc -> board);
-            cell *right7 = getCell((p -> loc -> cellID)-7, p -> loc -> board);
-            cell *left = getCell((p -> loc -> cellID)+1, p -> loc -> board);
-            cell *left2 = getCell((p -> loc -> cellID)+2, p -> loc -> board);
-            cell *left3 = getCell((p -> loc -> cellID)+3, p -> loc -> board);
-            cell *left4 = getCell((p -> loc -> cellID)+4, p -> loc -> board);
-            cell *left5 = getCell((p -> loc -> cellID)+5, p -> loc -> board);
-            cell *left6 = getCell((p -> loc -> cellID)+6, p -> loc -> board);
-            cell *left7 = getCell((p -> loc -> cellID)+7, p -> loc -> board);
-            cell *back = getCell((p->loc->cellID)+8, p->loc->board);
-            cell *back2 = getCell((p->loc->cellID)+16, p->loc->board);
-            cell *back3 = getCell((p->loc->cellID)+24, p->loc->board);
-            cell *back4 = getCell((p->loc->cellID)+32, p->loc->board);
-            cell *back5 = getCell((p->loc->cellID)+40, p->loc->board);
-            cell *back6 = getCell((p->loc->cellID)+48, p->loc->board);
-            cell *back7 = getCell((p->loc->cellID)+56, p->loc->board);
-
-/*basic forward movement of Rook*/
-            if (front->piece == NULL)
-            {
-                fwd++;
-                frontchk = front->cellID;
-            }
-            if (front2->piece == NULL)
-            {
-                fwd++;
-                frontchk2 = front2->cellID;
-            }
-            if (front3->piece == NULL)
-            {
-                fwd++;
-                frontchk3 = front3->cellID;
-            }
-            if (front4->piece == NULL)
-            {
-                fwd++;
-                frontchk4 = front4->cellID;
-            }
-            if (front5->piece == NULL)
-            {
-                fwd++;
-                frontchk5 = front5->cellID;
-            }
-            if (front6->piece == NULL)
-            {
-                fwd++;
-                frontchk6 = front6->cellID;
-            }
-            if (front7->piece == NULL)
-            {
-                fwd++;
-                frontchk7 = front7->cellID;
-            }
-
-/*basic right movement of the Rook*/
-            if (right->piece == NULL)
-            {
-                rght++;
-                rightchk = right->cellID;
-            }
-            if (right2->piece == NULL)
-            {
-                rght++;
-                rightchk2 = right2->cellID;
-            }
-            if (right3->piece == NULL)
-            {
-                rght++;
-                rightchk3 = right3->cellID;
-            }
-            if (right4->piece == NULL)
-            {
-                rght++;
-                rightchk4 = right4->cellID;
-            }
-            if (right5->piece == NULL)
-            {
-                rght++;
-                rightchk5 = right5->cellID;
-            }
-            if (right6->piece == NULL)
-            {
-                rght++;
-                rightchk6 = right6->cellID;
-            }
-            if (right7->piece == NULL)
-            {
-                rght++;
-                rightchk7 = right7->cellID;
-            }
-
-/*basic left movement of the Rook*/
-            if (left->piece == NULL)
-            {
-                lft++;
-                leftchk = left->cellID;
-            }
-            if (left2->piece == NULL)
-            {
-                lft++;
-                leftchk2 = left2->cellID;
-            }
-            if (left3->piece == NULL)
-            {
-                lft++;
-                leftchk3 = left3->cellID;
-            }
-            if (left4->piece == NULL)
-            {
-                lft++;
-                leftchk4 = left4->cellID;
-            }
-            if (left5->piece == NULL)
-            {
-                lft++;
-                leftchk5 = left5->cellID;
-            }
-            if (left6->piece == NULL)
-            {
-                lft++;
-                leftchk6 = left6->cellID;
-            }
-            if (left7->piece == NULL)
-            {
-                lft++;
-                leftchk7 = left7->cellID;
-            }
-            
-/*basic backwards movement of the rook*/
-            if (back->piece == NULL)
-            {
-                bck++;
-                backchk = back->cellID;
-            }
-            if (back2->piece == NULL)
-            {
-                bck++;
-                backchk2 = back2->cellID;
-            }
-            if (back3->piece == NULL)
-            {
-                bck++;
-                backchk3 = back3->cellID;
-            }
-            if (back4->piece == NULL)
-            {
-                bck++;
-                backchk4 = back4->cellID;
-            }
-            if (back5->piece == NULL)
-            {
-                bck++;
-                backchk5 = back5->cellID;
-            }
-            if (back6->piece == NULL)
-            {
-                bck++;
-                backchk6 = back6->cellID;
-            }
-            if (back7->piece == NULL)
-            {
-                bck++;
-                backchk7 = back7->cellID;
-            }
-
-/*when the rook is on the left edge*/
-            if (front->cellID%8 == 7)
-            {
-                lft = 0;
-            }
-
-/*when the rook is on the right edge*/
-            if (front->cellID%8 == 0)
-            {
-                rght = 0;
-            }
-
-        }
-
-        /*adding all the # of available moves for the rook*/
-        num = fwd + rght + lft;
-        /* if no available moves, print error and return null*/
-        if (num==0)
-        {
-            printp(available, p);
-            return NULL;
-        }
-  int *ans;
-  ans = malloc(sizeof(int) * (num+1));
+int *checkRookMoves(piece *p){ /* Calculate rook piece's movement */
+	int num;
+	int fwdChk = -1;  /* Rook can move forward (cell+8) */
+	int rightChk = -1; /* Rook can move right (cell+1) */
+	int leftChk = -1;  /* Rook can move left (cell-1) */
+	int bckChk = -1; /* Rook can move down (cell-8) */
+	int currentPos = p->loc->cellID; /* Holds piece's location */
+	int rowStart = -1; /* Values of first & last cells of a row */
+	int currentStart = -1;
+	int rowEnd = -1;
+	int currentEnd = -1;
+	int moveArray[12]; /* Holds values of cells that rook can legally move to */
+	int entry = 0; /* Keeps track of position in MoveArray */
+	
+	/* Determine start & end of row the rook is on. Sets certain variables to zero */
+	/* if there will be no moves the rook can make in a certain direction.     */
+	if(currentPos%8 == 0){ /* Checks if rook is on left edge of board */		 
+		leftChk = 0;
+		if(currentPos == 0){ /* Bottom left corner */
+			bckChk = 0;
+		}
+		if(currentPos == 56){ /* Top left corner */
+			fwdChk = 0;
+		}
+		currentStart = currentPos;
+		currentEnd = currentStart + 7;
+	}
+	if(currentPos == 7  || currentPos == 15 || currentPos == 23 || currentPos == 31 ||
+	   currentPos == 39 || currentPos == 47 || currentPos == 55 || currentPos == 63 ){ 
+	   /* Rook on right edge */
+		rightChk = 0;
+		if(currentPos == 7){ /* Bottom right corner */
+			bckChk = 0;
+		}
+		if(currentPos == 63){ /* Top right corner */
+			fwdChk = 0;
+		}
+		currentEnd = currentPos;
+		currentStart = currentEnd - 7;
+	}
+	else{ /* If piece is not on the edge of the board */
+		int n;
+		n = currentPos%8;
+		currentStart = currentPos - n;
+		currentEnd = currentStart + 7;
+	}
+	assert(currentStart >= 0 && currentEnd <= 63);
+	
+	int mult = 1; /* For calculating position additional rows up or down */
+	rowStart = currentStart;
+	rowEnd = currentEnd;
+	while(fwdChk){ /* Determines how many spaces forward rook could move */
+		rowStart += 8;
+		rowEnd += 8;
+		if(rowStart > 56 || rowEnd > 63){
+		fwdChk = 0;
+		rowEnd = currentPos+8*mult;
+		}
+		if(currentPos+8*mult<rowEnd){
+			num++;
+			assert(currentPos+8*mult<=63 && currentPos+8*mult>=0);
+			cell *read = getCell(currentPos+8*mult, p->loc->board);
+			if(read->piece != NULL){ /* Calculated space is occupied */
+				if(p->player == read->piece->player){ /* Can't capture own piece */
+					num--;
+					rowEnd = currentPos+8*mult;
+				}
+        /*fwdChk = 0;*/
+			}
+		}
+		else if(currentPos+8*mult == rowEnd){
+      fwdChk = 0;
+		}
+		if(currentPos+8*mult != rowEnd){
+			moveArray[entry] = currentPos+8*mult;
+			entry++;
+		}
+		if(currentPos+8*mult <= rowStart){
+			  fwdChk = 0;
+		}
+		mult++;
+		if(mult >= 7){
+			fwdChk = 0;
+		}
+	}
+	mult = 1;
+	rowStart = currentStart;
+	rowEnd = currentEnd;
+	while(rightChk){ /* Determines how many spaces right rook could move */
+		rowStart += 8;
+		rowEnd += 8;
+		if(rowStart > 56 || rowEnd > 63){
+			fwdChk = 0;
+			rowStart = currentPos+1*mult-8;
+			rowEnd = -100;
+		}
+		if(currentPos+1*mult<rowEnd){
+			num++;
+			assert(currentPos+1*mult<=63 && currentPos+1*mult>=0);
+			cell *read = getCell(currentPos+1*mult, p->loc->board);
+			if(read->piece != NULL){ /* Calculated space is occupied */
+				if(p->player == read->piece->player){ /* Can't capture own piece */
+					num--;
+					rowStart = currentPos+1*mult-8;
+				}
+				rightChk = 0;
+			}
+		}
+		else if(currentPos+1*mult == rowStart+8){
+			rightChk = 0;
+		}
+		if(currentPos+1*mult != rowStart+8){
+			moveArray[entry] = currentPos+1*mult;
+			entry++;
+		}
+		if(currentPos+1*mult == rowEnd){
+			rightChk = 0;
+		}
+		mult++;
+		if(mult >= 7){
+			rightChk = 0;
+		}
+	}
+	mult = 1;
+	rowStart = currentStart;
+	rowEnd = currentEnd;
+	while(leftChk){ /* Determines how many spaces left rook could move */
+		rowStart -= 8;
+		rowEnd -= 8;
+		if(rowStart < 0 || rowEnd < 7){
+			leftChk = 0;
+			rowStart = 63;
+			rowEnd = currentPos-1*mult+8;
+		}
+		if(currentPos-1*mult>=rowStart){
+			num++;
+		assert(currentPos-1*mult<=63 && currentPos-1*mult>=0);
+			cell *read = getCell(currentPos-1*mult, p->loc->board);
+			if(read->piece != NULL){ /* Calculated space is occupied */
+				if(p->player == read->piece->player){ /* Can't capture own piece */
+					num--;
+					rowEnd = currentPos-1*mult+8;
+				}
+				leftChk = 0;
+			}
+		}
+		else if(currentPos-1*mult == rowEnd-8){
+			leftChk = 0;
+		}
+		if(currentPos-1*mult != rowEnd-8){
+			moveArray[entry] = currentPos-1*mult;
+			entry++;
+		}	
+		if(currentPos-1*mult == rowStart){
+			leftChk = 0;
+		}
+		mult++;
+		if(mult >= 7){
+			leftChk = 0;
+		}
+	}
+	mult = 1;
+	rowStart = currentStart;
+	rowEnd = currentEnd;
+	while(bckChk){ /* Determines how many spaces down rook could move */
+		rowStart -= 8;
+		rowEnd -= 8;
+		if(rowStart < 0 || rowEnd < 7){
+			bckChk = 0;
+			rowStart = currentPos-8*mult;
+		}
+		if(currentPos-8*mult>=rowEnd){
+			num++;
+			assert(currentPos-8*mult<=63 && currentPos-8*mult>=0);
+			cell *read = getCell(currentPos-8*mult, p->loc->board);
+			if(read->piece != NULL){ /* Calculated space is occupied */
+				if(p->player == read->piece->player){ /* Can't capture own piece */
+					num--;
+					rowStart = currentPos+8*mult;
+				}
+				bckChk = 0;
+			}
+		}
+		else if(currentPos-8*mult == rowStart){
+			bckChk = 0;
+		}
+		if(currentPos-8*mult != rowStart){
+			moveArray[entry] = currentPos-8*mult;
+			entry++;
+		}
+		if(currentPos-8*mult == rowEnd){
+			bckChk = 0;
+		}
+		mult++;
+		if(mult >= 7){
+			bckChk = 0;
+		}
+	}
+	
+	if(num == 0){ /* No available moves, error message */
+		printp(available, p);
+		return NULL;
+	}
+	/* Below transfers moves list to pointer from array */
+	int *ans = malloc(sizeof(int)*num);
 	int i;
-	for (i=num; i>0; i--){
-		if ((frontchk+frontchk2+frontchk3+frontchk4+frontchk5+frontchk6+frontchk7) > 0){
-			*ans = (frontchk+frontchk2+frontchk3+frontchk4+frontchk5+frontchk6+frontchk7);
-			frontchk = -2;
-			ans++;
-		}
-		if ((leftchk+leftchk2+leftchk3+leftchk4+leftchk5+leftchk6+leftchk7) > 0){
-			*ans = (leftchk+leftchk2+leftchk3+leftchk4+leftchk5+leftchk6+leftchk7);
-			leftchk = -2;
-			ans++;
-		}
-		if ((rightchk+rightchk2+rightchk3+rightchk4+rightchk5+rightchk6+rightchk7) > 0){
-			*ans = (rightchk+rightchk2+rightchk3+rightchk4+rightchk5+rightchk6+rightchk7);
-			rightchk = -2;
-			ans++;
-		}
-		if ((backchk+backchk2+backchk3+backchk4+backchk5+backchk6+backchk7) > 0){
-			*ans = (backchk+backchk2+backchk3+backchk4+backchk5+backchk6+backchk7);
-			backchk = -2;
-			ans++;
-	    }
-     }
-        *ans = -2;
-	      /*ans -= num;*/
-        return ans;
-    }
-
+	for(i=0; i<num; i++){
+		/* printf("%d\n", moveArray[i]); /* Debug */
+		*(ans+i) = moveArray[i];
+		moveArray[i] = 0;
+	}
+	*(ans+i) = -2;
+	return ans; /* Returns pointer to list of available moves */
+	/* free(ans); Probably needs to be freed after moves are displayed to player */
+}
 
 int *checkBishopMoves(piece *p){ /* Calculate bishop piece's movement */
 	int num;
