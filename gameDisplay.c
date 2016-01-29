@@ -29,9 +29,6 @@
 #include "errors.h"
 #include "defs.h"
 
-int turn=0;
-int pieceSelected=0;
-
 void updateGameDisplay(board *board){
 	printf("    a   b   c   d   e   f   g   h\n");
 	printf("  +---+---+---+---+---+---+---+---+\n");
@@ -53,170 +50,197 @@ void updateGameDisplay(board *board){
 	printf("  +---+---+---+---+---+---+---+---+\n");
 	printf("    a   b   c   d   e   f   g   h\n");
 	printf("\n\n");
-	printMessage(turn);
-	
-	/*handleInput();*/
+	printMessage(board->turn);
+	handleInput(board);
+}
+
+void updateMessage(board *board){
+	printf("\n");
+	printMessage(board->turn);
+	handleInput(board);
 }
 
 void printMessage(int turn){ /* for turns: white = even, black = odd */
-	if (turn == 0){
-		printf("Select a piece by typing its location like: a1\nAlternatively, you may directly move a piece by typing its location and its destination like: a2 a3");
-	}
 	if (turn%2 == 0){
-		printf("White's turn\n");
+		printf("White's turn\n\n");
 	}
 	else{
-		printf("Black's turn\n");
+		printf("Black's turn\n\n");
+	}
+	if (turn == 0){
+		printf("White pieces are displayed in CAPITALS. Black pieces are displayed in lowercase\n\nMove a piece by typing its location and its destination like: a2 a3\nYou can also see a piece's available moves by typing its location like: a1\n\n");
 	}
 	
 	printf("\n>");
 }
-/*
-void handleInput(){
-	char *loc;
+
+void handleInput(board *board){
+	char *loc = malloc(sizeof(char)*5);
+	fgetc(stdin);
 	fgets(loc, 5, stdin);
 	int cellID = toID(loc);
 	if (cellID == -2){
-		printe(entry);
+		printe(command);
+		return;
 	}
 	if (cellID == -3){
+		/* todo: maybe deleteBoard and deleteAllCells? */
 		exit(0);
 	}
-	if (strlen(loc) == 4){
-		loc+=2;
-		
+	if (cellID == -4){
+		/* undo */
+		printf("Undo move functionality is currently unavailable.\n");
+		return;
 	}
-	switch (movePiece(cellID->piece, destCell)){
-		case -2:
-			printp(cellID->piece);
+	if (cellID == -5){ /*do nothing*/
+		return;
+	}
+	if (strlen(loc) == 5){ /* segment for direct move */
+		loc+=2;
+		int destCell = toID(loc);
+		loc-=2;
+		if (destCell == -2){
+			printe(entryFormat);
+			return;
+		}
+		cell *tmp = getCell(cellID, board);
+		moveSwitch(tmp->piece, destCell);
+	}
+	else if (strlen(loc) == 3){ /* segment for selecting a piece */
+		cell *tmp = getCell(cellID, board);
+		if (tmp == NULL){
+			printe(emptyCell);
+			return;
+		}
+		checkAvailMovesSwitch(tmp->piece);
+	}
+	free(loc);
+}
+
+void checkAvailMovesSwitch(piece *piece){
+	int *tmp = checkAvailMoves(piece);
+	if (tmp == NULL || *tmp == -2){
+		printp(available, piece);
+		return;
+	}
+	printf("Possible locations for ");
+	switch(piece->player){
+		case white: printf("White "); break;
+		case black: printf("Black "); break;
+	}
+	switch(piece->type){
+		case pawn: printf("Pawn "); break;
+		case bishop: printf("Bishop "); break;
+		case king: printf("King "); break;
+		case queen: printf("Queen "); break;
+		case rook: printf("Rook "); break;
+		case knight: printf("Knight "); break;
+	}
+	printf("in location ");
+	printLoc(piece);
+	while (*tmp != -2){
+		printCell(*tmp);
+		printf(" ");
+		tmp++;
+	}
+	printf("\n");
+}
+
+void moveSwitch(piece *piece, int destCell){
+	switch (movePiece(piece, getCell(destCell, piece->loc->board))){
+		case -2: /* no available moves */
+			printp(available, piece); 
 			break;
-		case 1:
-			pawnPromotion(cellID->piece);
+		case 0: /* standard move or capture */
+			/* nothing for now */
 			break;
-		
+		case 1: /* pawn promotion */
+			pawnPromotion(piece);
+			break;
+		/* another case for check/checkmate? */
 	}
 }
 
 int toID(char *loc){ 
-	if (strncmp("quit", loc, 4) == 0 || strncmp("exit", loc, 4 == 0))
+	
+	if ((strncmp("quit", loc, 4) == 0) || (strncmp("exit", loc, 4 == 0)))
 		return -3;
 	
-	if (2 == strlen(loc) && strncmp("a1", loc, 2) == 0) return 0;
-	if (2 == strlen(loc) && strncmp("b1", loc, 2) == 0) return 1;
-	if (2 == strlen(loc) && strncmp("c1", loc, 2) == 0) return 2;
-	if (2 == strlen(loc) && strncmp("d1", loc, 2) == 0) return 3;
-	if (2 == strlen(loc) && strncmp("e1", loc, 2) == 0) return 4;
-	if (2 == strlen(loc) && strncmp("f1", loc, 2) == 0) return 5;
-	if (2 == strlen(loc) && strncmp("g1", loc, 2) == 0) return 6;
-	if (2 == strlen(loc) && strncmp("h1", loc, 2) == 0) return 7;
+	if (strncmp("undo", loc, 4) == 0)
+		return -4;
 	
-	if (2 == strlen(loc) && strncmp("a2", loc, 2) == 0) return 8;
-	if (2 == strlen(loc) && strncmp("b2", loc, 2) == 0) return 9;
-	if (2 == strlen(loc) && strncmp("c2", loc, 2) == 0) return 10;
-	if (2 == strlen(loc) && strncmp("d2", loc, 2) == 0) return 11;
-	if (2 == strlen(loc) && strncmp("e2", loc, 2) == 0) return 12;
-	if (2 == strlen(loc) && strncmp("f2", loc, 2) == 0) return 13;
-	if (2 == strlen(loc) && strncmp("g2", loc, 2) == 0) return 14;
-	if (2 == strlen(loc) && strncmp("h2", loc, 2) == 0) return 15;
+	if (strncmp("a1", loc, 2) == 0) return 0;
+	if (strncmp("b1", loc, 2) == 0) return 1;
+	if (strncmp("c1", loc, 2) == 0) return 2;
+	if (strncmp("d1", loc, 2) == 0) return 3;
+	if (strncmp("e1", loc, 2) == 0) return 4;
+	if (strncmp("f1", loc, 2) == 0) return 5;
+	if (strncmp("g1", loc, 2) == 0) return 6;
+	if (strncmp("h1", loc, 2) == 0) return 7;
+	
+	if (strncmp("a2", loc, 2) == 0) return 8;
+	if (strncmp("b2", loc, 2) == 0) return 9;
+	if (strncmp("c2", loc, 2) == 0) return 10;
+	if (strncmp("d2", loc, 2) == 0) return 11;
+	if (strncmp("e2", loc, 2) == 0) return 12;
+	if (strncmp("f2", loc, 2) == 0) return 13;
+	if (strncmp("g2", loc, 2) == 0) return 14;
+	if (strncmp("h2", loc, 2) == 0) return 15;
 
-	if (2 == strlen(loc) && strncmp("a3", loc, 2) == 0) return 16;
-	if (2 == strlen(loc) && strncmp("b3", loc, 2) == 0) return 17;
-	if (2 == strlen(loc) && strncmp("c3", loc, 2) == 0) return 18;
-	if (2 == strlen(loc) && strncmp("d3", loc, 2) == 0) return 19;
-	if (2 == strlen(loc) && strncmp("e3", loc, 2) == 0) return 20;
-	if (2 == strlen(loc) && strncmp("f3", loc, 2) == 0) return 21;
-	if (2 == strlen(loc) && strncmp("g3", loc, 2) == 0) return 22;
-	if (2 == strlen(loc) && strncmp("h3", loc, 2) == 0) return 23;
+	if (strncmp("a3", loc, 2) == 0) return 16;
+	if (strncmp("b3", loc, 2) == 0) return 17;
+	if (strncmp("c3", loc, 2) == 0) return 18;
+	if (strncmp("d3", loc, 2) == 0) return 19;
+	if (strncmp("e3", loc, 2) == 0) return 20;
+	if (strncmp("f3", loc, 2) == 0) return 21;
+	if (strncmp("g3", loc, 2) == 0) return 22;
+	if (strncmp("h3", loc, 2) == 0) return 23;
 	
-	if (2 == strlen(loc) && strncmp("a4", loc, 2) == 0) return 24;
-	if (2 == strlen(loc) && strncmp("b4", loc, 2) == 0) return 25;
-	if (2 == strlen(loc) && strncmp("c4", loc, 2) == 0) return 26;
-	if (2 == strlen(loc) && strncmp("d4", loc, 2) == 0) return 27;
-	if (2 == strlen(loc) && strncmp("e4", loc, 2) == 0) return 28;
-	if (2 == strlen(loc) && strncmp("f4", loc, 2) == 0) return 29;
-	if (2 == strlen(loc) && strncmp("g4", loc, 2) == 0) return 30;
-	if (2 == strlen(loc) && strncmp("h4", loc, 2) == 0) return 31;
+	if (strncmp("a4", loc, 2) == 0) return 24;
+	if (strncmp("b4", loc, 2) == 0) return 25;
+	if (strncmp("c4", loc, 2) == 0) return 26;
+	if (strncmp("d4", loc, 2) == 0) return 27;
+	if (strncmp("e4", loc, 2) == 0) return 28;
+	if (strncmp("f4", loc, 2) == 0) return 29;
+	if (strncmp("g4", loc, 2) == 0) return 30;
+	if (strncmp("h4", loc, 2) == 0) return 31;
 	
-	if (2 == strlen(loc) && strncmp("a5", loc, 2) == 0) return 32;
-	if (2 == strlen(loc) && strncmp("b5", loc, 2) == 0) return 33;
-	if (2 == strlen(loc) && strncmp("c5", loc, 2) == 0) return 34;
-	if (2 == strlen(loc) && strncmp("d5", loc, 2) == 0) return 35;
-	if (2 == strlen(loc) && strncmp("e5", loc, 2) == 0) return 36;
-	if (2 == strlen(loc) && strncmp("f5", loc, 2) == 0) return 37;
-	if (2 == strlen(loc) && strncmp("g5", loc, 2) == 0) return 38;
-	if (2 == strlen(loc) && strncmp("h5", loc, 2) == 0) return 39;
+	if (strncmp("a5", loc, 2) == 0) return 32;
+	if (strncmp("b5", loc, 2) == 0) return 33;
+	if (strncmp("c5", loc, 2) == 0) return 34;
+	if (strncmp("d5", loc, 2) == 0) return 35;
+	if (strncmp("e5", loc, 2) == 0) return 36;
+	if (strncmp("f5", loc, 2) == 0) return 37;
+	if (strncmp("g5", loc, 2) == 0) return 38;
+	if (strncmp("h5", loc, 2) == 0) return 39;
 	
-	if (2 == strlen(loc) && strncmp("a6", loc, 2) == 0) return 40;
-	if (2 == strlen(loc) && strncmp("b6", loc, 2) == 0) return 41;
-	if (2 == strlen(loc) && strncmp("c6", loc, 2) == 0) return 42;
-	if (2 == strlen(loc) && strncmp("d6", loc, 2) == 0) return 43;
-	if (2 == strlen(loc) && strncmp("e6", loc, 2) == 0) return 44;
-	if (2 == strlen(loc) && strncmp("f6", loc, 2) == 0) return 45;
-	if (2 == strlen(loc) && strncmp("g6", loc, 2) == 0) return 46;
-	if (2 == strlen(loc) && strncmp("h6", loc, 2) == 0) return 47;
+	if (strncmp("a6", loc, 2) == 0) return 40;
+	if (strncmp("b6", loc, 2) == 0) return 41;
+	if (strncmp("c6", loc, 2) == 0) return 42;
+	if (strncmp("d6", loc, 2) == 0) return 43;
+	if (strncmp("e6", loc, 2) == 0) return 44;
+	if (strncmp("f6", loc, 2) == 0) return 45;
+	if (strncmp("g6", loc, 2) == 0) return 46;
+	if (strncmp("h6", loc, 2) == 0) return 47;
 	
-	if (2 == strlen(loc) && strncmp("a7", loc, 2) == 0) return 48;
-	if (2 == strlen(loc) && strncmp("b7", loc, 2) == 0) return 49;
-	if (2 == strlen(loc) && strncmp("c7", loc, 2) == 0) return 50;
-	if (2 == strlen(loc) && strncmp("d7", loc, 2) == 0) return 51;
-	if (2 == strlen(loc) && strncmp("e7", loc, 2) == 0) return 52;
-	if (2 == strlen(loc) && strncmp("f7", loc, 2) == 0) return 53;
-	if (2 == strlen(loc) && strncmp("g7", loc, 2) == 0) return 54;
-	if (2 == strlen(loc) && strncmp("h7", loc, 2) == 0) return 55;
+	if (strncmp("a7", loc, 2) == 0) return 48;
+	if (strncmp("b7", loc, 2) == 0) return 49;
+	if (strncmp("c7", loc, 2) == 0) return 50;
+	if (strncmp("d7", loc, 2) == 0) return 51;
+	if (strncmp("e7", loc, 2) == 0) return 52;
+	if (strncmp("f7", loc, 2) == 0) return 53;
+	if (strncmp("g7", loc, 2) == 0) return 54;
+	if (strncmp("h7", loc, 2) == 0) return 55;
 	
-	if (2 == strlen(loc) && strncmp("a8", loc, 2) == 0) return 56;
-	if (2 == strlen(loc) && strncmp("b8", loc, 2) == 0) return 57;
-	if (2 == strlen(loc) && strncmp("c8", loc, 2) == 0) return 58;
-	if (2 == strlen(loc) && strncmp("d8", loc, 2) == 0) return 59;
-	if (2 == strlen(loc) && strncmp("e8", loc, 2) == 0) return 60;
-	if (2 == strlen(loc) && strncmp("f8", loc, 2) == 0) return 61;
-	if (2 == strlen(loc) && strncmp("g8", loc, 2) == 0) return 62;
-	if (2 == strlen(loc) && strncmp("h8", loc, 2) == 0) return 63;
+	if (strncmp("a8", loc, 2) == 0) return 56;
+	if (strncmp("b8", loc, 2) == 0) return 57;
+	if (strncmp("c8", loc, 2) == 0) return 58;
+	if (strncmp("d8", loc, 2) == 0) return 59;
+	if (strncmp("e8", loc, 2) == 0) return 60;
+	if (strncmp("f8", loc, 2) == 0) return 61;
+	if (strncmp("g8", loc, 2) == 0) return 62;
+	if (strncmp("h8", loc, 2) == 0) return 63;
 	
 	return -2;
 }
-*/
-/*//Message bar for the player to select options.
-
-	//Option for undoing last movement
-	printf("If you want to undo your last Chess move type undo.\n\n");
-	scanf("%c, &c");
-	if (c = undo){
-		printf("The Undo function is currently unavailable, please try later.\n\n");
-	}
-	else{
-		printf("Unknown command. Please try again.\n\n");
-	}
-
-	//If the player wants to quit the game
-	int a, b, c, move, quit = 0, exit = 0, Exit = 0; Quit = 0;
-	quit = 0;
-	printf("If you want to quit the game type quit or exit.\n");
-	scanf("%c", &c);
-	if (c = quit || exit || Quit || Exit){
-		return(0);
-	}
-	else{
-		printf("Unknown command. Please try again.\n\n");
-	}
-
-	//Player moves a piece using two board location
-
-
-	cell *tmp = getCell(input, board);
-	movePiece(tmp->piece, getCell(input2, board));
-
-		//If Piece is in the actual location
-		int input;
-		printf("Please type the current location of your piece.");
-		scanf(%s, &input);
-		if (input = ""){
-			printf("Please input where you want to move this piece.");
-		}
-		//If theres np piece in that location
-		else{
-			printf("Invalid selection.Please try again.\n\n");
-		}
-	}
-}*/
 

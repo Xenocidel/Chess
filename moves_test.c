@@ -30,7 +30,7 @@
 
 void pawnTest(board *board);
 void bishopTest(board *board);
-void bishopTest(board *board);
+void kingTest(board *board);
 
 int main(){
 	board *board = createBoard();

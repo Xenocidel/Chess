@@ -43,6 +43,7 @@ struct piece{
 struct piece *createPiece(enum player player, enum type type, cell *cell);
 void deletePiece(struct piece *p);
 void printLoc(struct piece *p);
+void printCell(int cellID);
 int *checkAvailMoves (struct piece *p);
 int *checkPawnMoves  (struct piece *p);
 int *checkKnightMoves(struct piece *p);
@@ -57,4 +58,5 @@ int moveKing  (struct piece *p, cell *target, int *avail);
 int moveQueen (struct piece *p, cell *target, int *avail);
 int moveRook  (struct piece *p, cell *target, int *avail);
 int moveBishop(struct piece *p, cell *target, int *avail);
+void pawnPromotion(struct piece *p);
 #endif
