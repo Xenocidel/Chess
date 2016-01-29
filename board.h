@@ -90,6 +90,7 @@
 #define CELL63 board->cell63
 
 struct board{
+	int turn;
 	struct cell *minus1;
 	struct cell *cell0 ;
 	struct cell *cell1 ;

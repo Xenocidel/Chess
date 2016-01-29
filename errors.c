@@ -30,17 +30,20 @@
 /*print error function*/
 void printe(int code){
 	switch(code){
-		case 0:
+		case move:
 			printf("Invalid move. Please try again.\n\n");
 			break;
-		case 1:
+		case command:
 			printf("Unknown command. Please try again.\n\n");
 			break;
-		case 2:
+		case selection:
 			printf("Invalid selection. Please try again.\n\n");
 			break;
-		case 3:
-			printf("Invalid entry. Please try again.\n\n");
+		case entryFormat:
+			printf("Invalid entry or format. Please try again.\n\n");
+			break;
+		case emptyCell:
+			printf("No piece in selected location. Please try again.\n\n");
 			break;
 		default:
 			printf("Unknown error has occured. Program terminating...\n\n");
@@ -48,34 +51,41 @@ void printe(int code){
 	}
 }
 /*print error function with specific piece location; function name has been changed to printp since C doesn't support overloading*/
-void printp(piece *p){
-	switch(p->type){
-		case pawn:
-			printf("No available moves for Pawn at");
-			printLoc(p);
-			break;
-		case knight:
-			printf("No available moves for Knight at");
-			printLoc(p);
-			break;
-		case king:
-			printf("No available moves for King at");
-			printLoc(p);
-			break;
-		case queen:
-			printf("No available moves for Queen at");
-			printLoc(p);
-			break;
-		case rook:
-			printf("No available moves for Rook at");
-			printLoc(p);
-			break;
-		case bishop:
-			printf("No available moves for Bishop at");
-			printLoc(p);
+void printp(int code, piece *p){
+	switch (code){
+		case available:
+			switch(p->type){
+				case pawn:
+					printf("No available moves for Pawn at ");
+					printLoc(p);
+					break;
+				case knight:
+					printf("No available moves for Knight at ");
+					printLoc(p);
+					break;
+				case king:
+					printf("No available moves for King at ");
+					printLoc(p);
+					break;
+				case queen:
+					printf("No available moves for Queen at ");
+					printLoc(p);
+					break;
+				case rook:
+					printf("No available moves for Rook at ");
+					printLoc(p);
+					break;
+				case bishop:
+					printf("No available moves for Bishop at ");
+					printLoc(p);
+					break;
+				default:
+					printf("Unexpected piece type in printp function ");
+					exit(2);
+			}
 			break;
 		default:
-			printf("Unexpected piece type in printp function");
+			printf("Unknown error has occured. Program terminating...\n\n");
 			exit(2);
 	}
 }

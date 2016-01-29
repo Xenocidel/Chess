@@ -29,6 +29,7 @@
 
 int main(){
 	int in_game=0;
+	int turnPre=0;
 	int mode=-1;	 	/*range 1-3*/
 	int diff=-1; 		/*range 0-3, 0 if pvp*/
 	int timer=-1;		/*range 0, 5, 10, 20*/
@@ -37,6 +38,7 @@ int main(){
 	char modeS[26];
 	char diffS[26];
 	char timerS[26];
+	board *board = createNewGame();
 	do{	/*game setup*/
 		printf("\nChess v1.0 by nøl / C Gets Degrees\n\n");
 		while (mode < 1){
@@ -50,7 +52,7 @@ int main(){
 					printf("Player versus Player selected\n");
 					break;
 				case 2:
-					printf("Player versus Computer selected\n");
+					printf("Player versus Computer selected\n\n");
 					printf("Choose a side: White(0) or Black(1)?\n");
 					scanf("%d", &side);
 					switch(side){
@@ -185,11 +187,19 @@ int main(){
 		else{
 			printe(selection);
 		}
-
+		
+		while(in_game){ /* if side = 1, player is black */
+			/* if mode = 2 or 3, set up AI. if timer !=0, set up timer */
+			turnPre = board->turn;
+			updateGameDisplay(board); /* display the entire board only when its a new turn */
+			while (turnPre == board->turn){
+				updateMessage(board);
+			}
+		}
+			
 	}
 	while(!in_game);
-	board *board = createNewGame();
-	/*while(in_game)*/
-		updateGameDisplay(board);
+	
+		
 	return 0;
 }

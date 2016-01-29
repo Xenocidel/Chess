@@ -23,10 +23,14 @@
 #define GAMEDISPLAY_H_INCLUDED_
 
 #include "board.h"
+#include "piece.h"
 
 void updateGameDisplay(board *board);
+void updateMessage(board *board);
 void printMessage();
-void handleInput();
+void handleInput(board *board);
 int toID(char *loc);
+void moveSwitch(piece *piece, int destCell);
+void checkAvailMovesSwitch(piece *piece);
 
 #endif

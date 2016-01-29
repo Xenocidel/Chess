@@ -24,6 +24,6 @@
 #include "piece.h"
 
 void printe(int code);
-void printp(piece *p);
+void printp(int code, piece *p);
 
 #endif

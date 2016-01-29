@@ -48,6 +48,75 @@ void deletePiece(piece *p){
 	free(p);
 }
 
+void printCell(int cellID){
+	switch (cellID){
+		case 0 : printf("a1"); break;
+		case 8 : printf("a2"); break;
+		case 16: printf("a3"); break;
+		case 24: printf("a4"); break;
+		case 32: printf("a5"); break;
+		case 40: printf("a6"); break;
+		case 48: printf("a7"); break;
+		case 56: printf("a8"); break;
+		case 1 : printf("b1"); break;
+		case 9 : printf("b2"); break;
+		case 17: printf("b3"); break;
+		case 25: printf("b4"); break;
+		case 33: printf("b5"); break;
+		case 41: printf("b6"); break;
+		case 49: printf("b7"); break;
+		case 57: printf("b8"); break;
+		case 2 : printf("c1"); break;
+		case 10: printf("c2"); break;
+		case 18: printf("c3"); break;
+		case 26: printf("c4"); break;
+		case 34: printf("c5"); break;
+		case 42: printf("c6"); break;
+		case 50: printf("c7"); break;
+		case 58: printf("c8"); break;
+		case 3 : printf("d1"); break;
+		case 11: printf("d2"); break;
+		case 19: printf("d3"); break;
+		case 27: printf("d4"); break;
+		case 35: printf("d5"); break;
+		case 43: printf("d6"); break;
+		case 51: printf("d7"); break;
+		case 59: printf("d8"); break;
+		case 4 : printf("e1"); break;
+		case 12: printf("e2"); break;
+		case 20: printf("e3"); break;
+		case 28: printf("e4"); break;
+		case 36: printf("e5"); break;
+		case 44: printf("e6"); break;
+		case 52: printf("e7"); break;
+		case 60: printf("e8"); break;
+		case 5 : printf("f1"); break;
+		case 13: printf("f2"); break;
+		case 21: printf("f3"); break;
+		case 29: printf("f4"); break;
+		case 37: printf("f5"); break;
+		case 45: printf("f6"); break;
+		case 53: printf("f7"); break;
+		case 61: printf("f8"); break;
+		case 6 : printf("g1"); break;
+		case 14: printf("g2"); break;
+		case 22: printf("g3"); break;
+		case 30: printf("g4"); break;
+		case 38: printf("g5"); break;
+		case 46: printf("g6"); break;
+		case 54: printf("g7"); break;
+		case 62: printf("g8"); break;
+		case 7 : printf("h1"); break;
+		case 15: printf("h2"); break;
+		case 23: printf("h3"); break;
+		case 31: printf("h4"); break;
+		case 39: printf("h5"); break;
+		case 47: printf("h6"); break;
+		case 55: printf("h7"); break;
+		case 63: printf("h8"); break;
+	}
+}
+
 void printLoc(piece *p){
 	switch (p->loc->cellID){
 		case 0 : printf("a1\n"); break;
@@ -536,7 +605,7 @@ int *checkKnightMoves(piece *p){
 	return NULL;
 }
 	
-int *checkKingMoves(struct piece *p){
+int *checkKingMoves(piece *p){
 	int count = 0;
 	int q[8] = { '0', '0', '0', '0', '0', '0', '0', '0' };
 	/*Works when the king is on position "0"*/
@@ -2092,8 +2161,9 @@ int movePiece(piece *p, cell *target){ /* also handles captures. returns 0 if mo
 	assert(target->cellID >= 0);
 	int *avail = checkAvailMoves(p);
 	if (avail == NULL){
-		return -2
+		return -2;
 	}
+	target->board->turn += 1;
 	switch (p->type){
 		case pawn: return movePawn(p, target, avail);
 		break;
@@ -2152,5 +2222,9 @@ int moveRook(piece *p, cell *target, int *avail){
 }
 
 int moveBishop(piece *p, cell *target, int *avail){
+	
+}
+
+void pawnPromotion(piece *p){
 	
 }
