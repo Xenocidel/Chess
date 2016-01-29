@@ -1979,11 +1979,41 @@ int movePawn(piece *p, cell *target, int *avail){
 	if (target->piece != NULL){ /* capturing */
 		replacePiece(getCell(-1, target->board), target->piece);
 	}
+	if (p->epFlag = 1 && target->piece == NULL){ /* en passant capturing */
+		cell *epUp = getCell(target->cellID+8, target->board);
+		cell *epDown = getCell(target->cellID-8, target->board);
+		if (epUp != NULL && epUp->piece != NULL && epUp->piece->type == pawn && epUp->piece->player != p->player){
+			replacePiece(getCell(-1, target->board), epUp->piece);
+		}
+		else if (epDown != NULL && epDown->piece != NULL && epDown->piece->type == pawn && epDown->piece->player != p->player){
+			replacePiece(getCell(-1, target->board), epDown->piece);
+		}
+	}
 	replacePiece(target, p);
+	if (p->player == white && target->cellID == p->prev->cellID + 16){ /* if a pawn jumps and there are enemy pawns next to its destination, the enemy pawns can en passant next turn */
+		if (target->cellID % 8 != 0){
+			cell *tmpLeft = getCell(target->cellID - 1, target->board);
+			if (tmpLeft->piece != NULL){
+				if (tmpLeft->piece->type == pawn && tmpLeft->piece->player != p->player){
+					tmpLeft->piece->epFlag = 1;
+				}
+			}
+		}
+		if (target->cellID % 7 != 0){
+			cell *tmpRight = getCell(target->cellID - 1, target->board);
+			if (tmpRight->piece != NULL){
+				if (tmpRight->piece->type == pawn && tmpRight->piece->player != p->player){
+					tmpRight->piece->epFlag = 1;
+				}
+			}
+		}
+	}
 	updatePrintPiece(target);
+	updatePrintPiece(p->prev);
 	if (target->cellID < 8 || target->cellID > 55){
 		valid = 1; /* pawn is to be promoted */
 	}
+	p->hasMoved = false;
 	return valid;
 }
 

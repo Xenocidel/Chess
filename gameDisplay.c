@@ -75,46 +75,77 @@ void printMessage(int turn){ /* for turns: white = even, black = odd */
 }
 
 void handleInput(board *board){
-	char *loc = malloc(sizeof(char)*5);
-	fgetc(stdin);
-	fgets(loc, 5, stdin);
+	char *loc = malloc(sizeof(char)*7);
+	fgetc(stdin); /* absorb anything left in stdin stream */
+	if (fgets(loc, 6, stdin)){
+		char *tmp;
+		if ((tmp = strchr(loc, '\n')) != NULL){ /*cuts off \n at the end of each input*/
+			*tmp = '\0';
+		}
+		if (strlen(loc) > 5){
+			int purge;
+			while ((purge = fgetc(stdin)) != EOF && purge != '\n'); 
+			printe(entryFormat);
+			free(loc);
+			return;
+		}
+	}
 	int cellID = toID(loc);
 	if (cellID == -2){
 		printe(command);
+		free(loc);
 		return;
 	}
 	if (cellID == -3){
 		/* todo: maybe deleteBoard and deleteAllCells? */
+		free(loc);
 		exit(0);
 	}
 	if (cellID == -4){
 		/* undo */
 		printf("Undo move functionality is currently unavailable.\n");
+		free(loc);
 		return;
 	}
 	if (cellID == -5){ /*do nothing*/
+		free(loc);
 		return;
 	}
+
 	if (strlen(loc) == 5){ /* segment for direct move */
-		loc+=2;
+		loc+=3;
 		int destCell = toID(loc);
-		loc-=2;
+		loc-=3;
 		if (destCell == -2){
 			printe(entryFormat);
+			free(loc);
 			return;
 		}
 		cell *tmp = getCell(cellID, board);
+		if (board->turn % 2 == 0){
+			/* restrict movement to white pieces only */
+		}
+		else {
+			/* restrict movement to black pieces only */
+		}
 		moveSwitch(tmp->piece, destCell);
+		free(loc);
+		return;
 	}
-	else if (strlen(loc) == 3){ /* segment for selecting a piece */
+	else if (strlen(loc) == 2){ /* segment for selecting a piece */
 		cell *tmp = getCell(cellID, board);
-		if (tmp == NULL){
+		if (tmp->piece == NULL){
 			printe(emptyCell);
+			free(loc);
 			return;
 		}
 		checkAvailMovesSwitch(tmp->piece);
+		free(loc);
+		return;
 	}
+	printe(entryFormat);
 	free(loc);
+	return;
 }
 
 void checkAvailMovesSwitch(piece *piece){
@@ -163,11 +194,17 @@ void moveSwitch(piece *piece, int destCell){
 
 int toID(char *loc){ 
 	
-	if ((strncmp("quit", loc, 4) == 0) || (strncmp("exit", loc, 4 == 0)))
+	if (strncmp("quit", loc, 4) == 0){ 
 		return -3;
+	}
 	
-	if (strncmp("undo", loc, 4) == 0)
+	if (strncmp("exit", loc, 4 == 0)){
+		return -3;
+	}
+	
+	if (strncmp("undo", loc, 4) == 0){
 		return -4;
+	}
 	
 	if (strncmp("a1", loc, 2) == 0) return 0;
 	if (strncmp("b1", loc, 2) == 0) return 1;

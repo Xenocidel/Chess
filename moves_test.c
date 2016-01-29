@@ -31,6 +31,9 @@
 void pawnTest(board *board);
 void bishopTest(board *board);
 void kingTest(board *board);
+void rookTest(board *board);
+void queenTest(board *board);
+void knightTest(board *board);
 
 int main(){
 	board *board = createBoard();
