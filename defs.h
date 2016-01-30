@@ -28,5 +28,6 @@
 #define available 3
 #define entryFormat 4
 #define emptyCell 5
+#define offSides 6
 
 #endif
