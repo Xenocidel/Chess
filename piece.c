@@ -269,8 +269,8 @@ int *checkPawnMoves(piece *p){
 		cell *front2 = getCell((p->loc->cellID)-16, p->loc->board);
 		cell *left = getCell((p->loc->cellID)-9, p->loc->board);
 		cell *right = getCell((p->loc->cellID)-7, p->loc->board);
-		cell *epleft = getCell((p->loc->cellID)+1, p->loc->board);
-		cell *epright = getCell((p->loc->cellID)-1, p->loc->board);
+		cell *epleft = getCell((p->loc->cellID)-1, p->loc->board);
+		cell *epright = getCell((p->loc->cellID)+1, p->loc->board);
 		/*first move jump 2*/
 		if (p->hasMoved == false){
 			if (front2->piece == NULL && front->piece == NULL){ /*if both front locations are empty (can't jump over a piece)*/
@@ -1945,22 +1945,66 @@ int movePiece(piece *p, cell *target){ /* also handles captures. returns 0 if mo
 	if (avail == NULL){
 		return -2;
 	}
+	int ans;
 	target->board->turn += 1;
 	switch (p->type){
-		case pawn: return movePawn(p, target, avail);
-		break;
-		case knight: return moveKnight(p, target, avail);
-		break;
-		case king: return moveKing(p, target, avail);
-		break;
-		case queen: return moveQueen(p, target, avail);
-		break;
-		case rook: return moveRook(p, target, avail);
-		break;
-		case bishop:return moveBishop(p, target, avail);
-		break;
+		case pawn:
+			ans = movePawn(p, target, avail);
+			if (ans < 0){
+				return ans;
+			}
+			break;
+		case knight:
+			ans = moveKnight(p, target, avail);
+			if (ans < 0){
+				return ans;
+			}
+			break;
+		case king:
+			ans = moveKing(p, target, avail);
+			if (ans < 0){
+				return ans;
+			}
+			break;
+		case queen:
+			ans = moveQueen(p, target, avail);
+			if (ans < 0){
+				return ans;
+			}
+			break;		
+		case rook:
+			ans = moveRook(p, target, avail);
+			if (ans < 0){
+				return ans;
+			}
+			break;
+		case bishop:
+			ans = moveBishop(p, target, avail);
+			if (ans < 0){
+				return ans;
+			}
+			break;
 	}
-	return -1;
+	/* turn has already been incremented */
+	if (target->board->turn % 2 == 1){ /* after a black move, wipe all row 5 epFlags */
+		int i;
+		for (i = 32; i<=39; i++){
+			cell *tmpi = getCell(i, target->board);
+			if (tmpi->piece != NULL){
+				tmpi->piece->epFlag = 0;
+			}
+		}
+	}
+	else{ /* after a white move, wipe all row 4 epFlags */
+		int i;
+		for (i = 24; i<=31; i++){
+			cell *tmpi = getCell(i, target->board);
+			if (tmpi->piece != NULL){
+				tmpi->piece->epFlag = 0;
+			}
+		}
+	}
+	return ans;
 }
 
 int movePawn(piece *p, cell *target, int *avail){
@@ -1985,10 +2029,12 @@ int movePawn(piece *p, cell *target, int *avail){
 		if (epUp != NULL && epUp->piece != NULL && epUp->piece->type == pawn && epUp->piece->player != p->player){
 			replacePiece(getCell(-1, target->board), epUp->piece);
 			updatePrintPiece(epUp);
+			p->epFlag = 0;
 		}
 		else if (epDown != NULL && epDown->piece != NULL && epDown->piece->type == pawn && epDown->piece->player != p->player){
 			replacePiece(getCell(-1, target->board), epDown->piece);
 			updatePrintPiece(epDown);
+			p->epFlag = 0;
 		}
 	}
 	replacePiece(target, p);

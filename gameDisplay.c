@@ -68,9 +68,8 @@ void printMessage(int turn){ /* for turns: white = even, black = odd */
 		printf("Black's turn\n\n");
 	}
 	if (turn == 0){
-		printf("White pieces are displayed in CAPITALS. Black pieces are displayed in lowercase\n\nMove a piece by typing its location and its destination like: a2 a3\nYou can also see a piece's available moves by typing its location like: a1\n\n");
+		printf("White pieces are displayed in CAPITALS. Black pieces are displayed in lowercase\n\nMove a piece by typing its location and its destination like: a2 a3 or a2a3\nYou can also see a piece's available moves by typing its location like: a1\n\nTo bring up these instructions again, type help\nExit the game by typing exit or quit\n\n");
 	}
-	
 	printf("\n>");
 }
 
@@ -106,35 +105,49 @@ void handleInput(board *board){
 		free(loc);
 		return;
 	}
-	if (cellID == -5){ /*do nothing*/
+	if (cellID == -5){ /* display help */
+		if (board->turn != 0){
+			printf("White pieces are displayed in CAPITALS. Black pieces are displayed in lowercase\n\nMove a piece by typing its location and its destination like: a2 a3 or a2a3\nYou can also see a piece's available moves by typing its location like: a1\n\nTo bring up these instructions again, type help\nExit the game by typing exit or quit\n\n");
+		}
 		free(loc);
 		return;
 	}
 
-	if (strlen(loc) == 5){ /* segment for direct move */
-		loc+=3;
+	if (strlen(loc) == 5 || strlen(loc) == 4){ /* segment for direct move */
+		int loclen = strlen(loc)-2;
+		loc += loclen;
 		int destCell = toID(loc);
-		loc-=3;
+		loc -= loclen;
 		if (destCell == -2){
 			printe(entryFormat);
-			free(loc);
+			if (loc)
+				free(loc);
 			return;
 		}
 		cell *tmp = getCell(cellID, board);
+		if (tmp->piece == NULL){
+			printe(emptyCell);
+			if (loc)
+				free(loc);
+			return;
+		}
 		if (tmp->piece->player == black && board->turn % 2 == 0){
 			/* offSides black trying to move white */
 			printe(offSides);
-			free(loc);
+			if (loc)
+				free(loc);
 			return;
 		}
 		else if (tmp->piece->player == white && board->turn % 2 == 1){
 			/* offSides white trying to move black */
 			printe(offSides);
-			free(loc);
+			if (loc)
+				free(loc);
 			return;
 		}
 		moveSwitch(tmp->piece, destCell);
-		free(loc);
+		if (loc)
+			free(loc);
 		return;
 	}
 	else if (strlen(loc) == 2){ /* segment for selecting a piece */
@@ -208,6 +221,10 @@ int toID(char *loc){
 	
 	if (strncmp("undo", loc, 4) == 0){
 		return -4;
+	}
+	
+	if (strncmp("help", loc, 4) == 0){
+		return -5;
 	}
 	
 	if (strncmp("a1", loc, 2) == 0) return 0;
