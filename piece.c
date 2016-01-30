@@ -240,7 +240,7 @@ int *checkPawnMoves(piece *p){
 				}
 			}
 			if (epleft->piece != NULL){
-				if (epleft->piece->epFlag == 1){ /*en passant capture left */
+				if (p->epFlag == 1 && epleft->piece->type == pawn && epleft->piece->player != p->player){ /*en passant capture left */
 					num++;
 					epleftchk = left->cellID;	/*not epleft because pawn captures diagonally */
 				}
@@ -256,7 +256,7 @@ int *checkPawnMoves(piece *p){
 				}
 			}
 			if (epright->piece != NULL){
-				if (epright->piece->epFlag == 1){ /*en passant capture right */
+				if (p->epFlag == 1 && epright->piece->type == pawn && epright->piece->player != p->player){ /*en passant capture right */
 					num++;
 					eprightchk = right->cellID;	/*not epright because pawn captures diagonally */
 				}
@@ -293,7 +293,7 @@ int *checkPawnMoves(piece *p){
 				}
 			}
 			if (epleft->piece != NULL){
-				if (epleft->piece->epFlag == 1){ /*en passant capture left */
+				if (p->epFlag == 1 && epleft->piece->type == pawn && epleft->piece->player != p->player){ /*en passant capture left */
 					num++;
 					epleftchk = left->cellID;	/*not epleft because pawn captures diagonally */
 				}
@@ -309,7 +309,7 @@ int *checkPawnMoves(piece *p){
 				}
 			}
 			if (epright->piece != NULL){
-				if (epright->piece->epFlag == 1){ /*en passant capture right */
+				if (p->epFlag == 1 && epright->piece->type == pawn && epright->piece->player != p->player){ /*en passant capture right */
 					num++;
 					eprightchk = right->cellID;	/*not epright because pawn captures diagonally */
 				}
@@ -1919,7 +1919,7 @@ int *checkQueenMoves(piece *p){
 		}
 	if(num == 0)	/* No available moves*/
 	{ 
-		printp(available, p);
+		/* printp(available, p); */
 		return NULL;
 	}
   int *ans=malloc(sizeof(int)*num);
@@ -2002,7 +2002,25 @@ int movePawn(piece *p, cell *target, int *avail){
 			}
 		}
 		if (target->cellID % 7 != 0){
-			cell *tmpRight = getCell(target->cellID - 1, target->board);
+			cell *tmpRight = getCell(target->cellID + 1, target->board);
+			if (tmpRight->piece != NULL){
+				if (tmpRight->piece->type == pawn && tmpRight->piece->player != p->player){
+					tmpRight->piece->epFlag = 1;
+				}
+			}
+		}
+	}
+	else if (p->player == black && target->cellID == p->prev->cellID - 16){ /* if a pawn jumps and there are enemy pawns next to its destination, the enemy pawns can en passant next turn */
+		if (target->cellID % 8 != 0){
+			cell *tmpLeft = getCell(target->cellID - 1, target->board);
+			if (tmpLeft->piece != NULL){
+				if (tmpLeft->piece->type == pawn && tmpLeft->piece->player != p->player){
+					tmpLeft->piece->epFlag = 1;
+				}
+			}
+		}
+		if (target->cellID % 7 != 0){
+			cell *tmpRight = getCell(target->cellID + 1, target->board);
 			if (tmpRight->piece != NULL){
 				if (tmpRight->piece->type == pawn && tmpRight->piece->player != p->player){
 					tmpRight->piece->epFlag = 1;
