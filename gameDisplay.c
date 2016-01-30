@@ -76,15 +76,14 @@ void printMessage(int turn){ /* for turns: white = even, black = odd */
 
 void handleInput(board *board){
 	char *loc = malloc(sizeof(char)*7);
-	fgetc(stdin); /* absorb anything left in stdin stream */
-	if (fgets(loc, 6, stdin)){
+	if (fgets(loc, 7, stdin)){
 		char *tmp;
 		if ((tmp = strchr(loc, '\n')) != NULL){ /*cuts off \n at the end of each input*/
 			*tmp = '\0';
 		}
 		if (strlen(loc) > 5){
-			int purge;
-			while ((purge = fgetc(stdin)) != EOF && purge != '\n'); 
+			int c;
+			while((c = getchar()) != '\n' && c != EOF); /* purges excess or \n input */
 			printe(entryFormat);
 			free(loc);
 			return;
@@ -122,11 +121,17 @@ void handleInput(board *board){
 			return;
 		}
 		cell *tmp = getCell(cellID, board);
-		if (board->turn % 2 == 0){
-			/* restrict movement to white pieces only */
+		if (tmp->piece->player == black && board->turn % 2 == 0){
+			/* offSides black trying to move white */
+			printe(offSides);
+			free(loc);
+			return;
 		}
-		else {
-			/* restrict movement to black pieces only */
+		else if (tmp->piece->player == white && board->turn % 2 == 1){
+			/* offSides white trying to move black */
+			printe(offSides);
+			free(loc);
+			return;
 		}
 		moveSwitch(tmp->piece, destCell);
 		free(loc);
@@ -151,7 +156,6 @@ void handleInput(board *board){
 void checkAvailMovesSwitch(piece *piece){
 	int *tmp = checkAvailMoves(piece);
 	if (tmp == NULL || *tmp == -2){
-		printp(available, piece);
 		return;
 	}
 	printf("Possible locations for ");
@@ -197,8 +201,8 @@ int toID(char *loc){
 	if (strncmp("quit", loc, 4) == 0){ 
 		return -3;
 	}
-	
-	if (strncmp("exit", loc, 4 == 0)){
+
+	if (strncmp("exit", loc, 4) == 0){
 		return -3;
 	}
 	
