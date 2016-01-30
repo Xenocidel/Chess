@@ -45,6 +45,9 @@ void printe(int code){
 		case emptyCell:
 			printf("No piece in selected location. Please try again.\n\n");
 			break;
+		case offSides:
+			printf("You are not allowed to move your opponent's pieces. Please try again.\n\n");
+			break;
 		default:
 			printf("Unknown error has occured. Program terminating...\n\n");
 			exit(2);

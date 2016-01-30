@@ -178,6 +178,7 @@ int main(){
 
 		if (confirm == 'y' || confirm == 'Y'){
 			in_game = 1;
+			fgetc(stdin); /* absorb the /n produced by the last scanf */
 		}
 		else if (confirm == 'n' || confirm == 'N'){
 			mode = -1;

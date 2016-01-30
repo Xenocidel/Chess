@@ -1979,14 +1979,16 @@ int movePawn(piece *p, cell *target, int *avail){
 	if (target->piece != NULL){ /* capturing */
 		replacePiece(getCell(-1, target->board), target->piece);
 	}
-	if (p->epFlag = 1 && target->piece == NULL){ /* en passant capturing */
+	if (p->epFlag == 1 && target->piece == NULL){ /* en passant capturing */
 		cell *epUp = getCell(target->cellID+8, target->board);
 		cell *epDown = getCell(target->cellID-8, target->board);
 		if (epUp != NULL && epUp->piece != NULL && epUp->piece->type == pawn && epUp->piece->player != p->player){
 			replacePiece(getCell(-1, target->board), epUp->piece);
+			updatePrintPiece(epUp);
 		}
 		else if (epDown != NULL && epDown->piece != NULL && epDown->piece->type == pawn && epDown->piece->player != p->player){
 			replacePiece(getCell(-1, target->board), epDown->piece);
+			updatePrintPiece(epDown);
 		}
 	}
 	replacePiece(target, p);
@@ -2013,7 +2015,7 @@ int movePawn(piece *p, cell *target, int *avail){
 	if (target->cellID < 8 || target->cellID > 55){
 		valid = 1; /* pawn is to be promoted */
 	}
-	p->hasMoved = false;
+	p->hasMoved = true;
 	return valid;
 }
 
