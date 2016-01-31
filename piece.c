@@ -1329,222 +1329,104 @@ int *checkRookMoves(piece *p){ /* Calculate rook piece's movement */
 }
 
 int *checkBishopMoves(piece *p){ /* Calculate bishop piece's movement */
-	int num;
-	int upLeftchk = -1;  /* Bishop can move up and left (cell+7) */
-	int upRightchk = -1; /* Bishop can move up and right (cell+9) */
-	int dnLeftchk = -1;  /* Bishop can move down and left (cell-9) */
-	int dnRightchk = -1; /* Bishop can move down and right (cell-7) */
-	int currentPos = p->loc->cellID; /* Holds piece's location */
-	int rowStart = -1; /* Values of first & last cells of a row */
-	int currentStart = -1;
-	int rowEnd = -1;
-	int currentEnd = -1;
-	int moveArray[20]; /* Holds values of cells that bishop can legally move to */
-	int entry = 0; /* Keeps track of position in MoveArray */
-	
-	/* Determine start & end of row bishop is on. Sets certain variables to zero */
-	/* if there will be no moves the bishop can make in a certain direction.     */
-	if(currentPos%8 == 0){ /* Checks if bishop is on left edge of board */
-		upLeftchk = 0;		 
-		dnLeftchk = 0;
-		if(currentPos == 0){ /* Bottom left corner */
-			dnRightchk = 0;
-		}
-		if(currentPos == 56){ /* Top left conrer */
-			upRightchk = 0;
-		}
-		currentStart = currentPos;
-		currentEnd = currentStart + 7;
-	}
-	if(currentPos == 7  || currentPos == 15 || currentPos == 23 || currentPos == 31 ||
-	   currentPos == 39 || currentPos == 47 || currentPos == 55 || currentPos == 63 ){ 
-	   /* Bishop on right edge */
-		upRightchk = 0;
-		dnRightchk = 0;
-		if(currentPos == 7){ /* Bottom right corner */
-			dnLeftchk = 0;
-		}
-		if(currentPos == 63){ /* Top right corner */
-			upLeftchk = 0;
-		}
-		currentEnd = currentPos;
-		currentStart = currentEnd-7;
-	}
-	else{ /* If piece is not on the edge of the board */
-		int n;
-		n = currentPos%8;
-		currentStart = currentPos-n;
-		currentEnd = currentStart + 7;
-	}
-	assert(currentStart >= 0 && currentEnd <= 63);
-	
-	int mult = 1; /* For calculating position additional rows up or down */
-	rowStart = currentStart;
-	rowEnd = currentEnd;
-	while(upLeftchk){ /* Determines how many spaces up+left piece could move */
-		rowStart += 8;
-		rowEnd += 8;
-		if(rowStart > 56 || rowEnd > 63){
-		upLeftchk = 0;
-		rowEnd = currentPos+7*mult;
-		}
-		if(currentPos+7*mult<rowEnd){
-			num++;
-			assert(currentPos+7*mult<=63 && currentPos+7*mult>=0);
-			cell *read = getCell(currentPos+7*mult, p->loc->board);
-			if(read->piece != NULL){ /* Calculated space is occupied */
-				if(p->player == read->piece->player){ /* Can't capture own piece */
-					num--;
-					rowEnd = currentPos+7*mult;
-				}
-				upLeftchk = 0;
-			}
-		}
-		else if(currentPos+7*mult == rowEnd){
-			upLeftchk = 0;
-		}
-		if(currentPos+7*mult != rowEnd){
-			moveArray[entry] = currentPos+7*mult;
-			entry++;
-		}
-		if(currentPos+7*mult == rowStart){
-			  upLeftchk = 0;
-		}
-		mult++;
-		if(mult >= 7){
-			upLeftchk = 0;
-		}
-	}
-	mult = 1;
-	rowStart = currentStart;
-	rowEnd = currentEnd;
-	while(upRightchk){ /* Determines how many spaces up+right piece could move */
-		rowStart += 8;
-		rowEnd += 8;
-		if(rowStart > 56 || rowEnd > 63){
-			upRightchk = 0;
-			rowStart = currentPos+9*mult-8;
-			rowEnd = -100;
-		}
-		if(currentPos+9*mult<rowEnd){
-			num++;
-			assert(currentPos+9*mult<=63 && currentPos+9*mult>=0);
-			cell *read = getCell(currentPos+9*mult, p->loc->board);
-			if(read->piece != NULL){ /* Calculated space is occupied */
-				if(p->player == read->piece->player){ /* Can't capture own piece */
-					num--;
-					rowStart = currentPos+9*mult-8;
-				}
-				upRightchk = 0;
-			}
-		}
-		else if(currentPos+9*mult == rowStart+8){
-			upRightchk = 0;
-		}
-		if(currentPos+9*mult != rowStart+8){
-			moveArray[entry] = currentPos+9*mult;
-			entry++;
-		}
-		if(currentPos+9*mult == rowEnd){
-			upRightchk = 0;
-		}
-		mult++;
-		if(mult >= 7){
-			upRightchk = 0;
-		}
-	}
-	mult = 1;
-	rowStart = currentStart;
-	rowEnd = currentEnd;
-	while(dnLeftchk){ /* Determines how many spaces down+left piece could move */
-		rowStart -= 8;
-		rowEnd -= 8;
-		if(rowStart < 0 || rowEnd < 7){
-			dnLeftchk = 0;
-			rowStart = 63;
-			rowEnd = currentPos-9*mult+8;
-		}
-		if(currentPos-9*mult>=rowStart){
-			num++;
-		assert(currentPos-9*mult<=63 && currentPos-9*mult>=0);
-			cell *read = getCell(currentPos-9*mult, p->loc->board);
-			if(read->piece != NULL){ /* Calculated space is occupied */
-				if(p->player == read->piece->player){ /* Can't capture own piece */
-					num--;
-					rowEnd = currentPos-9*mult+8;
-				}
-				dnLeftchk = 0;
-			}
-		}
-		else if(currentPos-9*mult == rowEnd-8){
-			dnLeftchk = 0;
-		}
-		if(currentPos-9*mult != rowEnd-8){
-			moveArray[entry] = currentPos-9*mult;
-			entry++;
-		}	
-		if(currentPos-9*mult == rowStart){
-			dnLeftchk = 0;
-		}
-		mult++;
-		if(mult >= 7){
-			dnLeftchk = 0;
-		}
-	}
-	mult = 1;
-	rowStart = currentStart;
-	rowEnd = currentEnd;
-	while(dnRightchk){ /* Determines how many spaces down+right piece could move */
-		rowStart -= 8;
-		rowEnd -= 8;
-		if(rowStart < 0 || rowEnd < 7){
-			dnRightchk = 0;
-			rowStart = currentPos-7*mult;
-			mult = 1;
-		}
-		if(currentPos-7*mult<=rowEnd){
-			num++;
-			assert(currentPos-7*mult<=63 && currentPos-7*mult>=0);
-			cell *read = getCell(currentPos-7*mult, p->loc->board);
-			if(read->piece != NULL){ /* Calculated space is occupied */
-				if(p->player == read->piece->player){ /* Can't capture own piece */
-					num--;
-					rowStart = currentPos-7*mult;
-				}
-				dnRightchk = 0;
-			}
-		}
-		else if(currentPos-7*mult == rowStart){
-			dnRightchk = 0;
-		}
-		if(currentPos-7*mult != rowStart){
-			moveArray[entry] = currentPos-7*mult;
-			entry++;
-		}
-		if(currentPos-7*mult == rowEnd){
-			dnRightchk = 0;
-		}
-		mult++;
-		if(mult >= 7){
-			dnRightchk = 0;
-		}
-	}
-	
-	if(num == 0){ /* No available moves, error message */
-		printp(available, p);
-		return NULL;
-	}
-	/* Below transfers moves list to pointer from array */
-	int *ans = malloc(sizeof(int)*num);
-	int i;
-	for(i=0; i<num; i++){
-		/* printf("%d\n", moveArray[i]); /* Debug */
-		*(ans+i) = moveArray[i];
-		moveArray[i] = 0;
-	}
-	*(ans+i) = -2;
-	return ans; /* Returns pointer to list of available moves */
-	/* free(ans); Probably needs to be freed after moves are displayed to player */
+  int currentPos = p->loc->cellID;
+  int moves[14] = {-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2};
+  int checkPos;
+  int count=0;
+  
+  if(currentPos%8 != 0) /*If the piece is not on the left edge*/
+  {
+    for(checkPos=currentPos-9; checkPos >= 0; checkPos-=9)
+    {
+      cell *next = getCell(checkPos, p->loc->board);
+      if(next->piece != NULL)
+      {
+        if(next->piece->player != p->player)
+        {
+          moves[count] = checkPos;
+          count++;
+        break;
+        }
+        else
+        {
+        break;
+        }
+      }
+      moves[count] = checkPos;
+      count++;
+    }
+    for(checkPos=currentPos+7; checkPos <= 63; checkPos+=7)
+    {
+      cell *next = getCell(checkPos, p->loc->board);
+      if(next->piece != NULL)
+      {
+        if(next->piece->player != p->player)
+        {
+          moves[count] = checkPos;
+          count++;
+        break;
+        }
+        else
+        {
+        break;
+        }
+      }
+      moves[count] = checkPos;
+      count++;
+    }
+  }
+  if(currentPos%8 != 7) /*If the piece is not on the right edge*/
+  {
+    for(checkPos=currentPos+9; checkPos <= 63; checkPos+=9)
+    {
+      cell *next = getCell(checkPos, p->loc->board);
+      if(next->piece != NULL)
+      {
+        if(next->piece->player != p->player)
+        {
+          moves[count] = checkPos;
+          count++;
+        break;
+        }
+        else
+        {
+        break;
+        }
+      }
+      moves[count] = checkPos;
+      count++;
+    }
+    for(checkPos=currentPos-7; checkPos >= 0; checkPos-=7)
+    {
+      cell *next = getCell(checkPos, p->loc->board);
+      if(next->piece != NULL)
+      {
+        if(next->piece->player != p->player)
+        {
+          moves[count] = checkPos;
+          count++;
+        break;
+        }
+        else
+        {
+        break;
+        }
+      }
+      moves[count] = checkPos;
+      count++;
+    }
+  }
+  int *ans = malloc(sizeof(int)*(count+1));
+  int i=0;
+  while(i <= count)
+  {
+    *ans = moves[i];
+    ans++;
+    i++;
+  }
+  *ans =-2;
+  ans -= i;
+  return ans;
 }
 
 int *checkQueenMoves(piece *p){
@@ -1993,7 +1875,27 @@ int movePawn(piece *p, cell *target, int *avail){
 }
 
 int moveKnight(piece *p, cell *target, int *avail){
-	
+	  assert(target);
+	int valid = -1; /* -1 is invalid, 0 is valid,*/
+	while (*avail != -2){
+		if (target->cellID == *avail){
+			valid = 0;
+			break;
+		}
+		avail++;
+	}
+	if (valid == -1){
+		return valid;
+	}
+	if (target->piece != NULL){ /* capturing */
+		replacePiece(getCell(-1, target->board), target->piece);
+	}
+
+	replacePiece(target, p);
+	updatePrintPiece(target);
+	updatePrintPiece(p->prev);
+	p->hasMoved = false;
+	return valid;
 }
 
 int moveKing(piece *p, cell *target, int *avail){
@@ -2001,15 +1903,75 @@ int moveKing(piece *p, cell *target, int *avail){
 }
 
 int moveQueen(piece *p, cell *target, int *avail){
-	
+	  assert(target);
+	int valid = -1; /* -1 is invalid, 0 is valid,*/
+	while (*avail != -2){
+		if (target->cellID == *avail){
+			valid = 0;
+			break;
+		}
+		avail++;
+	}
+	if (valid == -1){
+		return valid;
+	}
+	if (target->piece != NULL){ /* capturing */
+		replacePiece(getCell(-1, target->board), target->piece);
+	}
+
+	replacePiece(target, p);
+	updatePrintPiece(target);
+	updatePrintPiece(p->prev);
+	p->hasMoved = false;
+	return valid;
 }
 
 int moveRook(piece *p, cell *target, int *avail){
-	
+  assert(target);
+	int valid = -1; /* -1 is invalid, 0 is valid,*/
+	while (*avail != -2){
+		if (target->cellID == *avail){
+			valid = 0;
+			break;
+		}
+		avail++;
+	}
+	if (valid == -1){
+		return valid;
+	}
+	if (target->piece != NULL){ /* capturing */
+		replacePiece(getCell(-1, target->board), target->piece);
+	}
+
+	replacePiece(target, p);
+	updatePrintPiece(target);
+	updatePrintPiece(p->prev);
+	p->hasMoved = false;
+	return valid;
 }
 
 int moveBishop(piece *p, cell *target, int *avail){
-	
+	  assert(target);
+	int valid = -1; /* -1 is invalid, 0 is valid,*/
+	while (*avail != -2){
+		if (target->cellID == *avail){
+			valid = 0;
+			break;
+		}
+		avail++;
+	}
+	if (valid == -1){
+		return valid;
+	}
+	if (target->piece != NULL){ /* capturing */
+		replacePiece(getCell(-1, target->board), target->piece);
+	}
+
+	replacePiece(target, p);
+	updatePrintPiece(target);
+	updatePrintPiece(p->prev);
+	p->hasMoved = false;
+	return valid;
 }
 
 int pawnPromotion(piece *p){ /* if undo is implemented, reverting back to pawn would be handled in the undo move function, not here */
