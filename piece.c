@@ -317,9 +317,8 @@ int *checkPawnMoves(piece *p){
 		}
 	}
 		
-	/*if no available moves, print error and return null*/
+	/*if no available moves, return null*/
 	if (num==0){
-		printp(available, p);
 		return NULL;
 	}
 	/*compile all available moves*/

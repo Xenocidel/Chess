@@ -32,7 +32,7 @@ int main(){
 	int turnPre=0;
 	int mode=-1;	 	/*range 1-3*/
 	int diff=-1; 		/*range 0-3, 0 if pvp*/
-	int timer=-1;		/*range 0, 5, 10, 20*/
+	int timer=0;		/*range 0, 5, 10, 20; todo: timer currently disabled*/
 	int side=-1;        /*range '0' for white, '1' for black*/
 	char confirm='n';	/*range 'n', 'y'*/
 	char modeS[26];
@@ -183,15 +183,22 @@ int main(){
 		}
 		else if (confirm == 'n' || confirm == 'N'){
 			mode = -1;
+			side = -1;
 			diff = -1;
-			timer = -1;
+			/* todo: timer currently disabled
+			timer = -1; */
 		}
 		else{
 			printe(selection);
 		}
 		
 		while(in_game){ /* if side = 1, player is black */
-			/* if mode = 2 or 3, set up AI. if timer !=0, set up timer */
+			if (mode == 2 || mode == 3){
+				/*set up AI with the correct side*/
+			}
+			if (timer != 0){
+				/* set up timer */
+			}
 			turnPre = board->turn;
 			updateGameDisplay(board); /* display the entire board only when its a new turn */
 			while (turnPre == board->turn){
