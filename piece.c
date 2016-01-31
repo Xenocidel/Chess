@@ -1732,7 +1732,47 @@ int moveKnight(piece *p, cell *target, int *avail){
 }
 
 int moveKing(piece *p, cell *target, int *avail){
-	
+	assert(target);
+	int valid = -1; /* -1 is invalid, 0 is valid, 1 is promotion */
+	while (*avail != -2){
+		if (target->cellID == *avail){
+			valid = 0;
+			break;
+		}
+		avail++;
+	}
+	if (valid == -1){
+		return valid;
+	}
+	else if (target->cellID == p->loc->cellID-2 && p->hasMoved == false){
+		replacePiece(target, p);
+		cell *temp = getCell(target->cellID -2, target->board);
+		cell *temp2 = getCell(target->cellID + 1, target->board);
+		replacePiece(temp2, temp->piece);
+		updatePrintPiece(temp);
+		updatePrintPiece(temp2);
+		valid = 3;
+		free(temp);
+		free(temp2);
+	}
+	else if (target->cellID == p->loc->cellID + 2 && p->hasMoved == false){
+		replacePiece(target, p);
+		cell *temp = getCell(target->cellID + 2, target->board);
+		cell *temp2 = getCell(target->cellID - 1, target->board);
+		replacePiece(temp2, temp->piece);
+		updatePrintPiece(temp);
+		updatePrintPiece(temp2);
+		valid = 2;
+		free(temp);
+		free(temp2);
+	}
+	else if (target->piece != NULL){ /* capturing */
+		replacePiece(getCell(-1, target->board), target->piece);
+	}
+	replacePiece(target, p);
+	updatePrintPiece(target);
+	updatePrintPiece(p->prev);
+	return valid;
 }
 
 int moveQueen(piece *p, cell *target, int *avail){
