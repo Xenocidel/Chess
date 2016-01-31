@@ -1227,7 +1227,7 @@ int *checkRookMoves(piece *p){ /* Calculate rook piece's movement */
   
   if(currentPos%8!=0) /*If the piece is not on the left edge*/
   {
-    for(checkPos=currentPos-1; checkPos%8 != 0; checkPos--)
+    for(checkPos=currentPos-1; checkPos%8 != 7; checkPos--)
     {
       cell *next = getCell(checkPos, p->loc->board);
       if(next->piece != NULL)
@@ -1246,8 +1246,6 @@ int *checkRookMoves(piece *p){ /* Calculate rook piece's movement */
       moves[count] = checkPos;
       count++;
     }
-    moves[count] = checkPos;
-    count++;
   }
   if(currentPos%8!=7) /*If the piece is not on the right edge*/
   {
@@ -1448,7 +1446,7 @@ int *checkQueenMoves(piece *p){
   /* rook moves */
   if(currentPos%8!=0) /*If the piece is not on the left edge*/
   {
-    for(checkPos=currentPos-1; checkPos%8 != 0; checkPos--)
+    for(checkPos=currentPos-1; checkPos%8 != 7; checkPos--)
     {
       cell *next = getCell(checkPos, p->loc->board);
       if(next->piece != NULL)
@@ -1467,8 +1465,6 @@ int *checkQueenMoves(piece *p){
       moves[count] = checkPos;
       count++;
     }
-    moves[count] = checkPos;
-    count++;
   }
   if(currentPos%8!=7) /*If the piece is not on the right edge*/
   {

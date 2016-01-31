@@ -560,4 +560,5 @@ const char * returnCell(int cellID){
 		case 55: return "h7";
 		case 63: return "h8";
 	}
+	return "ERROR";
 }
