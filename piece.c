@@ -1949,7 +1949,7 @@ int movePiece(piece *p, cell *target){
 	assert(target->cellID <= 63);
 	assert(target->cellID >= 0);
 	int *avail = checkAvailMoves(p);
-	if (avail == NULL){
+	if (avail == NULL || (avail != NULL && *avail == -2)){
 		return -2;
 	}
 	int ans;
