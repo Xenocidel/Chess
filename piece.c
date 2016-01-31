@@ -1353,6 +1353,9 @@ int *checkBishopMoves(piece *p){ /* Calculate bishop piece's movement */
       }
       moves[count] = checkPos;
       count++;
+	  if(currentPos%8 == 0){
+		  break;
+	  }
     }
     for(checkPos=currentPos+7; checkPos <= 63; checkPos+=7)
     {
@@ -1372,6 +1375,9 @@ int *checkBishopMoves(piece *p){ /* Calculate bishop piece's movement */
       }
       moves[count] = checkPos;
       count++;
+	  if(currentPos%8 == 0){
+		  break;
+	  }
     }
   }
   if(currentPos%8 != 7) /*If the piece is not on the right edge*/
@@ -1394,6 +1400,9 @@ int *checkBishopMoves(piece *p){ /* Calculate bishop piece's movement */
       }
       moves[count] = checkPos;
       count++;
+	  if(currentPos%8 == 7){
+		  break;
+	  }
     }
     for(checkPos=currentPos-7; checkPos >= 0; checkPos-=7)
     {
@@ -1413,6 +1422,9 @@ int *checkBishopMoves(piece *p){ /* Calculate bishop piece's movement */
       }
       moves[count] = checkPos;
       count++;
+	  if(currentPos%8 == 7){
+		  break;
+	  }
     }
   }
   int *ans = malloc(sizeof(int)*(count+1));
@@ -1423,290 +1435,213 @@ int *checkBishopMoves(piece *p){ /* Calculate bishop piece's movement */
     ans++;
     i++;
   }
-  *ans =-2;
   ans -= i;
   return ans;
 }
 
 int *checkQueenMoves(piece *p){
-
-	int i;
-	int num=0;
-	cell *piecelocation = getCell((p->loc->cellID), p->loc->board);
-        int movearray[64];
-        int entry =0;
-		
-		if (piecelocation->cellID < 56)
-		{
-			for (i=1;i<8;i++)		/*upward motion from non-top row starting position*/
-			{		
-				cell *front = getCell((p->loc->cellID)+(8*i), p->loc->board);
-				if (front->cellID < 64)
-				{
-					if (front->piece == NULL)
-					{
-						num++;
-						movearray[entry] = front->cellID;
-						entry++;
-					}					
-					if (front->piece != NULL)
-					{
-						if (front->piece->player != p->player)
-						{
-							num++;
-							movearray[entry] = front->cellID;
-							entry++;
-							break;
-						}						
-						else 
-						{
-							break;
-						}
-					}
-				}
-        else{
-          break;
+  int currentPos = p->loc->cellID;
+  int moves[28] = {-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2};
+  int checkPos;
+  int count=0;
+  
+  /* rook moves */
+  if(currentPos%8!=0) /*If the piece is not on the left edge*/
+  {
+    for(checkPos=currentPos-1; checkPos%8 != 0; checkPos--)
+    {
+      cell *next = getCell(checkPos, p->loc->board);
+      if(next->piece != NULL)
+      {
+        if(next->piece->player != p->player)
+        {
+          moves[count] = checkPos;
+          count++;
+        break;
         }
-			}
-		}
-
-		if (piecelocation->cellID > 7)		/*downward motion from non-bottom row starting position*/
-		{
-			for (i=1; i<8;i++)
-			{
-				cell *back = getCell((p->loc->cellID)-(8*i), p->loc->board);
-				if (back->cellID >=0)
-				{
-					if (back->piece == NULL)
-					{
-						num++;
-						movearray[entry] = back->cellID;
-						entry++;
-					}
-					if (back->piece != NULL)
-					{
-						if (back->piece->player != p->player)
-						{
-							num++;
-							movearray[entry] = back->cellID;
-							entry++;
-							break;
-						}
-						else 
-						{
-							break;
-						}
-					}
-				}
-        else{
-          break;
+        else
+        {
+        break;
         }
-			}
-		}
-
-		if (((piecelocation->cellID-7)%8) != 0)		/*rightward motion from non-rightside column*/
-		{	
-			for (i=1; i<8; i++)
-			{
-				cell *right = getCell((p->loc->cellID)+i, p->loc->board);
-				if (right->piece == NULL)
-				{
-					num++;
-					movearray[entry] = right->cellID;
-					entry++;
-				}
-				if(right->piece != NULL)
-				{
-					if (right->piece->player != p->player)
-					{
-						num++;
-						movearray[entry] = right->cellID;
-						entry++;
-						break;
-					}
-					else 
-					{
-						break;
-					}
-				}
-        			if ((right->cellID-7)%8 == 0)
-				{
-          				break;
-			        }
-			}
-		}
-
-		if ((piecelocation->cellID%8) != 0)		/*leftward motion from non-rightside column*/
-		{
-			for (i=1;i<8;i++)
-			{
-				cell *left = getCell((p->loc->cellID)-i, p->loc->board);
-				if (left->piece == NULL)
-				{
-					num++;
-					movearray[entry] = left->cellID;
-					entry++;
-				}
-				if(left->piece != NULL)
-				{
-					if (left->piece->player != p->player)
-					{
-						num++;
-						movearray[entry] = left->cellID;
-						entry++;
-						break;
-					}
-					else 
-					{
-						break;
-					{
-				}
-			}
-		}
-
-		if (((piecelocation->cellID-7)%8) != 0 && piecelocation->cellID < 56)		/*upright diagonal motion*/
-		{
-			for (i=1; i<8; i++)
-			{
-				cell *upright = getCell((p->loc->cellID)+(9*i), p->loc->board);
-				if (upright->piece == NULL)
-				{
-					num++;
-					movearray[entry] = upright->cellID;
-					entry++;
-				}
-				if (upright->piece != NULL)
-				{
-					if (upright->piece->player != p->player)
-					{
-						num++;
-						movearray[entry] = upright->cellID;
-						entry++;
-						break;
-					}
-					else 
-					{
-						break;
-					}
-				}
-          			if (((upright->cellID-7)%8) != 0 || upright->cellID < 56)
-				{
-			            break;
-          			}
-			}
-		}
-   
-		if (((piecelocation->cellID-7)%8) != 0 && piecelocation->cellID > 7)		/*downright diagonal motion*/
-		{
-			for (i=1; i<8; i++)
-			{
-				cell *downright = getCell((p->loc->cellID)-(7*i), p->loc->board);
-				if (downright->piece == NULL)
-				{
-					num++;
-					movearray[entry] = downright->cellID;
-					entry++;
-				}
-				if (downright->piece != NULL)
-				{
-					if (downright->piece->player != p->player)
-					{
-						num++;
-						movearray[entry] = downright->cellID;
-						entry++;
-						break;
-					}
-					else 
-					{
-						break;
-					}
-				}
-			        if (((downright->cellID-7)%8) != 0 || downright->cellID < 7)
-				{
-           				break;
-          			}
-			}
-		}
-			
-		if ((piecelocation->cellID%8) != 0 && piecelocation->cellID < 56)		/*upleft diagonal motion*/
-		{
-			for (i=1; i<8; i++)
-			{
-				cell *upleft = getCell((p->loc->cellID)+(7*i), p->loc->board);
-				if (upleft->piece == NULL)
-				{
-					num++;
-					movearray[entry] = upleft->cellID;
-					entry++;
-				}
-				if (upleft->piece != NULL)
-				{
-					if (upleft->piece->player != p->player)
-					{
-						num++;
-						movearray[entry] = upleft->cellID;
-						entry++;
-						break;
-					}
-					else 
-					{
-						break;
-					}
-				}
-			        if ((upleft->cellID%8) != 0 || upleft->cellID < 56)
-				{
-		            		break;
-          			}
-			}
-		}
-   
-		if ((piecelocation->cellID%8) != 0 && piecelocation->cellID < 56)		/*downleft diagonal motion*/
-		{
-			for (i=1; i<8; i++)
-			{
-				cell *downleft = getCell((p->loc->cellID)+(7*i), p->loc->board);
-				if (downleft->piece == NULL)
-				{
-					num++;
-					movearray[entry] = downleft->cellID;
-					entry++;
-				}
-				if (downleft->piece != NULL)
-				{
-					if (downleft->piece->player != p->player)
-					{
-						num++;
-						movearray[entry] = downleft->cellID;
-						entry++;
-						break;
-					}
-					else 
-					{
-						break;
-					}
-				}
-			        if ((downleft->cellID%8) != 0 || downleft->cellID < 7)
-				{
-           				 break;
-        			}
-			}
-		}
-	if(num == 0)	/* No available moves*/
-	{ 
-		/* printp(available, p); */
-		return NULL;
-	}
-  int *ans=malloc(sizeof(int)*num);
-	for (i=0;i<num;i++)
-	{
-		*(ans+i) = movearray[i];
-		movearray[i] =0 ;
-	}
-	*(ans+i) = -2;
+      }
+      moves[count] = checkPos;
+      count++;
+    }
+    moves[count] = checkPos;
+    count++;
+  }
+  if(currentPos%8!=7) /*If the piece is not on the right edge*/
+  {
+    for(checkPos=currentPos+1; checkPos%8 != 0; checkPos++)
+    {
+      cell *next = getCell(checkPos, p->loc->board);
+      if(next->piece != NULL)
+      {
+        if(next->piece->player != p->player)
+        {
+          moves[count] = checkPos;
+          count++;
+        break;
+        }
+        else
+        {
+        break;
+        }
+      }
+      moves[count] = checkPos;
+      count++;
+    }
+  }
+  if(currentPos > 7) /*checks if the piece is not in the bottom row*/
+  {
+    for(checkPos=currentPos-8; checkPos >= 0; checkPos-=8)  /*moving backwards*/
+    {
+      cell *next = getCell(checkPos, p->loc->board);
+      if(next->piece != NULL)
+      {
+        if(next->piece->player != p->player)
+        {
+          moves[count] = checkPos;
+          count++;
+        break;
+        }
+        else
+        {
+        break;
+        }
+      }
+      moves[count] = checkPos;
+      count++;
+    }
+  }
+  if(currentPos < 56) /*checks if the piece is not in the top row*/
+  {
+    for(checkPos=currentPos+8; checkPos <= 63; checkPos+=8)  /*moving forwards*/
+    {
+      cell *next = getCell(checkPos, p->loc->board);
+      if(next->piece != NULL)
+      {
+        if(next->piece->player != p->player)
+        {
+          moves[count] = checkPos;
+          count++;
+        break;
+        }
+        else
+        {
+        break;
+        }
+      }
+      moves[count] = checkPos;
+      count++;
+    }
+  }
+  
+  /* bishop moves */
+  if(currentPos%8 != 0) /*If the piece is not on the left edge*/
+  {
+    for(checkPos=currentPos-9; checkPos >= 0; checkPos-=9)
+    {
+      cell *next = getCell(checkPos, p->loc->board);
+      if(next->piece != NULL)
+      {
+        if(next->piece->player != p->player)
+        {
+          moves[count] = checkPos;
+          count++;
+        break;
+        }
+        else
+        {
+        break;
+        }
+      }
+      moves[count] = checkPos;
+      count++;
+	  if(currentPos%8 == 0){
+		  break;
+	  }
+    }
+    for(checkPos=currentPos+7; checkPos <= 63; checkPos+=7)
+    {
+      cell *next = getCell(checkPos, p->loc->board);
+      if(next->piece != NULL)
+      {
+        if(next->piece->player != p->player)
+        {
+          moves[count] = checkPos;
+          count++;
+        break;
+        }
+        else
+        {
+        break;
+        }
+      }
+      moves[count] = checkPos;
+      count++;
+	  if(currentPos%8 == 0){
+		  break;
+	  }
+    }
+  }
+  if(currentPos%8 != 7) /*If the piece is not on the right edge*/
+  {
+    for(checkPos=currentPos+9; checkPos <= 63; checkPos+=9)
+    {
+      cell *next = getCell(checkPos, p->loc->board);
+      if(next->piece != NULL)
+      {
+        if(next->piece->player != p->player)
+        {
+          moves[count] = checkPos;
+          count++;
+        break;
+        }
+        else
+        {
+        break;
+        }
+      }
+      moves[count] = checkPos;
+      count++;
+	  if(currentPos%8 == 7){
+		  break;
+	  }
+    }
+    for(checkPos=currentPos-7; checkPos >= 0; checkPos-=7)
+    {
+      cell *next = getCell(checkPos, p->loc->board);
+      if(next->piece != NULL)
+      {
+        if(next->piece->player != p->player)
+        {
+          moves[count] = checkPos;
+          count++;
+        break;
+        }
+        else
+        {
+        break;
+        }
+      }
+      moves[count] = checkPos;
+      count++;
+	  if(currentPos%8 == 7){
+		  break;
+	  }
+    }
+  }
+  int *ans = malloc(sizeof(int)*(count+1));
+  int i=0;
+  while(i <= count)
+  {
+    *ans = moves[i];
+    ans++;
+    i++;
+  }
+  ans -= i;
   return ans;
-  /*free(ans);*/
-}
-}
 }
 
 /* also handles captures. possible return values:
