@@ -173,17 +173,20 @@ void handleInput(board *board){
 			return;
 		}
 		checkAvailMovesSwitch(tmp->piece);
-		free(loc);
+		if (loc)
+			free(loc);
 		return;
 	}
 	printe(entryFormat);
-	free(loc);
+	if (loc)
+		free(loc);
 	return;
 }
 
 void checkAvailMovesSwitch(piece *piece){
 	int *tmp = checkAvailMoves(piece);
 	if (tmp == NULL || *tmp == -2){
+		printp(available, piece);
 		return;
 	}
 	printf("Possible locations for ");
