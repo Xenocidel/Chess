@@ -29,5 +29,6 @@
 #define entryFormat 4
 #define emptyCell 5
 #define offSides 6
+int cost[6] = {1, 5, 100, 40, 5, 10}; /* pawn, knight, king, queen, rook, bishop */
 
 #endif

@@ -7,6 +7,7 @@
 #include "defs.h"
 #include "board.h"
 #include "piece.h"
+#include "cell.h"
 
 int aiMove(int diff, int team, board *board){
 	switch(diff){
@@ -111,4 +112,17 @@ int *checkPiecePos(int team, board *board){
 	}
 	return cellList;
 	/* cellList will need to be freed at some point */
+}
+
+int sumCost(board *board){
+	int ans;
+	int i;
+	cell *tmp;
+	for (i=0; i<=63; i++){
+		tmp = getCell(i, board);
+		if (tmp->piece != NULL){
+			ans += getCost(tmp->piece);
+		}
+	}
+	return ans;
 }

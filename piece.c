@@ -319,7 +319,6 @@ int *checkPawnMoves(piece *p){
 		
 	/*if no available moves, print error and return null*/
 	if (num==0){
-		printp(available, p);
 		return NULL;
 	}
 	/*compile all available moves*/
@@ -1936,4 +1935,9 @@ int pawnPromotion(piece *p){ /* if undo is implemented, reverting back to pawn w
 	}
 	updatePrintPiece(p->loc);
 	return tmp;
+}
+
+/* returns positive if white has favorable cost, negative if black has favorable cost */
+int getCost(piece *p){
+	return cost[p->type]*(p->player == white ? 1 : -1);
 }

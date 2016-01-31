@@ -30,6 +30,7 @@
 #include "defs.h"
 
 void updateGameDisplay(board *board){
+	printf("\n");
 	printf("    a   b   c   d   e   f   g   h\n");
 	printf("  +---+---+---+---+---+---+---+---+\n");
 	printf("8 | %c | %c | %c | %c | %c | %c | %c | %c | 8\n", CELL56->printPiece, CELL57->printPiece, CELL58->printPiece, CELL59->printPiece, CELL60->printPiece, CELL61->printPiece, CELL62->printPiece, CELL63->printPiece);
@@ -232,12 +233,14 @@ int moveSwitch(piece *piece, int destCell){
 			break;
 		}
 		case 1: /* pawn promotion */
+		{	cell *prison = getCell(-1, piece->loc->board);
 			promo = pawnPromotion(piece);
 			if (prison->piece != NULL && prison->piece->prev == dest){
 				capture = 1;
 			}
 			fgetc(stdin); /* absorb the \n produced by scanf */
 			break;
+		}
 	}
 	/* add check for check? */
 	if (mp>=0)
