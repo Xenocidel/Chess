@@ -10,7 +10,7 @@
 *    You should have received a copy of the GNU General Public License         *
 *    along with this program; if not, write to the Free Software               *
 *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA *
-*                                                                              *                                                       *
+*                                                                              *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /*
@@ -145,7 +145,22 @@ void handleInput(board *board){
 				free(loc);
 			return;
 		}
-		moveSwitch(tmp->piece, destCell);
+		int checkCode = moveSwitch(tmp->piece, destCell);
+		switch (checkCode){
+			case 1:
+				printf("You are in check!\n\n");
+				break;
+			case 2:
+				printf("Checkmate! Game over!\n\n");
+				/* todo: deleteBoard and deleteAllCells? */
+				exit(0);
+				break;
+			case 3:
+				printf("Stalemate! Game over!\n\n");
+				/* todo: deleteBoard and deleteAllCells? */
+				exit(0);
+				break;
+		}
 		if (loc)
 			free(loc);
 		return;
@@ -194,19 +209,36 @@ void checkAvailMovesSwitch(piece *piece){
 	printf("\n");
 }
 
-void moveSwitch(piece *piece, int destCell){
-	switch (movePiece(piece, getCell(destCell, piece->loc->board))){
+int moveSwitch(piece *piece, int destCell){
+	cell *dest = getCell(destCell, piece->loc->board);
+	int capture = 0;
+	int promo = 0; /* 1-4 depending on piece selected */
+	int castle = 0; /* 2-3 depending on kingside or queenside */
+	int check = 0; /* 1-3 depending on check, checkmate, or stalemate */
+	int mp = movePiece(piece, dest);
+	switch (mp){
 		case -2: /* no available moves */
 			printp(available, piece); 
 			break;
+		case -1: /* invalid move */
+			printe(move);
+			break;
 		case 0: /* standard move or capture */
-			/* nothing for now */
+		{	cell *prison = getCell(-1, piece->loc->board);
+			if (prison->piece != NULL && prison->piece->prev == dest){
+				capture = 1;
+			}
 			break;
+		}
 		case 1: /* pawn promotion */
-			pawnPromotion(piece);
+			promo = pawnPromotion(piece);
+			fgetc(stdin); /* absorb the \n produced by scanf */
 			break;
-		/* another case for check/checkmate? */
 	}
+	/* add check for check? */
+	if (mp>=0)
+		writeMoveLog(piece->loc->board->turn-1, piece, capture, promo, castle, check); /* turn-1 to log the move that just occurred */
+	return check;
 }
 
 int toID(char *loc){ 
@@ -302,3 +334,229 @@ int toID(char *loc){
 	return -2;
 }
 
+/* initializes title bar for movelog */
+void createMoveLog(){
+	FILE * moveLog;
+	moveLog = fopen("movelog.txt", "w");
+	if (moveLog == NULL){
+		printf("Error writing to move log. Skipping...\n\n");
+		return;
+	}
+	fprintf(moveLog, "   White     Black\n");
+	fclose(moveLog);
+}
+
+/*  promo 1-4 depending on piece selected (queen, knight, rook, bishop)
+ *	castle 2-3 depending on kingside or queenside
+ *	check 1-3 depending on check, checkmate, or stalemate
+ */
+void writeMoveLog(int turn, piece *p, int capture, int promo, int castle, int check){
+	assert(p);
+	int len=0;
+	FILE * moveLog;
+	moveLog = fopen("movelog.txt", "a");
+	if (moveLog == NULL){
+		printf("Error writing to move log. Skipping...\n\n");
+		return;
+	}
+	if (turn%2 == 0){
+		fprintf(moveLog, "%d. ", turn/2+1);
+	}
+	
+	if (!promo){
+		switch (p->type){
+		case pawn:
+			fprintf(moveLog, "%s", returnCell(p->prev->cellID));
+			if (capture)
+				fprintf(moveLog, "x");
+			else
+				fprintf(moveLog, "-");
+			fprintf(moveLog, "%s", returnCell(p->loc->cellID));
+			len+=5;
+			break;
+		case knight:
+			fprintf(moveLog, "N%s", returnCell(p->prev->cellID));
+			if (capture)
+				fprintf(moveLog, "x");
+			else
+				fprintf(moveLog, "-");
+			fprintf(moveLog, "%s", returnCell(p->loc->cellID));
+			len+=6;
+			break;
+		case king:
+			if (castle == 2){
+				fprintf(moveLog, "O-O");
+				len+=3;
+				break;
+			}
+			else if (castle == 3){
+				fprintf(moveLog, "O-O-O");
+				len+=5;
+				break;
+			}
+			fprintf(moveLog, "K%s", returnCell(p->prev->cellID));
+			if (capture)
+				fprintf(moveLog, "x");
+			else
+				fprintf(moveLog, "-");
+			fprintf(moveLog, "%s", returnCell(p->loc->cellID));
+			len+=6;
+			break;
+		case queen:
+			fprintf(moveLog, "Q%s", returnCell(p->prev->cellID));
+			if (capture)
+				fprintf(moveLog, "x");
+			else
+				fprintf(moveLog, "-");
+			fprintf(moveLog, "%s", returnCell(p->loc->cellID));
+			len+=6;
+			break;
+		case rook:
+			fprintf(moveLog, "R%s", returnCell(p->prev->cellID));
+			if (capture)
+				fprintf(moveLog, "x");
+			else
+				fprintf(moveLog, "-");
+			fprintf(moveLog, "%s", returnCell(p->loc->cellID));
+			len+=6;
+			break;
+		case bishop:
+			fprintf(moveLog, "B%s", returnCell(p->prev->cellID));
+			if (capture)
+				fprintf(moveLog, "x");
+			else
+				fprintf(moveLog, "-");
+			fprintf(moveLog, "%s", returnCell(p->loc->cellID));
+			len+=6;
+			break;
+		}
+	}
+	if(promo){
+		fprintf(moveLog, "%s", returnCell(p->prev->cellID));
+		if (capture)
+			fprintf(moveLog, "x");
+		else
+			fprintf(moveLog, "-");
+		fprintf(moveLog, "%s", returnCell(p->loc->cellID));
+		len+=5;
+		switch (promo){
+			case 1:
+				fprintf(moveLog, "Q");
+				len++;
+				break;
+			case 2:
+				fprintf(moveLog, "N");
+				len++;
+				break;
+			case 3:
+				fprintf(moveLog, "R");
+				len++;
+				break;
+			case 4:
+				fprintf(moveLog, "B");
+				len++;
+				break;
+		}
+	}
+	switch(check){
+		case 1:
+			fprintf(moveLog, "+");
+			len++;
+			break;
+		case 2:
+			fprintf(moveLog, "#\n");
+			if (turn % 2 == 0){
+				fprintf(moveLog, "1-0");
+				fclose(moveLog);
+				return;
+			}
+			else{
+				fprintf(moveLog, "0-1");
+				fclose(moveLog);
+				return;
+			}
+		case 3:
+			fprintf(moveLog, "\n1/2-1/2");
+			fclose(moveLog);
+			return;
+	}
+	
+	if (turn%2 != 0){
+		fprintf(moveLog, "\n");
+	}
+	else{
+		for (len = 10-len; len>0; len--){
+			fprintf(moveLog, " ");
+		}
+	}
+	fclose(moveLog);
+}
+
+const char * returnCell(int cellID){
+	switch (cellID){
+		case 0 : return "a1";
+		case 8 : return "a2";
+		case 16: return "a3";
+		case 24: return "a4";
+		case 32: return "a5";
+		case 40: return "a6";
+		case 48: return "a7";
+		case 56: return "a8";
+		case 1 : return "b1";
+		case 9 : return "b2";
+		case 17: return "b3";
+		case 25: return "b4";
+		case 33: return "b5";
+		case 41: return "b6";
+		case 49: return "b7";
+		case 57: return "b8";
+		case 2 : return "c1";
+		case 10: return "c2";
+		case 18: return "c3";
+		case 26: return "c4";
+		case 34: return "c5";
+		case 42: return "c6";
+		case 50: return "c7";
+		case 58: return "c8";
+		case 3 : return "d1";
+		case 11: return "d2";
+		case 19: return "d3";
+		case 27: return "d4";
+		case 35: return "d5";
+		case 43: return "d6";
+		case 51: return "d7";
+		case 59: return "d8";
+		case 4 : return "e1";
+		case 12: return "e2";
+		case 20: return "e3";
+		case 28: return "e4";
+		case 36: return "e5";
+		case 44: return "e6";
+		case 52: return "e7";
+		case 60: return "e8";
+		case 5 : return "f1";
+		case 13: return "f2";
+		case 21: return "f3";
+		case 29: return "f4";
+		case 37: return "f5";
+		case 45: return "f6";
+		case 53: return "f7";
+		case 61: return "f8";
+		case 6 : return "g1";
+		case 14: return "g2";
+		case 22: return "g3";
+		case 30: return "g4";
+		case 38: return "g5";
+		case 46: return "g6";
+		case 54: return "g7";
+		case 62: return "g8";
+		case 7 : return "h1";
+		case 15: return "h2";
+		case 23: return "h3";
+		case 31: return "h4";
+		case 39: return "h5";
+		case 47: return "h6";
+		case 55: return "h7";
+		case 63: return "h8";
+	}
+}

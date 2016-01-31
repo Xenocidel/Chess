@@ -10,7 +10,7 @@
 *    You should have received a copy of the GNU General Public License         *
 *    along with this program; if not, write to the Free Software               *
 *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA *
-*                                                                              *                                                       *
+*                                                                              *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /*
@@ -179,6 +179,7 @@ int main(){
 		if (confirm == 'y' || confirm == 'Y'){
 			in_game = 1;
 			fgetc(stdin); /* absorb the /n produced by the last scanf */
+			createMoveLog();
 		}
 		else if (confirm == 'n' || confirm == 'N'){
 			mode = -1;

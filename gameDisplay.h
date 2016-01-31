@@ -10,7 +10,7 @@
 *    You should have received a copy of the GNU General Public License         *
 *    along with this program; if not, write to the Free Software               *
 *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA *
-*                                                                              *                                                       *
+*                                                                              *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /*
@@ -30,7 +30,11 @@ void updateMessage(board *board);
 void printMessage();
 void handleInput(board *board);
 int toID(char *loc);
-void moveSwitch(piece *piece, int destCell);
+int moveSwitch(piece *piece, int destCell);
 void checkAvailMovesSwitch(piece *piece);
+
+void createMoveLog();
+void writeMoveLog(int turn, piece *piece, int capture, int promo, int castle, int check);
+const char * returnCell(int cellID);
 
 #endif
