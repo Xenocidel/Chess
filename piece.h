@@ -10,7 +10,7 @@
 *    You should have received a copy of the GNU General Public License         *
 *    along with this program; if not, write to the Free Software               *
 *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA *
-*                                                                              *                                                       *
+*                                                                              *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /*
@@ -58,5 +58,6 @@ int moveKing  (struct piece *p, cell *target, int *avail);
 int moveQueen (struct piece *p, cell *target, int *avail);
 int moveRook  (struct piece *p, cell *target, int *avail);
 int moveBishop(struct piece *p, cell *target, int *avail);
-void pawnPromotion(struct piece *p);
+int pawnPromotion(struct piece *p);
+
 #endif

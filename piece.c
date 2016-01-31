@@ -10,7 +10,7 @@
 *    You should have received a copy of the GNU General Public License         *
 *    along with this program; if not, write to the Free Software               *
 *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA *
-*                                                                              *                                                       *
+*                                                                              *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /*
@@ -1935,8 +1935,15 @@ int *checkQueenMoves(piece *p){
 }
 }
 
-
-int movePiece(piece *p, cell *target){ /* also handles captures. returns 0 if move is valid, -1 if move is invalid, -2 if no available moves, 1 for a pawn promotion */
+/* also handles captures. possible return values:
+ * 0 if move is valid
+ * -1 if move is invalid
+ * -2 if no available moves
+ * 1 for a pawn promotion
+ * 2 for kingside castle
+ * 3 for queenside castle
+ */
+int movePiece(piece *p, cell *target){ 
 	assert(p);
 	assert(target);
 	assert(target->cellID <= 63);
@@ -1965,8 +1972,6 @@ int movePiece(piece *p, cell *target){ /* also handles captures. returns 0 if mo
 			}
 		}
 	}
-	
-	target->board->turn += 1;
 	
 	switch (p->type){
 		case pawn:
@@ -2006,7 +2011,8 @@ int movePiece(piece *p, cell *target){ /* also handles captures. returns 0 if mo
 			}
 			break;
 	}
-
+	if (ans >= 0)
+		target->board->turn += 1;
 	return ans;
 }
 
@@ -2053,7 +2059,7 @@ int movePawn(piece *p, cell *target, int *avail){
 				}
 			}
 		}
-		if (target->cellID % 7 != 0){
+		if (target->cellID != 7 || target->cellID != 15 || target->cellID != 23 || target->cellID != 31 || target->cellID != 39 || target->cellID != 47 || target->cellID != 55 || target->cellID != 63){
 			cell *tmpRight = getCell(target->cellID + 1, target->board);
 			if (tmpRight->piece != NULL){
 				if (tmpRight->piece->type == pawn && tmpRight->piece->player != p->player){
@@ -2073,7 +2079,7 @@ int movePawn(piece *p, cell *target, int *avail){
 				}
 			}
 		}
-		if (target->cellID % 7 != 0){
+		if (target->cellID != 7 || target->cellID != 15 || target->cellID != 23 || target->cellID != 31 || target->cellID != 39 || target->cellID != 47 || target->cellID != 55 || target->cellID != 63){
 			cell *tmpRight = getCell(target->cellID + 1, target->board);
 			if (tmpRight->piece != NULL){
 				if (tmpRight->piece->type == pawn && tmpRight->piece->player != p->player){
@@ -2113,6 +2119,36 @@ int moveBishop(piece *p, cell *target, int *avail){
 	
 }
 
-void pawnPromotion(piece *p){
-	
+int pawnPromotion(piece *p){ /* if undo is implemented, reverting back to pawn would be handled in the undo move function, not here */
+	printf("Pawn in cell ");
+	printCell(p->loc->cellID);
+	printf(" promoted! Please select the piece to promote to:\n");
+	printf("1: Queen\n");
+	printf("2: Knight\n");
+	printf("3: Rook\n");
+	printf("4: Bishop\n");
+	int tmp = 0;
+	while (tmp < 1){
+		scanf("%d", &tmp);
+		switch(tmp){
+			case 1:
+				p->type = queen;
+				break;
+			case 2:
+				p->type = knight;
+				break;
+			case 3:
+				p->type = rook;
+				break;
+			case 4:
+				p->type = bishop;
+				break;
+			default:
+				printe(selection);
+				tmp = 0;
+				break;
+		}
+	}
+	updatePrintPiece(p->loc);
+	return tmp;
 }
