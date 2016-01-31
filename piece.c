@@ -1323,7 +1323,6 @@ int *checkRookMoves(piece *p){ /* Calculate rook piece's movement */
     ans++;
     i++;
   }
-  *ans =-2;
   ans -= i;
   return ans;
 }

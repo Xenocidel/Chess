@@ -184,6 +184,7 @@ void handleInput(board *board){
 void checkAvailMovesSwitch(piece *piece){
 	int *tmp = checkAvailMoves(piece);
 	if (tmp == NULL || *tmp == -2){
+		printp(available, piece);
 		return;
 	}
 	printf("Possible locations for ");
