@@ -1222,14 +1222,14 @@ int *checkKingMoves(piece *p){
 int *checkRookMoves(piece *p){ /* Calculate rook piece's movement */
   int currentPos = p->loc->cellID;
   int moves[15] = {-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2,-2};
-  int checkPos;
+  int checkPos=0;
   int count=0;
   
   if(currentPos%8!=0) /*If the piece is not on the left edge*/
   {
-    for(checkPos=currentPos-1; checkPos%8 != 0; checkPos--)
+    for(checkPos=currentPos-1;; checkPos--)
     {
-      cell *next = getCell(checkPos, p->loc->board);
+	  cell *next = getCell(checkPos, p->loc->board);
       if(next->piece != NULL)
       {
         if(next->piece->player != p->player)
@@ -1245,13 +1245,14 @@ int *checkRookMoves(piece *p){ /* Calculate rook piece's movement */
       }
       moves[count] = checkPos;
       count++;
+	  if (checkPos%8 == 0){
+		  break;
+	  }
     }
-    moves[count] = checkPos;
-    count++;
   }
   if(currentPos%8!=7) /*If the piece is not on the right edge*/
   {
-    for(checkPos=currentPos+1; checkPos%8 != 0; checkPos++)
+    for(checkPos=currentPos+1;; checkPos++)
     {
       cell *next = getCell(checkPos, p->loc->board);
       if(next->piece != NULL)
@@ -1260,20 +1261,23 @@ int *checkRookMoves(piece *p){ /* Calculate rook piece's movement */
         {
           moves[count] = checkPos;
           count++;
-        break;
+		  break;
         }
         else
         {
-        break;
+		  break;
         }
+		moves[count] = checkPos;
+        count++;
+		if (checkPos%8 == 7){
+			break;
+		}
       }
-      moves[count] = checkPos;
-      count++;
     }
   }
   if(currentPos > 7) /*checks if the piece is not in the bottom row*/
   {
-    for(checkPos=currentPos-8; checkPos >= 0; checkPos-=8)  /*moving backwards*/
+    for(checkPos=currentPos-8;; checkPos-=8)  /*moving backwards*/
     {
       cell *next = getCell(checkPos, p->loc->board);
       if(next->piece != NULL)
@@ -1291,11 +1295,14 @@ int *checkRookMoves(piece *p){ /* Calculate rook piece's movement */
       }
       moves[count] = checkPos;
       count++;
+	  if (checkPos < 8){
+		  break;
+	  }
     }
   }
   if(currentPos < 56) /*checks if the piece is not in the top row*/
   {
-    for(checkPos=currentPos+8; checkPos <= 63; checkPos+=8)  /*moving forwards*/
+    for(checkPos=currentPos+8;; checkPos+=8)  /*moving forwards*/
     {
       cell *next = getCell(checkPos, p->loc->board);
       if(next->piece != NULL)
@@ -1313,6 +1320,9 @@ int *checkRookMoves(piece *p){ /* Calculate rook piece's movement */
       }
       moves[count] = checkPos;
       count++;
+	  if (checkPos > 55){
+		  break;
+	  }
     }
   }
   int *ans = malloc(sizeof(int)*(count+1));
