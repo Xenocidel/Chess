@@ -233,6 +233,9 @@ int moveSwitch(piece *piece, int destCell){
 		}
 		case 1: /* pawn promotion */
 			promo = pawnPromotion(piece);
+			if (prison->piece != NULL && prison->piece->prev == dest){
+				capture = 1;
+			}
 			fgetc(stdin); /* absorb the \n produced by scanf */
 			break;
 	}
