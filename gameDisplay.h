@@ -36,5 +36,6 @@ void checkAvailMovesSwitch(piece *piece);
 void createMoveLog();
 void writeMoveLog(int turn, piece *piece, int capture, int promo, int castle, int check);
 const char * returnCell(int cellID);
+void loadGame(char *fname, board *board);
 
 #endif

@@ -69,7 +69,7 @@ void printMessage(int turn){ /* for turns: white = even, black = odd */
 		printf("Black's turn\n\n");
 	}
 	if (turn == 0){
-		printf("White pieces are displayed in CAPITALS. Black pieces are displayed in lowercase\n\nMove a piece by typing its location and its destination like: a2 a3 or a2a3\nYou can also see a piece's available moves by typing its location like: a1\n\nTo bring up these instructions again, type help\nExit the game by typing exit or quit\n\n");
+		printf("White pieces are displayed in CAPITALS. Black pieces are displayed in lowercase\n\nMove a piece by typing its location and its destination like: a2 a3 or a2a3\nYou can also see a piece's available moves by typing its location like: a1\n\nLoad a game by typing load (see user manual for more instructions)\n\nTo bring up these instructions again, type help\nExit the game by typing exit or quit\n\n");
 	}
 	printf("\n>");
 }
@@ -85,32 +85,43 @@ void handleInput(board *board){
 			int c;
 			while((c = getchar()) != '\n' && c != EOF); /* purges excess or \n input */
 			printe(entryFormat);
-			free(loc);
+			if (loc) free(loc);
 			return;
 		}
 	}
 	int cellID = toID(loc);
 	if (cellID == -2){
 		printe(command);
-		free(loc);
+		if (loc) free(loc);
 		return;
 	}
 	if (cellID == -3){
 		/* todo: maybe deleteBoard and deleteAllCells? */
-		free(loc);
+		if (loc) free(loc);
 		exit(0);
 	}
 	if (cellID == -4){
 		/* undo */
 		printf("Undo move functionality is currently unavailable.\n");
-		free(loc);
+		if (loc) free(loc);
 		return;
 	}
 	if (cellID == -5){ /* display help */
 		if (board->turn != 0){
-			printf("White pieces are displayed in CAPITALS. Black pieces are displayed in lowercase\n\nMove a piece by typing its location and its destination like: a2 a3 or a2a3\nYou can also see a piece's available moves by typing its location like: a1\n\nTo bring up these instructions again, type help\nExit the game by typing exit or quit\n\n");
+			printf("White pieces are displayed in CAPITALS. Black pieces are displayed in lowercase\n\nMove a piece by typing its location and its destination like: a2 a3 or a2a3\nYou can also see a piece's available moves by typing its location like: a1\n\nLoad a game by typing load (see user manual for more instructions)\n\nTo bring up these instructions again, type help\nExit the game by typing exit or quit\n\n");
 		}
-		free(loc);
+		if (loc) free(loc);
+		return;
+	}
+	if (cellID == -6){
+		printf("Please type the file name to load from, including the extension\n");
+		char fname[63];
+		fgets(fname, 63, stdin);
+		char *tmp;
+		if ((tmp = strchr(fname, '\n')) != NULL){ /*cuts off \n at the end of each input*/
+			*tmp = '\0';
+		}
+		loadGame(fname, board);
 		return;
 	}
 
@@ -121,29 +132,29 @@ void handleInput(board *board){
 		loc -= loclen;
 		if (destCell == -2){
 			printe(entryFormat);
-			if (loc)
-				free(loc);
+			
+				if (loc) free(loc);
 			return;
 		}
 		cell *tmp = getCell(cellID, board);
 		if (tmp->piece == NULL){
 			printe(emptyCell);
-			if (loc)
-				free(loc);
+			
+				if (loc) free(loc);
 			return;
 		}
 		if (tmp->piece->player == black && board->turn % 2 == 0){
 			/* offSides black trying to move white */
 			printe(offSides);
-			if (loc)
-				free(loc);
+			
+				if (loc) free(loc);
 			return;
 		}
 		else if (tmp->piece->player == white && board->turn % 2 == 1){
 			/* offSides white trying to move black */
 			printe(offSides);
-			if (loc)
-				free(loc);
+			
+				if (loc) free(loc);
 			return;
 		}
 		int checkCode = moveSwitch(tmp->piece, destCell);
@@ -162,23 +173,23 @@ void handleInput(board *board){
 				exit(0);
 				break;
 		}
-		if (loc)
-			free(loc);
+		
+			if (loc) free(loc);
 		return;
 	}
 	else if (strlen(loc) == 2){ /* segment for selecting a piece */
 		cell *tmp = getCell(cellID, board);
 		if (tmp->piece == NULL){
 			printe(emptyCell);
-			free(loc);
+			if (loc) free(loc);
 			return;
 		}
 		checkAvailMovesSwitch(tmp->piece);
-		free(loc);
+		if (loc) free(loc);
 		return;
 	}
 	printe(entryFormat);
-	free(loc);
+	if (loc) free(loc);
 	return;
 }
 
@@ -264,6 +275,10 @@ int toID(char *loc){
 	
 	if (strncmp("help", loc, 4) == 0){
 		return -5;
+	}
+	
+	if (strncmp("load", loc, 4) == 0){
+		return -6;
 	}
 	
 	if (strncmp("a1", loc, 2) == 0) return 0;
@@ -567,4 +582,116 @@ const char * returnCell(int cellID){
 		case 63: return "h8";
 	}
 	return "ERROR";
+}
+
+void loadGame(char *fname, board *board){
+	FILE *file = fopen(fname, "r");
+	if (!file){
+		printf("\nCan't open file \"%s\" for reading!\n", fname);
+		return;
+	}
+	char *loc = malloc(sizeof(char)*7);
+	char *tmp;
+	while (fgets(loc, 7, file)){
+		if ((tmp = strchr(loc, '\r')) != NULL){ /*cuts off \r at the end of each input*/
+			*tmp = '\0';
+		}
+		int cellID = toID(loc);
+		if (cellID == -2){
+			printe(command);
+			printf("Error occured while loading. Stopping...\n");
+			
+			return;
+		}
+		if (cellID == -3){
+			/* todo: maybe deleteBoard and deleteAllCells? */
+			
+			exit(0);
+		}
+		if (cellID == -4){
+			/* undo */
+			printf("Undo move functionality is currently unavailable.\n");
+			
+			return;
+		}
+		if (cellID == -5){ /* display help */
+			if (board->turn != 0){
+				printf("White pieces are displayed in CAPITALS. Black pieces are displayed in lowercase\n\nMove a piece by typing its location and its destination like: a2 a3 or a2a3\nYou can also see a piece's available moves by typing its location like: a1\n\nLoad a game by typing load (see user manual for more instructions)\n\nTo bring up these instructions again, type help\nExit the game by typing exit or quit\n\n");
+			}
+			
+			return;
+		}
+		if (cellID == -6){
+			printf("You may not recursively load. Stopping...\n");
+			return;
+		}
+
+		if (strlen(loc) == 5 || strlen(loc) == 4){ /* segment for direct move */
+			int loclen = strlen(loc)-2;
+			loc += loclen;
+			int destCell = toID(loc);
+			loc -= loclen;
+			if (destCell == -2){
+				printe(entryFormat);
+				
+					
+				return;
+			}
+			cell *tmp = getCell(cellID, board);
+			if (tmp->piece == NULL){
+				printe(emptyCell);
+				
+					
+				return;
+			}
+			if (tmp->piece->player == black && board->turn % 2 == 0){
+				/* offSides black trying to move white */
+				printe(offSides);
+				
+					
+				return;
+			}
+			else if (tmp->piece->player == white && board->turn % 2 == 1){
+				/* offSides white trying to move black */
+				printe(offSides);
+				
+					
+				return;
+			}
+			int checkCode = moveSwitch(tmp->piece, destCell);
+			switch (checkCode){
+				case 1:
+					printf("You are in check!\n\n");
+					continue;
+				case 2:
+					printf("Checkmate! Game over!\n\n");
+					/* todo: deleteBoard and deleteAllCells? */
+					exit(0);
+					continue;
+				case 3:
+					printf("Stalemate! Game over!\n\n");
+					/* todo: deleteBoard and deleteAllCells? */
+					exit(0);
+					continue;
+			}
+			
+			continue;
+		}
+		else if (strlen(loc) == 2){ /* segment for selecting a piece */
+			cell *tmp = getCell(cellID, board);
+			if (tmp->piece == NULL){
+				printe(emptyCell);
+				
+				continue;
+			}
+			checkAvailMovesSwitch(tmp->piece);
+			
+			continue;
+		}
+		printe(entryFormat);
+		
+		continue;
+	}
+	printf("Game loaded!\n");
+	free(loc);
 }
