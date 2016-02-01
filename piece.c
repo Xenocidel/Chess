@@ -363,246 +363,150 @@ int *checkPawnMoves(piece *p){
 	return ans;
 }
 
-int *checkKnightMoves(piece *p){
-	int num = 0; /* number of possible moves */
-	int fwd = 0;
-	int back = 0;
-	int left, right = 0;
-	int frontchk, frontchk2, frontchk3, frontchk4 = -1; /* the "forward" movements */
-	int backchk, backchk2, backchk3, backchk4 = -1; /* the "back" movements */
+int *checkKnightMoves(piece *p){ /* calculate knight piece's movement */
+	int currentPos = p->loc->cellID;
+	int moves[9] = {-2,-2,-2,-2,-2,-2,-2,-2};
+	int checkPos;
+	int count = 0;
 	
-	if(p->player == white){
-		/* available moves for the knight, not including edge detection */
-		cell *front  = getCell((p->loc->cellID)+6, p->loc->board);
-		cell *front2 = getCell((p->loc->cellID)+10, p->loc->board);
-		cell *front3 = getCell((p->loc->cellID)+15, p->loc->board);
-		cell *front4 = getCell((p->loc->cellID)+17, p->loc->board);
-		
-		cell *back  = getCell((p->loc->cellID)-6, p->loc->board);
-		cell *back2 = getCell((p->loc->cellID)-10, p->loc->board);
-		cell *back3 = getCell((p->loc->cellID)-15, p->loc->board);
-		cell *back4 = getCell((p->loc->cellID)-17, p->loc->board);
-		
-		/*basic "forward" movement of Knight */
-		if(front->piece == NULL){
-			fwd++;
-			frontchk = front->cellID;
-		}
-		if(front->piece != NULL){
-			if(front->piece->player != p->player){
-				fwd++;
-				frontchk = front->cellID;
+	if(currentPos%8 != 0 && currentPos%8 != 1 && currentPos < 56){
+		/* if piece is not on first two columns and less than 56 (+6 move)*/	
+		checkPos = currentPos+6;
+		cell *next = getCell(checkPos, p->loc->board);
+		if(next->piece != NULL){
+			if(next->piece->player != p->player){
+				moves[count] = checkPos;
+				count++;
 			}
 		}
-		if(front2->piece == NULL){
-			fwd++;
-			frontchk2 = front2->cellID;
+		else{
+			moves[count] = checkPos;
+			count++;
 		}
-		if(front2->piece != NULL){
-			if(front2->piece->player != p->player){
-				fwd++;
-				frontchk2 = front2->cellID;
-			}
-		}
-		if(front3->piece == NULL){
-			fwd++;
-			frontchk3 = front3->cellID;
-		}
-		if(front3->piece != NULL){
-			if(front3->piece->player != p->player){
-				fwd++;
-				frontchk3 = front3->cellID;
-			}
-		}
-		if(front4->piece == NULL){
-			fwd++;
-			frontchk4 = front4->cellID;
-		}
-		if(front4->piece != NULL){
-			if(front4->piece->player != p->player){
-				fwd++;
-				frontchk4 = front4->cellID;
-			}
-		}
-		
-		/*basic "back" movement of Knight*/
-		if(back->piece == NULL){
-			back++;
-			backchk = back->cellID;
-		}
-		if(back->piece != NULL){
-			if(back->piece->player != p->player){
-				back++;
-				backchk = back->cellID;
-			}
-		}
-		
-		if(back2->piece == NULL){
-			back++;
-			backchk2 = back2->cellID;
-		}
-		if(back2->piece != NULL){
-			if(back2->piece->player != p->player){
-				back++;
-				backchk2 = back2->cellID;
-			}
-		}
-		
-		if(back3->piece == NULL){
-			back++;
-			backchk3 = back3->cellID;
-		}
-		if(back3->piece != NULL){
-			if(back3->piece->player != p->player){
-				back++;
-				backchk3 = back3->cellID;
-			}
-		}
-		
-		if(back4->piece == NULL){
-			back++;
-			backchk4 = back4->cellID;
-		}
-		if(back4->piece != NULL){
-			if(back4->piece->player != p->player){
-				back++;
-				backchk4 = back4->cellID;
-			}
-		}
-		
-		/*when the Knight is on the left edge*/
-		if(front->cellID%8 == 0){
-			left = 0;
-		}
-		
-		/*when the Knight is on the right edge*/
-		if(front->cellID%8 == 7){
-			right = 0;
-		}		
 	}
-	else{
-		cell *front  = getCell((p->loc->cellID)-6, p->loc->board);
-		cell *front2 = getCell((p->loc->cellID)-10, p->loc->board);
-		cell *front3 = getCell((p->loc->cellID)-15, p->loc->board);
-		cell *front4 = getCell((p->loc->cellID)-17, p->loc->board);
 		
-		cell *back  = getCell((p->loc->cellID)+6, p->loc->board);
-		cell *back2 = getCell((p->loc->cellID)+10, p->loc->board);
-		cell *back3 = getCell((p->loc->cellID)+15, p->loc->board);
-		cell *back4 = getCell((p->loc->cellID)+17, p->loc->board);		
-		
-		/*basic "forward" movement of Knight */
-		if(front->piece == NULL){
-			fwd++;
-			frontchk = front->cellID;
-		}
-		if(front->piece != NULL){
-			if(front->piece->player != p->player){
-				fwd++;
-				frontchk = front->cellID;
+	if(currentPos%8 != 6 && currentPos%8 != 7 && currentPos <54){
+		/* if piece is not on last two columns and less than 54 (+10 move)*/
+		checkPos = currentPos+10;
+		cell *next = getCell(checkPos, p->loc->board);
+		if(next->piece != NULL){
+			if(next->piece->player != p->player){
+				moves[count] = checkPos;
+				count++;
 			}
 		}
-		
-		if(front2->piece == NULL){
-			fwd++;
-			frontchk2 = front2->cellID;
+		else{
+			moves[count] = checkPos;
+			count++;
 		}
-		if(front2->piece != NULL){
-			if(front2->piece->player != p->player){
-				fwd++;
-				frontchk2 = front2->cellID;
+	}
+		
+	if(currentPos%8 != 0 && currentPos<56){
+		/* if piece is not on first column and less than 56 (+15 move) */
+		checkPos = currentPos+15;
+		cell *next = getCell(checkPos, p->loc->board);
+		if(next->piece != NULL){
+			if(next->piece->player != p->player){
+				moves[count] = checkPos;
+				count++;
 			}
 		}
-		
-		if(front3->piece == NULL){
-			fwd++;
-			frontchk3 = front3->cellID;
-		}
-		if(front3->piece != NULL){
-			if(front3->piece->player != p->player){
-				fwd++;
-				frontchk3 = front3->cellID;
-			}
-		}
-		
-		if(front4->piece == NULL){
-			fwd++;
-			frontchk4 = front4->cellID;
-		}
-		if(front4->piece != NULL){
-			if(front4->piece->player != p->player){
-				fwd++;
-				frontchk4 = front4->cellID;
-			}
-		}
-		
-		/*basic "back" movement of Knight*/
-		if(back->piece == NULL){
-			back++;
-			backchk = back->cellID;
-		}
-		if(back->piece != NULL){
-			if(back->piece->player != p->player){
-				back++;
-				backchk = back->cellID;
-			}
-		}
-		
-		if(back2->piece == NULL){
-			back++;
-			backchk2 = back2->cellID;
-		}
-		if(back2->piece != NULL){
-			if(back2->piece->player != p->player){
-				back++;
-				backchk2 = back2->cellID;
-			}
-		}
-		
-		if(back3->piece == NULL){
-			back++;
-			backchk3 = back3->cellID;
-		}
-		if(back3->piece != NULL){
-			if(back3->piece->player != p->player){
-				back++;
-				backchk3 = back3->cellID;
-			}
-		}
-		
-		if(back4->piece == NULL){
-			back++;
-			backchk4 = back4->cellID;
-		}
-		if(back4->piece != NULL){
-			if(back4->piece->player != p->player){
-				back++;
-				backchk4 = back4->cellID;
-			}
-		}
-		
-		/*when the Knight is on the left edge*/
-		if(front->cellID%8 == 7){
-			left = 0;
-		}
-		
-		/*when the Knight is on the right edge*/
-		if(front->cellID%8 == 0){
-			right = 0;
+		else{
+			moves[count] = checkPos;
+			count++;
 		}
 	}
 	
-	/*add all possible moves for Knight*/
-	num = fwd + back;
-	
-	/*if no possible moves, print error and return NULL*/
-	if(num==0){
-		printp(available, p);
-		return NULL;
+	if(currentPos%8 != 7 && currentPos<47){
+		/* if piece is not on last column and less than 47 (+17 move) */
+		checkPos = currentPos+17;
+		cell *next = getCell(checkPos, p->loc->board);
+		if(next->piece != NULL){
+			if(next->piece->player != p->player){
+				moves[count] = checkPos;
+				count++;
+			}
+		}
+		else{
+			moves[count] = checkPos;
+			count++;
+		}
 	}
 	
-	return NULL;
-}
+	if(currentPos%8 != 6 && currentPos%8 != 7 && currentPos > 7){
+		/* if piece is not on last two columns and greater than 7 (-6 move) */
+		checkPos = currentPos-6;
+		cell *next = getCell(checkPos, p->loc->board);
+		if(next->piece != NULL){
+			if(next->piece->player != p->player){
+				moves[count] = checkPos;
+				count++;
+			}
+		}
+		else{
+			moves[count] = checkPos;
+			count++;
+		}
+	}
+	
+	if(currentPos%8 != 0 && currentPos%8 != 1 && currentPos > 9){
+		/*if piece is not on first two columns and greater than 9 (-10 move) */
+		checkPos = currentPos-10;
+		cell *next = getCell(checkPos, p->loc->board);
+		if(next->piece != NULL){
+			if(next->piece->player != p->player){
+				moves[count] = checkPos;
+				count++;
+			}
+		}
+		else{
+			moves[count] = checkPos;
+			count++;
+		}
+	}
+	
+	if(currentPos%8 != 7 && currentPos > 15){
+		/*if piece is not on last columns and greater than 15 (-15 move) */
+		checkPos = currentPos-15;
+		cell *next = getCell(checkPos, p->loc->board);
+		if(next->piece != NULL){
+			if(next->piece->player != p->player){
+				moves[count] = checkPos;
+				count++;
+			}
+		}
+		else{
+			moves[count] = checkPos;
+			count++;
+		}
+	}
+	
+	if(currentPos%8 != 0 && currentPos > 16){
+		/*if piece is not on first two columns and greater than 9 (-17 move) */
+		checkPos = currentPos-17;
+		cell *next = getCell(checkPos, p->loc->board);
+		if(next->piece != NULL){
+			if(next->piece->player != p->player){
+				moves[count] = checkPos;
+				count++;
+			}
+		}
+		else{
+			moves[count] = checkPos;
+			count++;
+		}
+	}
+  int *ans = malloc(sizeof(int)*(count+1));
+  int i=0;
+  while(i <= count)
+  {
+    *ans = moves[i];
+    ans++;
+    i++;
+  }
+  ans -= i;
+  return ans;
+ }
 	
 int *checkKingMoves(piece *p){
 	int count = 0;
