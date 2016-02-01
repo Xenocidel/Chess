@@ -282,8 +282,15 @@ int moveSwitch(piece *piece, int destCell){
 			castle = 3;
 			break;
 	}
-	/* add check for check? */
-	
+	int i;
+	cell *tmp;
+	for (i = 0; i < 63; i++){
+		tmp = getCell(i, piece->loc->board);
+		if (tmp ! = NULL && tmp->piece->type == king){
+			/* todo: checkKingCheck */
+		}
+	}
+	checkKingCheck(
 	if (mp>=0)
 		writeMoveLog(piece->loc->board->turn-1, piece, capture, promo, castle, check); /* turn-1 to log the move that just occurred */
 	return check;
