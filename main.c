@@ -26,6 +26,7 @@
 #include "errors.h"
 #include "defs.h"
 #include "gameDisplay.h"
+#include "ai.h"
 
 int main(){
 	int in_game=0;
@@ -192,10 +193,16 @@ int main(){
 			printe(selection);
 		}
 		
+		int aiTeam1, aiTeam2;
+		if(mode == 2){ /* Inverts input value 0 -> 1, 1 -> 0, other input will cause assertion failure */
+			aiTeam1 = oppTeam(side); /* oppTeam function comes from ai.c. Reads an int, returns an int. */
+		}
+		if(mode == 3){ /* Default for CPU vs CPU */
+			aiTeam1 = 0;
+			aiTeam2 = 1;
+		}
+		
 		while(in_game){ /* if side = 1, player is black */
-			if (mode == 2 || mode == 3){
-				/*set up AI with the correct side*/
-			}
 			if (timer != 0){
 				/* set up timer */
 			}
@@ -203,6 +210,30 @@ int main(){
 			updateGameDisplay(board); /* display the entire board only when its a new turn */
 			while (turnPre == board->turn){
 				updateMessage(board);
+				switch(mode){
+					case 1: /* PvP */ 
+						/* */
+						break;
+					case 2: /* P vs AI */
+						if(board->turn%2 == aiTeam1){ /* AI's turn */
+							aiMove(diff, aiTeam1, board);
+						}
+						else{
+							/* player's turn */
+						}
+						break;
+					case 3: /* AI vs AI*/
+						if(board->turn%2 == 0){ /* White's turn */
+							/* aiTeam1 goes */
+							aiMove(diff, aiTeam1, board);
+						}
+						else{ /* Black's turn */
+							/* aiTeam2 goes */
+							aiMove(diff, aiTeam2, board);
+						}
+						break;
+				}
+				board->turn++; /* Exits loop when turn is finished */
 			}
 		}
 			

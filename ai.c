@@ -28,7 +28,7 @@ void aiMove(int diff, int team, board *board){
 			randomMove(team, board);
 			break; */
 		default:
-			printf("Missing difficulty parameter.\n");
+			printf("Missing difficulty parameter for AI.\n");
 			break;
 	}
 }
@@ -52,6 +52,7 @@ void aiChoice(int team, board *board, int lookAhd){
 }
 
 int oppTeam(int team){ /* Simple inversion function */
+	assert(team == 1 || team == 0); /* Handles invalid input */
 	return (team == 1) ? 0 : 1;
 }
 
