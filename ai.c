@@ -7,12 +7,13 @@
 #include "defs.h"
 #include "board.h"
 #include "piece.h"
+#include "ai.h"
 
-int aiMove(int diff, int team, board *board){
+void aiMove(int diff, int team, board *board){
 	int lookAhead = -1; /* Number of moves AI will account for */
 	switch(diff){
 		case(1): /* Easy, AI accounts for 1 move ahead */
-			lookAhead = 2+rand()%2;
+			lookAhead = 3;
 			aiChoice(team, board, lookAhead);
 			break;
 		case(2): /* Medium, AI accounts for 2 additional moves */
@@ -23,14 +24,13 @@ int aiMove(int diff, int team, board *board){
 			lookAhead = 5;
 			aiChoice(team, board, lookAhead);
 			break;
-		case(4): /* Mainly to quickly test AI moving functionality */
+		/* case(4): Mainly to quickly test AI moving functionality. Unused. 
 			randomMove(team, board);
-			break;
+			break; */
 		default:
 			printf("Missing difficulty parameter.\n");
 			break;
 	}
-	return NULL;
 }
 
 /* AI's move is determined by alpha-beta pruning */
@@ -44,7 +44,7 @@ void aiChoice(int team, board *board, int lookAhd){
 	int *movePointer = 0;
 	moveValue *bestMax = CreateMoveValue(NULL, -5, -10000); /* +/-10,000 act as default max/min bounds */
 	moveValue *bestMin = CreateMoveValue(NULL, -5, 10000);
-	moveValue *bestMove = calcABMax(piecePointer, piecePositions, enemyPositions, bestMax, bestMin, lookAhd, team, board);
+	moveValue *bestMove = calcABmax(piecePointer, movePointer, piecePositions, enemyPositions, bestMax, bestMin, lookAhd, team, board);
 	movePiece(bestMove->piece, getCell(bestMove->next, board));
 	DeleteMoveValue(bestMax);
 	DeleteMoveValue(bestMin);
@@ -57,20 +57,20 @@ int oppTeam(int team){ /* Simple inversion function */
 
 /* Allocates memory for a moveValue struct and assigns parameters as values */
 moveValue *CreateMoveValue(piece *p, int next, int value){ /*Check the syntax to see if malloc is correct*/
-	moveValue *move = malloc(sizeof(moveValue));
- 	move->piece = p;
-	move->next = next;
-	move->value = CalcMoveValue(); 
-	return move;
+	moveValue *m = malloc(sizeof(moveValue));
+ 	m->piece = p;
+	m->next = next;
+	m->value = value; 
+	return m;
 }
 
 /*Frees the memory of a moveValue struct*/
-void DeleteMoveValue(moveValue *move){
-	assert(move);
-	move->piece = NULL;
-	move->next = 0;
-	move->value = 0;
-	free(move);
+void DeleteMoveValue(moveValue *m){
+	assert(m);
+	m->piece = NULL;
+	m->next = 0;
+	m->value = 0;
+	free(m);
 }
 
 /* Compares the value of yoiur move with your previous best options (taking into consideration the opponent's moves as well)*/
@@ -89,7 +89,8 @@ moveValue *calcABmax(int *piecePointer, int *movePointer, int *piecePositions, i
 		int *moveList = checkAIAvailMoves(getCell( *(piecePositions + *piecePointer), board ) -> piece);
 		if(lookAhd == 0){
 			moveValue *newValue = calcMoveValue(team, board, getCell(*(piecePositions+(*piecePointer)),board), *(moveList + *movePointer));
-			*movePointer++;
+			int dummy = *movePointer++; /*Prevents a warning while incrementing the content of the pointer*/
+			dummy++;
 			return newValue;
 		}
 		int i;
@@ -98,7 +99,8 @@ moveValue *calcABmax(int *piecePointer, int *movePointer, int *piecePositions, i
 			currMove = calcABmin(piecePointer, movePointer, piecePositions, enemyPositions, bestMax, bestMin, lookAhd-1, oppTeam(team), board);
 			if (currMove->value >= bestMin->value) {
 				DeleteMoveValue(currMove);
-				*piecePointer++;
+				int dummy = *piecePointer++;
+				dummy++;
 				return bestMin;
 			}
 			if (currMove->value > bestMax->value) {
@@ -126,10 +128,12 @@ moveValue *calcABmin(int *piecePointer, int *movePointer, int *piecePositions, i
 	*/
 	
 	if (*(piecePositions+(*piecePointer)) != -2) {
+		int *moveList = checkAIAvailMoves(getCell( *(piecePositions + *piecePointer), board ) -> piece);
 		if(lookAhd == 0){
 			moveValue *newValue = calcMoveValue(team, board, getCell(*(piecePositions+(*piecePointer)),board), *(moveList + *movePointer));
 			newValue->value *= -1;
-			*movePointer++;
+			int dummy = *movePointer++;
+			dummy++;
 			return newValue;
 		}
 		int i;
@@ -138,7 +142,8 @@ moveValue *calcABmin(int *piecePointer, int *movePointer, int *piecePositions, i
 			currMove = calcABmax(piecePointer, movePointer, piecePositions, enemyPositions, bestMax, bestMin, lookAhd-1, oppTeam(team), board);
 			if (currMove->value <= bestMax->value){
 				DeleteMoveValue(currMove);
-				*piecePointer++;
+				int dummy = *piecePointer++;
+				dummy++;
 				return bestMax;
 			}
 			if (currMove->value < bestMin->value){ /*Replaces the BestMinimum with the newest calculated move (if the move is better)*/
@@ -178,18 +183,16 @@ moveValue *calcMoveValue(int team, board *board, cell *moveLoc, int nextCellLoc)
 			case bishop:
 				value += 20;
 				break;
-			default; /* Error */
+			default: /* Error */
 				value += 0;
 				break;
 		}
 	}
-	/* Will hold distance next move is left(-) or rigtht(+) from current position */
-	int leftrightComp = (nextCellLoc-(nextCellLoc-(nextCellLoc%8)))-(moveLoc->cellID-(moveLoc->cellID-(moveLoc->cellID%8)));
-	int distFromLeft = nextCellLoc % 8; /* Holds distance from leftmost row*/
+	int leftrightComp = nextCellLoc % 8 - moveLoc->cellID % 8; /* Will hold distance next move is left(-) or rigtht(+) from current position */
 	int distFromBotRow = nextCellLoc / 8; /*Holds distance of next move from bottom row*/
-	int updownComp = nextCellLoc / 8 - moveLoc->cellID/ 8; /*Holds positive/negative distance of the move*/
+	int updownComp = distFromBotRow - moveLoc->cellID/ 8; /*Holds positive/negative distance of the move*/
 	int rng = -1; /* Make AI slightly less predictable */
-	switch(moveLoc->piece){ /* Points for forward movement */
+	switch(moveLoc->piece->type){ /* Points for forward movement */
 		case pawn: /* Pawn moves forward normally */
 			value += 10;
 			if(moveLoc->piece->hasMoved == false){ /* First turn move priority */
@@ -197,10 +200,10 @@ moveValue *calcMoveValue(int team, board *board, cell *moveLoc, int nextCellLoc)
 			}
 			break;
 		case knight:
-			if((leftrightComp < 0 && nextCell%8 >= 4) || (leftrightComp > 0 && nextCell % 8  < 4 )){ /* If move would bring piece left/right toward center */
+			if((leftrightComp < 0 && nextCellLoc % 8 >= 4) || (leftrightComp > 0 && nextCellLoc % 8  < 4 )){ /* If move would bring piece left/right toward center */
 				value += 5;
 			}
-			if ( (distFromBotRow <= 3 && updownComp > 0) || (distFromBotRow >= 4 && upDownComp < 0) ) { /* Forward movement */
+			if ( (distFromBotRow <= 3 && updownComp > 0) || (distFromBotRow >= 4 && updownComp < 0) ) { /* Forward movement */
 				value += 5;	
 			}
 			if(moveLoc->piece->hasMoved == false){
@@ -213,28 +216,28 @@ moveValue *calcMoveValue(int team, board *board, cell *moveLoc, int nextCellLoc)
 			}
 			break;
 		case king:
-			if((leftrightComp < 0 && nextCell%8 >= 4) || (leftrightComp > 0 && nextCell % 8  < 4 )){ /* If move would bring piece left/right toward center */
+			if((leftrightComp < 0 && nextCellLoc%8 >= 4) || (leftrightComp > 0 && nextCellLoc % 8  < 4 )){ /* If move would bring piece left/right toward center */
 				value -= 1;
 			}
-			if ( (distFromBotRow <= 3 && updownComp > 0) || (distFromBotRow >= 4 && upDownComp < 0) ) { 
+			if ( (distFromBotRow <= 3 && updownComp > 0) || (distFromBotRow >= 4 && updownComp < 0) ) { 
 				value += 1;	
 			}
 			break;
 		case queen:
-			if((leftrightComp < 0 && nextCell%8 >= 4) || (leftrightComp > 0 && nextCell % 8  < 4 )){ /* If move would bring piece left/right toward center */
+			if((leftrightComp < 0 && nextCellLoc%8 >= 4) || (leftrightComp > 0 && nextCellLoc % 8  < 4 )){ /* If move would bring piece left/right toward center */
 				value += 10;
 			}
-			if ( (distFromBotRow <= 3 && updownComp > 0) || (distFromBotRow >= 4 && upDownComp < 0) ) { 
+			if ( (distFromBotRow <= 3 && updownComp > 0) || (distFromBotRow >= 4 && updownComp < 0) ) { 
 				value += 10;	
 			}
 			break;
 		case rook:
-			if ( (distFromBotRow <= 3 && updownComp > 0) || (distFromBotRow >= 4 && upDownComp < 0) ) { /* If move would bring piece toward opponent's side */
+			if ( (distFromBotRow <= 3 && updownComp > 0) || (distFromBotRow >= 4 && updownComp < 0) ) { /* If move would bring piece toward opponent's side */
 				value += 3;	
 			}
 			break;
 		case bishop:
-			if((leftrightComp < 0 && nextCell%8 < 4) || (leftrightComp > 0 && nextCell % 8 >= 4 )){ /* If move would bring piece left/right toward center */
+			if((leftrightComp < 0 && nextCellLoc %8 < 4) || (leftrightComp > 0 && nextCellLoc % 8 >= 4 )){ /* If move would bring piece left/right toward center */
 				value += 5;
 			}
 			if (updownComp > 0 && moveLoc->piece->player == white) { /* Movement vertically away from AI's side */
@@ -252,14 +255,14 @@ moveValue *calcMoveValue(int team, board *board, cell *moveLoc, int nextCellLoc)
 	return calcValue;
 }
 
-/* Basic move decision to quickly see if movement functions at a base level */
-void randomMove(int team, board *board){
-	int *aiTeamPos = checkPiecePos(team, board); /* Reads team locations */
+/* Basic move decision to quickly see if movement functions at a base level. Noted out and unused. */
+/* void randomMove(int team, board *board){
+	int *aiTeamPos = checkPiecePos(team, board); Reads team locations 
 	int opTeam = (team == 1) ? 0 : 1;
-	int *opTeamPos = checkPiecePos(opTeam, board); /* Reads enemy locations */
+	int *opTeamPos = checkPiecePos(opTeam, board); Reads enemy locations 
 	
-	/* Check moves cell by cell. Currently unused, saving just in case. */
-	/* int entry = 0;
+	 Check moves cell by cell. Currently unused, saving just in case. 
+	int entry = 0;
 	while(aiTeamPos){
 		cell *read = getCell(*(aiTeamPos+entry), board)
 		int *aiList = checkAvailMoves(read->piece);
@@ -267,12 +270,12 @@ void randomMove(int team, board *board){
 			break;
 		}
 		entry++;
-	} */
+	} 
 	
 	srand(time(NULL));
 	int *pieceMoves;
 	cell *moveCell;
-	while(1){ /* Selects a random piece to move, and gets corresponding available moves */
+	while(1){  Selects a random piece to move, and gets corresponding available moves 
 		int rNum = rand()%17;
 		cell *rCell = getCell(*(aiTeamPos+rNum), board);
 		if(*(aiTeamPos+rNum) != -2){
@@ -282,22 +285,21 @@ void randomMove(int team, board *board){
 		}
 	}
 	int count = 0;
-	while(1){ /* Count number of available moves */
+	while(1){  Count number of available moves 
 		if(*(pieceMoves+count) == -2){
 			break;
 		}
 		count++;
 	}
 	int selNum = rand()%count;
-	int move = *(pieceMoves+selNum);
-	cell *nextCell = getCell(move, board);
+	int m = *(pieceMoves+selNum);
+	cell *nextCell = getCell(m, board);
 	replacePiece(nextCell, moveCell->piece);
 	
-	/* Freeing memory */
-	/* deletecell read, free aiList and pieceMoves */
+	 Freeing memory
 	free(aiTeamPos); free(opTeamPos);
 	deleteCell(nextCell);
-}
+} */
 
 /* Counts number of moves a piece can make */
 int pieceMoveCount(piece *p){
@@ -309,8 +311,9 @@ int pieceMoveCount(piece *p){
 			return moveCount;
 		}
 		moveCount++;
-		*(moveList++);
+		moveList++;
 	}
+	return moveCount;
 }
 
 /* Counts number of moves a player can make */
@@ -324,8 +327,7 @@ int totalMoveCount(int team, board *board){
 			break;
 		}
 		pieceCount++;
-		*(pieceList++);
-	
+		pieceList++;
 	}
 	int i;
 	for (i = 0; i < pieceCount; i++) { /* For loop goes through all of the pieces for one player on his/her 
