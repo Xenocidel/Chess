@@ -2220,20 +2220,17 @@ int checkKingCheck(int k, piece *p){/* returns 0 if the move is legal and return
 	int *s;
 	for (x = 0; x < 64; x++){
 		temp = getCell(x, p->loc->board);
-<<<<<<< HEAD
 		if (temp->piece && temp->piece->type != king && temp->piece->player != p->player){
 			s = checkAvailMoves(temp->piece);
 			if (s != NULL){
-=======
-		if (temp->piece){
-			if (p->player != temp->piece->player && temp->piece->player!==p){
-				s = checkAvailMoves(temp->piece);
->>>>>>> origin/master
-				while (*s != -2){
-					if (*s == k){
-						return 1;
+				if (p->player != temp->piece->player && temp->piece->player!==p){
+					s = checkAvailMoves(temp->piece);
+					while (*s != -2){
+						if (*s == k){
+							return 1;
+						}
+					s++;
 					}
-				s++;
 				}
 			}
 		}
