@@ -164,13 +164,14 @@ void handleInput(board *board){
 		/* stalemate if all pieces have no available moves */
 		if (checkCode){
 			int x, y=1;
+			int *avail;
 			cell *tmp2;
 			while(y){
 				checkCode = 3; /* stalemate */
 				for (x=0; x<64; x++){
 					tmp2 = getCell(x, board);
 					if (tmp2->piece != NULL){
-						int *avail = checkAvailMoves(tmp2->piece);
+						avail = checkAvailMoves(tmp2->piece);
 						if (avail != NULL && *avail == -2){
 							y=0;
 							checkCode = 1; /* standard check */
@@ -692,10 +693,11 @@ void loadGame(char *fname, board *board){
 				/* if all pieces have no available moves, stalemate */
 				int x;
 				cell *tmp2;
+				int *avail;
 				for (x=0; x<64; x++){
 					tmp2 = getCell(x, board);
 					if (tmp2->piece != NULL){
-						int *avail = checkAvailMoves(tmp2->piece);
+						avail = checkAvailMoves(tmp2->piece);
 						if (!(avail == NULL || (avail != NULL && *avail == -2))){
 							break;
 						}
