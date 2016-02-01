@@ -510,6 +510,7 @@ int *checkKnightMoves(piece *p){ /* calculate knight piece's movement */
 	
 int *checkKingMoves(piece *p){
 	int count = 0;
+	int u;
 	int q[8] = { '0', '0', '0', '0', '0', '0', '0', '0' };
 	/*Works when the king is on position "0"*/
 	if (p->loc->cellID == 0){
@@ -519,40 +520,62 @@ int *checkKingMoves(piece *p){
 		if (temp->piece){
 			/*makes sure that that piece is not of the same color*/
 			if (temp->piece->player != p->player){
-				/*enables the move*/
-				q[count] = 1;
-				count++;
-
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(1, p);
+				if (u == 0){
+					/*enables the move*/
+					q[count] = 1;
+					count++;
+				}
 			}
 		}
 		/*enables the move if there is no piece on that cell*/
 		else{
-			q[count] = 1;
-			count++;
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(1, p);
+			if (u == 0){
+				q[count] = 1;
+				count++;
+			}
 		}
 		/*repeates the process for the other possible moves of the king*/
 		temp = getCell(8, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(8, p);
+				if (u == 0){
+					q[count] = 8;
+					count++;
+				}
+			}
+		}
+		else{
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(8, p);
+			if (u == 0){
 				q[count] = 8;
 				count++;
 			}
 		}
-		else{
-			q[count] = 8;
-			count++;
-		}
 		temp = getCell(9, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
-				q[count] = 9;
-				count++;
-				/*insert how to display the next move*/
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(9, p);
+				if (u == 0){
+					q[count] = 9;
+					count++;
+				}
 			}
 		}
 		else{
-			q[count] = 9;
-			count++;
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(9, p);
+			if (u == 0){
+				q[count] = 9;
+				count++;
+			}
 		}
 	}
 	/*Works when the king is in position "7"*/
@@ -563,38 +586,62 @@ int *checkKingMoves(piece *p){
 		if (temp->piece){
 			/*makes sure that that piece is not of the same color*/
 			if (temp->piece->player != p->player){
-				/*enables the move*/
-				q[count] = 6;
-				count++;
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(6, p);
+				if (u == 0){
+					/*enables the move*/
+					q[count] = 6;
+					count++;
+				}
 			}
 		}
 		/*enables the move if there is no piece on that cell*/
 		else{
-			q[count] = 6;
-			count++;
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(6, p);
+			if (u == 0){
+				q[count] = 6;
+				count++;
+			}
 		}
 		/*repeates the process for the other possible moves of the king*/
 		temp = getCell(14, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(14, p);
+				if (u == 0){
+					q[count] = 14;
+					count++;
+				}
+			}
+		}
+		else{
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(14, p);
+			if (u == 0){
 				q[count] = 14;
 				count++;
 			}
 		}
-		else{
-			q[count] = 14;
-			count++;
-		}
 		temp = getCell(15, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
-				q[count] = 15;
-				count++;
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(15, p);
+				if (u == 0){
+					q[count] = 15;
+					count++;
+				}
 			}
 		}
 		else{
-			q[count] = 15;
-			count++;
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(15, p);
+			if (u == 0){
+				q[count] = 15;
+				count++;
+			}
 		}
 	}
 	/*Works when the king is in position "56"*/
@@ -605,38 +652,62 @@ int *checkKingMoves(piece *p){
 		if (temp->piece){
 			/*makes sure that that piece is not of the same color*/
 			if (temp->piece->player != p->player){
-				/*enables the move*/
-				q[count] = 48;
-				count++;
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(48, p);
+				if (u == 0){
+					/*enables the move*/
+					q[count] = 48;
+					count++;
+				}
 			}
 		}
 		/*enables the move if there is no piece on that cell*/
 		else{
-			q[count] = 48;
-			count++;
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(48, p);
+			if (u == 0){
+				q[count] = 48;
+				count++;
+			}
 		}
 		/*repeates the process for the other possible moves of the king*/
 		temp = getCell(49, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(49, p);
+				if (u == 0){
+					q[count] = 49;
+					count++;
+				}
+			}
+		}
+		else{
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(49, p);
+			if (u == 0){
 				q[count] = 49;
 				count++;
 			}
 		}
-		else{
-			q[count] = 49;
-			count++;
-		}
 		temp = getCell(57, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
-				q[count] = 57;
-				count++;
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(57, p);
+				if (u == 0){
+					q[count] = 57;
+					count++;
+				}
 			}
 		}
 		else{
-			q[count] = 57;
-			count++;
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(57, p);
+			if (u == 0){
+				q[count] = 57;
+				count++;
+			}
 		}
 
 	}
@@ -648,38 +719,62 @@ int *checkKingMoves(piece *p){
 		if (temp->piece){
 			/*makes sure that that piece is not of the same color*/
 			if (temp->piece->player != p->player){
-				/*enables the move*/
-				q[count] = 54;
-				count++;
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(54, p);
+				if (u == 0){
+					/*enables the move*/
+					q[count] = 54;
+					count++;
+				}
 			}
 		}
 		/*enables the move if there is no piece on that cell*/
 		else{
-			q[count] = 54;
-			count++;
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(54, p);
+			if (u == 0){
+				q[count] = 54;
+				count++;
+			}
 		}
 		/*repeates the process for the other possible moves of the king*/
 		temp = getCell(8, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(55, p);
+				if (u == 0){
+					q[count] = 55;
+					count++;
+				}
+			}
+		}
+		else{
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(55, p);
+			if (u == 0){
 				q[count] = 55;
 				count++;
 			}
 		}
-		else{
-			q[count] = 55;
-			count++;
-		}
 		temp = getCell(9, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
-				q[count] = 62;
-				count++;
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(62, p);
+				if (u == 0){
+					q[count] = 62;
+					count++;
+				}
 			}
 		}
 		else{
-			q[count] = 62;
-			count++;
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(62, p);
+			if (u == 0){
+				q[count] = 62;
+				count++;
+			}
 		}
 	}
 	/*Works when the king is on the left most column of the board*/
@@ -690,60 +785,100 @@ int *checkKingMoves(piece *p){
 		if (temp->piece){
 			/*makes sure that that piece is not of the same color*/
 			if (temp->piece->player != p->player){
-				/*enables the move*/
-				q[count] = p->loc->cellID + 1;
-				count++;
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(p->loc->cellID + 1, p);
+				if (u == 0){
+					/*enables the move*/
+					q[count] = p->loc->cellID + 1;
+					count++;
+				}
 			}
 		}
 		/*enables the move if there is no piece on that cell*/
 		else{
-			q[count] = p->loc->cellID + 1;
-			count++;
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(p->loc->cellID + 1, p);
+			if (u == 0){
+				q[count] = p->loc->cellID + 1;
+				count++;
+			}
 		}
 		/*repeates the process for the other possible moves of the king*/
 		temp = getCell(p->loc->cellID + 8, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(p->loc->cellID + 8, p);
+				if (u == 0){
+					q[count] = p->loc->cellID + 8;
+					count++;
+				}
+			}
+		}
+		else{
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(p->loc->cellID + 8, p);
+			if (u == 0){
 				q[count] = p->loc->cellID + 8;
 				count++;
 			}
 		}
-		else{
-			q[count] = p->loc->cellID + 8;
-			count++;
-		}
 		temp = getCell(p->loc->cellID + 9, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(p->loc->cellID + 9, p);
+				if (u == 0){
+					q[count] = p->loc->cellID + 9;
+					count++;
+				}
+			}
+		}
+		else{
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(p->loc->cellID + 9, p);
+			if (u == 0){
 				q[count] = p->loc->cellID + 9;
 				count++;
 			}
 		}
-		else{
-			q[count] = p->loc->cellID + 9;
-			count++;
-		}
 		temp = getCell(p->loc->cellID - 8, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(p->loc->cellID -8, p);
+				if (u == 0){
+					q[count] = p->loc->cellID - 8;
+					count++;
+				}
+			}
+		}
+		else{
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(p->loc->cellID -8, p);
+			if (u == 0){
 				q[count] = p->loc->cellID - 8;
 				count++;
 			}
 		}
-		else{
-			q[count] = p->loc->cellID - 8;
-			count++;
-		}
 		temp = getCell(p->loc->cellID - 7, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
-				q[count] = p->loc->cellID - 7;
-				count++;
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(p->loc->cellID -7, p);
+				if (u == 0){
+					q[count] = p->loc->cellID - 7;
+					count++;
+				}
 			}
 		}
 		else{
-			q[count] = p->loc->cellID - 7;
-			count++;
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(p->loc->cellID -7, p);
+			if (u == 0){
+				q[count] = p->loc->cellID - 7;
+				count++;
+			}
 		}
 	}
 	/*Works when the king is in the right most column of the board*/
@@ -754,60 +889,100 @@ int *checkKingMoves(piece *p){
 		if (temp->piece){
 			/*makes sure that that piece is not of the same color*/
 			if (temp->piece->player != p->player){
-				/*enables the move*/
-				q[count] = p->loc->cellID - 1;
-				count++;
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(p->loc->cellID - 1, p);
+				if (u == 0){
+					/*enables the move*/
+					q[count] = p->loc->cellID - 1;
+					count++;
+				}
 			}
 		}
 		/*enables the move if there is no piece on that cell*/
 		else{
-			q[count] = p->loc->cellID - 1;
-			count++;
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(p->loc->cellID - 1, p);
+			if (u == 0){
+				q[count] = p->loc->cellID - 1;
+				count++;
+			}
 		}
 		/*repeates the process for the other possible moves of the king*/
 		temp = getCell(p->loc->cellID + 8, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(p->loc->cellID + 8, p);
+				if (u == 0){
+					q[count] = p->loc->cellID + 8;
+					count++;
+				}
+			}
+		}
+		else{
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(p->loc->cellID + 8, p);
+			if (u == 0){
 				q[count] = p->loc->cellID + 8;
 				count++;
 			}
 		}
-		else{
-			q[count] = p->loc->cellID + 8;
-			count++;
-		}
 		temp = getCell(p->loc->cellID + 7, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(p->loc->cellID + 7, p);
+				if (u == 0){
+					q[count] = p->loc->cellID + 7;
+					count++;
+				}
+			}
+		}
+		else{
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(p->loc->cellID + 7, p);
+			if (u == 0){
 				q[count] = p->loc->cellID + 7;
 				count++;
 			}
 		}
-		else{
-			q[count] = p->loc->cellID + 7;
-			count++;
-		}
 		temp = getCell(p->loc->cellID - 8, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(p->loc->cellID -8, p);
+				if (u == 0){
+					q[count] = p->loc->cellID - 8;
+					count++;
+				}
+			}
+		}
+		else{
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(p->loc->cellID -8, p);
+			if (u == 0){
 				q[count] = p->loc->cellID - 8;
 				count++;
 			}
 		}
-		else{
-			q[count] = p->loc->cellID - 8;
-			count++;
-		}
 		temp = getCell(p->loc->cellID - 9, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
-				q[count] = p->loc->cellID - 9;
-				count++;
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(p->loc->cellID -9, p);
+				if (u == 0){
+					q[count] = p->loc->cellID - 9;
+					count++;
+				}
 			}
 		}
 		else{
-			q[count] = p->loc->cellID - 9;
-			count++;
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(p->loc->cellID -9, p);
+			if (u == 0){
+				q[count] = p->loc->cellID - 9;
+				count++;
+			}
 		}
 	}
 	/*Works when the king is on the white starting row*/
@@ -818,31 +993,43 @@ int *checkKingMoves(piece *p){
 		if (temp->piece){
 			/*makes sure that that piece is not of the same color*/
 			if (temp->piece->player != p->player){
-				/*enables the move*/
-				q[count] = p->loc->cellID - 1;
-				count++;
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(p->loc->cellID - 1, p);
+				if (u == 0){
+					/*enables the move*/
+					q[count] = p->loc->cellID - 1;
+					count++;
+				}
 			}
 		}
 		/*enables the move if there is no piece on that cell*/
 		else{
-			q[count] = p->loc->cellID - 1;
-			count++;
-			/*Start of checking for castling on white left side*/
-			if (p->hasMoved == 0){
-				temp = getCell(p->loc->cellID - 2, p->loc->board);
-				/*checks to see if there is a piece two spaces to the left of the king*/
-				if (temp->piece == 0){
-					temp = getCell(p->loc->cellID - 3, p->loc->board);
-					/*checks to see if there is a piece three spaces to the left of the king*/
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(p->loc->cellID - 1, p);
+			if (u == 0){
+				q[count] = p->loc->cellID - 1;
+				count++;
+				/*Start of checking for castling on white left side*/
+				if (p->hasMoved == 0){
+					temp = getCell(p->loc->cellID - 2, p->loc->board);
+					/*checks to see if there is a piece two spaces to the left of the king*/
 					if (temp->piece == 0){
-						temp = getCell(p->loc->cellID - 4, p->loc->board);
-						/*checks to see if there is a piece 4 spaces to the left of the king*/
-						if (temp->piece){
-							/*checks to see if that piece is a rook and has not moved*/
-							if (temp->piece->hasMoved == 0){
-								/*allows the castling*/
-								q[count] = p->loc->cellID - 2;
-								count++;
+						temp = getCell(p->loc->cellID - 3, p->loc->board);
+						/*checks to see if there is a piece three spaces to the left of the king*/
+						if (temp->piece == 0){
+							temp = getCell(p->loc->cellID - 4, p->loc->board);
+							/*checks to see if there is a piece 4 spaces to the left of the king*/
+							if (temp->piece){
+								/*checks to see if that piece is a rook and has not moved*/
+								if (temp->piece->hasMoved == 0){
+									/*checks to see if the move would cause the king to be in check*/
+									u = checkKingCheck(p->loc->cellID - 2, p);
+									if (u == 0){
+										/*allows the castling*/
+										q[count] = p->loc->cellID - 2;
+										count++;
+									}
+								}
 							}
 						}
 					}
@@ -853,19 +1040,31 @@ int *checkKingMoves(piece *p){
 		temp = getCell(p->loc->cellID + 8, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(p->loc->cellID + 8, p);
+				if (u == 0){
+					q[count] = p->loc->cellID + 8;
+					count++;
+				}
+			}
+		}
+		else{
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(p->loc->cellID + 8, p);
+			if (u == 0){
 				q[count] = p->loc->cellID + 8;
 				count++;
 			}
 		}
-		else{
-			q[count] = p->loc->cellID + 8;
-			count++;
-		}
 		temp = getCell(p->loc->cellID + 7, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
-				q[count] = p->loc->cellID + 7;
-				count++;
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(p->loc->cellID + 7, p);
+				if (u == 0){
+					q[count] = p->loc->cellID + 7;
+					count++;
+				}
 			}
 		}
 		else{
@@ -875,26 +1074,38 @@ int *checkKingMoves(piece *p){
 		temp = getCell(p->loc->cellID + 1, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
-				q[count] = p->loc->cellID + 1;
-				count++;
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(p->loc->cellID + 1, p);
+				if (u == 0){
+					q[count] = p->loc->cellID + 1;
+					count++;
+				}
 			}
 		}
 		else{
-			q[count] = p->loc->cellID + 1;
-			count++;
-			/*Start of checking for castling on white right side*/
-			if (p->hasMoved == 0){
-				temp = getCell(p->loc->cellID + 2, p->loc->board);
-				/*checks to see if there is a piece 2 spaces to the right of the king*/
-				if (temp->piece == 0){
-					temp = getCell(p->loc->cellID + 3, p->loc->board);
-					/*checks to see if there is a piece 3 spaces to the right of the king*/
-					if (temp->piece){
-						/*checks to see if that piece is a rook and has not moved*/
-						if (temp->piece->hasMoved == 0){
-							/*allows the castling*/
-							q[count] = p->loc->cellID + 2;
-							count++;
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(p->loc->cellID + 1, p);
+			if (u == 0){
+				q[count] = p->loc->cellID + 1;
+				count++;
+				/*Start of checking for castling on white right side*/
+				if (p->hasMoved == 0){
+					temp = getCell(p->loc->cellID + 2, p->loc->board);
+					/*checks to see if there is a piece 2 spaces to the right of the king*/
+					if (temp->piece == 0){
+						temp = getCell(p->loc->cellID + 3, p->loc->board);
+						/*checks to see if there is a piece 3 spaces to the right of the king*/
+						if (temp->piece){
+							/*checks to see if that piece is a rook and has not moved*/
+							if (temp->piece->hasMoved == 0){
+								/*checks to see if the move would cause the king to be in check*/
+								u = checkKingCheck(p->loc->cellID + 2, p);
+								if (u == 0){
+									/*allows the castling*/
+									q[count] = p->loc->cellID + 2;
+									count++;
+								}
+							}
 						}
 					}
 				}
@@ -903,13 +1114,21 @@ int *checkKingMoves(piece *p){
 		temp = getCell(p->loc->cellID + 9, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
-				q[count] = p->loc->cellID + 9;
-				count++;
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(p->loc->cellID + 9, p);
+				if (u == 0){
+					q[count] = p->loc->cellID + 9;
+					count++;
+				}
 			}
 		}
 		else{
-			q[count] = p->loc->cellID + 9;
-			count++;
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(p->loc->cellID + 9, p);
+			if (u == 0){
+				q[count] = p->loc->cellID + 9;
+				count++;
+			}
 		}
 	}
 	/*This occurs when the king is in the black starting row*/
@@ -920,31 +1139,43 @@ int *checkKingMoves(piece *p){
 		if (temp->piece){
 			/*makes sure that that piece is not of the same color*/
 			if (temp->piece->player != p->player){
-				/*enables the move*/
-				q[count] = p->loc->cellID - 1;
-				count++;
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(p->loc->cellID - 1, p);
+				if (u == 0){
+					/*enables the move*/
+					q[count] = p->loc->cellID - 1;
+					count++;
+				}
 			}
 		}
 		/*enables the move if there is no piece on that cell*/
 		else{
-			q[count] = p->loc->cellID - 1;
-			count++;
-			/*Start of checking for castling on black right side*/
-			if (p->hasMoved == 0){
-				temp = getCell(p->loc->cellID - 2, p->loc->board);
-				/*checks to see if there is a piece two spaces to the right of the king*/
-				if (temp->piece == 0){
-					temp = getCell(p->loc->cellID - 3, p->loc->board);
-					/*checks to see if there is a piece three spaces to the right of the king*/
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(p->loc->cellID - 1, p);
+			if (u == 0){
+				q[count] = p->loc->cellID - 1;
+				count++;
+				/*Start of checking for castling on black right side*/
+				if (p->hasMoved == 0){
+					temp = getCell(p->loc->cellID - 2, p->loc->board);
+					/*checks to see if there is a piece two spaces to the right of the king*/
 					if (temp->piece == 0){
-						temp = getCell(p->loc->cellID - 4, p->loc->board);
-						/*checks to see if there is a piece 4 spaces to the right of the king*/
-						if (temp->piece){
-							/*checks to see if that piece is a rook and has not moved*/
-							if (temp->piece->hasMoved == 0){
-								/*allows the castling*/
-								q[count] = p->loc->cellID - 2;
-								count++;
+						temp = getCell(p->loc->cellID - 3, p->loc->board);
+						/*checks to see if there is a piece three spaces to the right of the king*/
+						if (temp->piece == 0){
+							temp = getCell(p->loc->cellID - 4, p->loc->board);
+							/*checks to see if there is a piece 4 spaces to the right of the king*/
+							if (temp->piece){
+								/*checks to see if that piece is a rook and has not moved*/
+								if (temp->piece->hasMoved == 0){
+									/*checks to see if the move would cause the king to be in check*/
+									u = checkKingCheck(p->loc->cellID -2, p);
+									if (u == 0){
+										/*allows the castling*/
+										q[count] = p->loc->cellID - 2;
+										count++;
+									}
+								}
 							}
 						}
 					}
@@ -955,48 +1186,76 @@ int *checkKingMoves(piece *p){
 		temp = getCell(p->loc->cellID - 8, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(p->loc->cellID - 8, p);
+				if (u == 0){
+					q[count] = p->loc->cellID - 8;
+					count++;
+				}
+			}
+		}
+		else{
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(p->loc->cellID - 8, p);
+			if (u == 0){
 				q[count] = p->loc->cellID - 8;
 				count++;
 			}
 		}
-		else{
-			q[count] = p->loc->cellID - 8;
-			count++;
-		}
 		temp = getCell(p->loc->cellID - 7, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(p->loc->cellID -7, p);
+				if (u == 0){
+					q[count] = p->loc->cellID - 7;
+					count++;
+				}
+			}
+		}
+		else{
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(p->loc->cellID -7, p);
+			if (u == 0){
 				q[count] = p->loc->cellID - 7;
 				count++;
 			}
 		}
-		else{
-			q[count] = p->loc->cellID - 7;
-			count++;
-		}
 		temp = getCell(p->loc->cellID + 1, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
-				q[count] = p->loc->cellID + 1;
-				count++;
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(p->loc->cellID + 1, p);
+				if (u == 0){
+					q[count] = p->loc->cellID + 1;
+					count++;
+				}
 			}
 		}
 		else{
-			q[count] = p->loc->cellID + 1;
-			count++;
-			/*Start of checking for castling on black left side*/
-			if (p->hasMoved == 0){
-				temp = getCell(p->loc->cellID + 2, p->loc->board);
-				/*checks to see if there is a piece 2 spaces to the left of the king*/
-				if (temp->piece == 0){
-					temp = getCell(p->loc->cellID + 3, p->loc->board);
-					/*checks to see if there is a piece 3 spaces to the left of the king*/
-					if (temp->piece){
-						/*checks to see if that piece is a rook and has not moved*/
-						if (temp->piece->hasMoved == 0){
-							/*allows the castling*/
-							q[count] = p->loc->cellID + 2;
-							count++;
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(p->loc->cellID + 1, p);
+			if (u == 0){
+				q[count] = p->loc->cellID + 1;
+				count++;
+				/*Start of checking for castling on black left side*/
+				if (p->hasMoved == 0){
+					temp = getCell(p->loc->cellID + 2, p->loc->board);
+					/*checks to see if there is a piece 2 spaces to the left of the king*/
+					if (temp->piece == 0){
+						temp = getCell(p->loc->cellID + 3, p->loc->board);
+						/*checks to see if there is a piece 3 spaces to the left of the king*/
+						if (temp->piece){
+							/*checks to see if that piece is a rook and has not moved*/
+							if (temp->piece->hasMoved == 0){
+								/*checks to see if the move would cause the king to be in check*/
+								u = checkKingCheck(p->loc->cellID + 2, p);
+								if (u == 0){
+									/*allows the castling*/
+									q[count] = p->loc->cellID + 2;
+									count++;
+								}
+							}
 						}
 					}
 				}
@@ -1005,13 +1264,21 @@ int *checkKingMoves(piece *p){
 		temp = getCell(p->loc->cellID - 9, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
-				q[count] = p->loc->cellID - 9;
-				count++;
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(p->loc->cellID -9, p);
+				if (u == 0){
+					q[count] = p->loc->cellID - 9;
+					count++;
+				}
 			}
 		}
 		else{
-			q[count] = p->loc->cellID - 9;
-			count++;
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(p->loc->cellID -9, p);
+			if (u == 0){
+				q[count] = p->loc->cellID - 9;
+				count++;
+			}
 		}
 	}
 	else{
@@ -1021,93 +1288,157 @@ int *checkKingMoves(piece *p){
 		if (temp->piece){
 			/*makes sure that that piece is not of the same color*/
 			if (temp->piece->player != p->player){
-				/*enables the move*/
-				q[count] = p->loc->cellID - 1;
-				count++;
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(p->loc->cellID - 1, p);
+				if (u == 0){
+					/*enables the move*/
+					q[count] = p->loc->cellID - 1;
+					count++;
+				}
 			}
 		}
 		/*enables the move if there is no piece on that cell*/
 		else{
-			q[count] = p->loc->cellID - 1;
-			count++;
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(p->loc->cellID - 1, p);
+			if (u == 0){
+				q[count] = p->loc->cellID - 1;
+				count++;
+			}
 		}
 		/*repeates the process for the other possible moves of the king*/
 		temp = getCell(p->loc->cellID - 8, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(p->loc->cellID -8, p);
+				if (u == 0){
+					q[count] = p->loc->cellID - 8;
+					count++;
+				}
+			}
+		}
+		else{
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(p->loc->cellID -8, p);
+			if (u == 0){
 				q[count] = p->loc->cellID - 8;
 				count++;
 			}
 		}
-		else{
-			q[count] = p->loc->cellID - 8;
-			count++;
-		}
 		temp = getCell(p->loc->cellID - 7, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(p->loc->cellID -7, p);
+				if (u == 0){
+					q[count] = p->loc->cellID - 7;
+					count++;
+				}
+			}
+		}
+		else{
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(p->loc->cellID -7, p);
+			if (u == 0){
 				q[count] = p->loc->cellID - 7;
 				count++;
 			}
 		}
-		else{
-			q[count] = p->loc->cellID - 7;
-			count++;
-		}
 		temp = getCell(p->loc->cellID + 1, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(p->loc->cellID + 1, p);
+				if (u == 0){
+					q[count] = p->loc->cellID + 1;
+					count++;
+				}
+			}
+		}
+		else{
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(p->loc->cellID + 1, p);
+			if (u == 0){
 				q[count] = p->loc->cellID + 1;
 				count++;
 			}
 		}
-		else{
-			q[count] = p->loc->cellID + 1;
-			count++;
-		}
 		temp = getCell(p->loc->cellID - 9, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(p->loc->cellID -9, p);
+				if (u == 0){
+					q[count] = p->loc->cellID - 9;
+					count++;
+				}
+			}
+		}
+		else{
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(p->loc->cellID -9, p);
+			if (u == 0){
 				q[count] = p->loc->cellID - 9;
 				count++;
 			}
 		}
-		else{
-			q[count] = p->loc->cellID - 9;
-			count++;
-		}
 		temp = getCell(p->loc->cellID + 7, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(p->loc->cellID + 7, p);
+				if (u == 0){
+					q[count] = p->loc->cellID + 7;
+					count++;
+				}
+			}
+		}
+		else{
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(p->loc->cellID + 7, p);
+			if (u == 0){
 				q[count] = p->loc->cellID + 7;
 				count++;
 			}
 		}
-		else{
-			q[count] = p->loc->cellID + 7;
-			count++;
-		}
 		temp = getCell(p->loc->cellID + 9, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(p->loc->cellID + 9, p);
+				if (u == 0){
+					q[count] = p->loc->cellID + 9;
+					count++;
+				}
+			}
+		}
+		else{
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(p->loc->cellID + 9, p);
+			if (u == 0){
 				q[count] = p->loc->cellID + 9;
 				count++;
 			}
 		}
-		else{
-			q[count] = p->loc->cellID + 9;
-			count++;
-		}
 		temp = getCell(p->loc->cellID + 8, p->loc->board);
 		if (temp->piece){
 			if (temp->piece->player != p->player){
-				q[count] = p->loc->cellID + 8;
-				count++;
+				/*checks to see if the move would cause the king to be in check*/
+				u = checkKingCheck(p->loc->cellID + 8, p);
+				if (u == 0){
+					q[count] = p->loc->cellID + 8;
+					count++;
+				}
 			}
 		}
 		else{
-			q[count] = p->loc->cellID + 8;
-			count++;
+			/*checks to see if the move would cause the king to be in check*/
+			u = checkKingCheck(p->loc->cellID + 8, p);
+			if (u == 0){
+				q[count] = p->loc->cellID + 8;
+				count++;
+			}
 		}
 	}
 	int *answer = malloc(sizeof(int)*(count + 2));
@@ -1879,4 +2210,31 @@ int pawnPromotion(piece *p){ /* if undo is implemented, reverting back to pawn w
 	}
 	updatePrintPiece(p->loc);
 	return tmp;
+}
+/*the int K in the function is the cellID of the the piece that you are trying to check is in check*/
+int checkKingCheck(int k, piece *p){/* returns 0 if the move is legal and returns 1 if the move puts the king in check*/
+	cell *temp = getCell(0, p->loc->board);
+	int x;
+	int *s;
+	int count = 0;
+	for (x = 0; x < 64; x++){
+		while (count != 0){
+			s--;
+			count--;
+		}
+		temp = getCell(x, p->loc->board);
+		if (temp->piece){
+			if (p->player != temp->piece->player){
+				s = checkAvailMoves(temp->piece);
+				while (*s != -2){
+					if (k == *s){
+						return 1;
+					}
+					s++;
+					count++;
+				}
+			}
+		}
+	}
+	return 0;
 }
