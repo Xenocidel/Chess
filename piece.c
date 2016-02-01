@@ -2224,7 +2224,7 @@ int checkKingCheck(int k, piece *p){/* returns 0 if the move is legal and return
 		}
 		temp = getCell(x, p->loc->board);
 		if (temp->piece){
-			if (p->player != temp->piece->player && temp->piece->player!=king){
+			if (p->player != temp->piece->player && temp->piece->player!==p){
 				s = checkAvailMoves(temp->piece);
 				while (*s != -2){
 					if (k == *s){
