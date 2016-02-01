@@ -1896,26 +1896,7 @@ int movePiece(piece *p, cell *target){
 		return -2;
 	}
 	int ans;
-	
-	if (target->board->turn % 2 == 0){ /* before a white move, wipe all row 5 epFlags */
-		int i;
-		for (i = 24; i<=31; i++){
-			cell *tmpi = getCell(i, target->board);
-			if (tmpi->piece != NULL){
-				tmpi->piece->epFlag = 0;
-			}
-		}
-	}
-	else{ /* before a black move, wipe all row 4 epFlags */
-		int i;
-		for (i = 32; i<=39; i++){
-			cell *tmpi = getCell(i, target->board);
-			if (tmpi->piece != NULL){
-				tmpi->piece->epFlag = 0;
-			}
-		}
-	}
-	
+		
 	switch (p->type){
 		case pawn:
 			ans = movePawn(p, target, avail);
@@ -1954,8 +1935,27 @@ int movePiece(piece *p, cell *target){
 			}
 			break;
 	}
-	if (ans >= 0)
+	if (ans >= 0){
+		if (target->board->turn % 2 == 0){ /* before a white move, wipe all row 5 epFlags */
+			int i;
+			for (i = 24; i<=31; i++){
+				cell *tmpi = getCell(i, target->board);
+				if (tmpi->piece != NULL){
+					tmpi->piece->epFlag = 0;
+				}
+			}
+		}
+		else{ /* before a black move, wipe all row 4 epFlags */
+			int i;
+			for (i = 32; i<=39; i++){
+				cell *tmpi = getCell(i, target->board);
+				if (tmpi->piece != NULL){
+					tmpi->piece->epFlag = 0;
+				}
+			}
+		}
 		target->board->turn += 1;
+	}
 	return ans;
 }
 
