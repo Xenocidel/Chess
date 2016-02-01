@@ -157,7 +157,31 @@ void handleInput(board *board){
 				if (loc) free(loc);
 			return;
 		}
+		
+		/* checkCode is 1 if in check */
 		int checkCode = moveSwitch(tmp->piece, destCell);
+		
+		/* stalemate if all pieces have no available moves */
+		if (checkCode){
+			int x, y=1;
+			cell *tmp2;
+			while(y){
+				checkCode = 3; /* stalemate */
+				for (x=0; x<64; x++){
+					tmp2 = getCell(x, board);
+					if (tmp2->piece != NULL){
+						int *avail = checkAvailMoves(tmp2->piece);
+						if (avail != NULL && *avail == -2){
+							y=0;
+							checkCode = 1; /* standard check */
+							break;
+						}
+					}
+				}
+				y=0;
+			}
+		}
+		
 		switch (checkCode){
 			case 1:
 				printf("You are in check!\n\n");
@@ -166,12 +190,10 @@ void handleInput(board *board){
 				printf("Checkmate! Game over!\n\n");
 				/* todo: deleteBoard and deleteAllCells? */
 				exit(0);
-				break;
 			case 3:
 				printf("Stalemate! Game over!\n\n");
 				/* todo: deleteBoard and deleteAllCells? */
 				exit(0);
-				break;
 		}
 		
 			if (loc) free(loc);
@@ -227,7 +249,7 @@ int moveSwitch(piece *piece, int destCell){
 	int capture = 0;
 	int promo = 0; /* 1-4 depending on piece selected */
 	int castle = 0; /* 2-3 depending on kingside or queenside */
-	int check = 0; /* 1-3 depending on check, checkmate, or stalemate */
+	int check = 0; /* 1 if check */
 	int mp = movePiece(piece, dest);
 	switch (mp){
 		case -2: /* no available moves */
@@ -252,8 +274,15 @@ int moveSwitch(piece *piece, int destCell){
 			fgetc(stdin); /* absorb the \n produced by scanf */
 			break;
 		}
+		case 2: /*kingside castle*/
+			castle = 2;
+			break;
+		case 3: /*queenside castle*/
+			castle = 3;
+			break;
 	}
 	/* add check for check? */
+	
 	if (mp>=0)
 		writeMoveLog(piece->loc->board->turn-1, piece, capture, promo, castle, check); /* turn-1 to log the move that just occurred */
 	return check;
@@ -407,12 +436,12 @@ void writeMoveLog(int turn, piece *p, int capture, int promo, int castle, int ch
 			break;
 		case king:
 			if (castle == 2){
-				fprintf(moveLog, "O-O");
+				fprintf(moveLog, "0-0");
 				len+=3;
 				break;
 			}
 			else if (castle == 3){
-				fprintf(moveLog, "O-O-O");
+				fprintf(moveLog, "0-0-0");
 				len+=5;
 				break;
 			}
@@ -659,6 +688,22 @@ void loadGame(char *fname, board *board){
 				return;
 			}
 			int checkCode = moveSwitch(tmp->piece, destCell);
+			if (checkCode){
+				/* if all pieces have no available moves, stalemate */
+				int x;
+				cell *tmp2;
+				for (x=0; x<64; x++){
+					tmp2 = getCell(x, board);
+					if (tmp2->piece != NULL){
+						int *avail = checkAvailMoves(tmp2->piece);
+						if (!(avail == NULL || (avail != NULL && *avail == -2))){
+							break;
+						}
+					}
+					checkCode = 2;
+				}
+				checkCode = 0;
+			}
 			switch (checkCode){
 				case 1:
 					printf("You are in check!\n\n");
@@ -667,12 +712,10 @@ void loadGame(char *fname, board *board){
 					printf("Checkmate! Game over!\n\n");
 					/* todo: deleteBoard and deleteAllCells? */
 					exit(0);
-					continue;
 				case 3:
 					printf("Stalemate! Game over!\n\n");
 					/* todo: deleteBoard and deleteAllCells? */
 					exit(0);
-					continue;
 			}
 			
 			continue;
