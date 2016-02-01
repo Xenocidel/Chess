@@ -1068,8 +1068,11 @@ int *checkKingMoves(piece *p){
 			}
 		}
 		else{
-			q[count] = p->loc->cellID + 7;
-			count++;
+			u = checkKingCheck(p->loc->cellID + 7, p);
+			if (u == 0){
+				q[count] = p->loc->cellID + 7;
+				count++;
+			}
 		}
 		temp = getCell(p->loc->cellID + 1, p->loc->board);
 		if (temp->piece){
@@ -1447,7 +1450,6 @@ int *checkKingMoves(piece *p){
 		*answer = q[k];
 		answer++;
 	}
-	printf("count is %d\n", count);
 	*answer = -2;
 	answer -= count;
 	return answer;
@@ -2214,15 +2216,11 @@ int pawnPromotion(piece *p){ /* if undo is implemented, reverting back to pawn w
 /*the int K in the function is the cellID of the the piece that you are trying to check is in check*/
 int checkKingCheck(int k, piece *p){/* returns 0 if the move is legal and returns 1 if the move puts the king in check*/
 	cell *temp = getCell(0, p->loc->board);
-	int x;
+	int x = 0;
 	int *s;
-	int count = 0;
 	for (x = 0; x < 64; x++){
-		while (count != 0){
-			s--;
-			count--;
-		}
 		temp = getCell(x, p->loc->board);
+<<<<<<< HEAD
 		if (temp->piece){
 			if (p->player != temp->piece->player && temp->piece->player!=p){
 				s = checkAvailMoves(temp->piece);
@@ -2230,8 +2228,19 @@ int checkKingCheck(int k, piece *p){/* returns 0 if the move is legal and return
 					if (k == *s){
 						return 1;
 					}
+=======
+		if (temp->piece && temp->piece->type != king && temp->piece->player != p->player){
+			s = checkAvailMoves(temp->piece);
+			if (s != NULL){
+				if (p->player != temp->piece->player && temp->piece->player!==p){
+					s = checkAvailMoves(temp->piece);
+					while (*s != -2){
+						if (*s == k){
+							return 1;
+						}
+>>>>>>> origin/master
 					s++;
-					count++;
+					}
 				}
 			}
 		}
