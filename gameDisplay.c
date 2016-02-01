@@ -51,8 +51,6 @@ void updateGameDisplay(board *board){
 	printf("  +---+---+---+---+---+---+---+---+\n");
 	printf("    a   b   c   d   e   f   g   h\n");
 	printf("\n\n");
-	printMessage(board->turn);
-	handleInput(board);
 }
 
 void updateMessage(board *board){

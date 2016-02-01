@@ -209,31 +209,39 @@ int main(){
 			turnPre = board->turn;
 			updateGameDisplay(board); /* display the entire board only when its a new turn */
 			while (turnPre == board->turn){
-				updateMessage(board);
 				switch(mode){
 					case 1: /* PvP */ 
-						/* */
+						updateMessage(board);
+						board->turn++;
 						break;
 					case 2: /* P vs AI */
 						if(board->turn%2 == aiTeam1){ /* AI's turn */
+							printMessage(board->turn);
 							aiMove(diff, aiTeam1, board);
+							board->turn++;
 						}
 						else{
 							/* player's turn */
+							updateMessage(board);
+							board->turn++;
 						}
 						break;
 					case 3: /* AI vs AI*/
 						if(board->turn%2 == 0){ /* White's turn */
 							/* aiTeam1 goes */
+							printMessage(board->turn);
 							aiMove(diff, aiTeam1, board);
+							board->turn++;
 						}
 						else{ /* Black's turn */
 							/* aiTeam2 goes */
+							printMessage(board->turn);
 							aiMove(diff, aiTeam2, board);
+							board->turn++;
 						}
 						break;
 				}
-				board->turn++; /* Exits loop when turn is finished */
+				/* Exits loop when turn is finished */
 			}
 		}
 			

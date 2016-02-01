@@ -18,8 +18,8 @@ void aiChoice(int team, board *board, int lookAhd);
 int oppTeam (int team);
 
 void DeleteMoveValue(struct moveValue *m);
-struct moveValue *calcABmax(int *piecePointer, int *movePointer, int *piecePositions, int *enemyPositions, struct moveValue *bestMax, struct moveValue *bestMin, int lookAhd, int team, board *board);
-struct moveValue *calcABmin(int *piecePointer, int *movePointer, int *piecePositions, int *enemyPositions, struct moveValue *bestMax, struct moveValue *bestMin, int lookAhd, int team, board *board);
+struct moveValue *calcABmax(/*int *piecePointer, int *movePointer,*/ int *piecePositions, int *enemyPositions, struct moveValue *bestMax, struct moveValue *bestMin, int lookAhd, int team, board *board);
+struct moveValue *calcABmin(/*int *piecePointer, int *movePointer,*/ int *piecePositions, int *enemyPositions, struct moveValue *bestMax, struct moveValue *bestMin, int lookAhd, int team, board *board);
 struct moveValue *calcMoveValue(int team, board *board, cell *moveLoc, int nextCellLoc);
 struct moveValue *CreateMoveValue(piece *p, int next, int value); 
 
