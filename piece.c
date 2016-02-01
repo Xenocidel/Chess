@@ -317,13 +317,15 @@ int *checkPawnMoves(piece *p){
 		}
 	}
 		
-	/*if no available moves, return null*/
-	if (num==0){
-		return NULL;
-	}
+
 	/*compile all available moves*/
 	int *ans;
 	ans = malloc(sizeof(int) * (num+1));
+	/*if no available moves, return a single -2*/
+	if (num==0){
+		*ans = -2;
+		return ans;
+	}
 	int i;
 	for (i=num; i>0; i--){
 		if (frontchk > 0){

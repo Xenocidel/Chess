@@ -34,7 +34,7 @@ struct piece{
 			rook,
 			bishop } type;
 	enum hasMoved { false, true } hasMoved;
-	int castleFlag;
+	int castleFlag; /* unused */
 	int epFlag;
 	cell *loc;
 	cell *prev;
