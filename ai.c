@@ -12,15 +12,15 @@ int aiMove(int diff, int team, board *board){
 	int lookAhead = -1; /* Number of moves AI will account for */
 	switch(diff){
 		case(1): /* Easy, AI accounts for 1 move ahead */
-			lookAhead = 2;
+			lookAhead = 2+rand()%2;
 			aiChoice(team, board, lookAhead);
 			break;
 		case(2): /* Medium, AI accounts for 2 additional moves */
-			lookAhead = 3;
+			lookAhead = 4;
 			aiChoice(team, board, lookAhead);
 			break;
 		case(3): /* Hard, AI accounts for 3 additional moves */
-			lookAhead = 4;
+			lookAhead = 5;
 			aiChoice(team, board, lookAhead);
 			break;
 		case(4): /* Mainly to quickly test AI moving functionality */
@@ -41,8 +41,9 @@ void aiChoice(int team, board *board, int lookAhd){
 	int *piecePointer = 0;
 	int *piecePositions = checkPiecePos(team, board);
 	int *enemyPositions = checkPiecePos(oppTeam(team), board);
-	moveValue *bestMax = CreateMoveValue(NULL, -5, -1000);
-	moveValue *bestMin = CreateMoveValue(NULL, -5, 1000);
+	int *movePointer = 0;
+	moveValue *bestMax = CreateMoveValue(NULL, -5, -10000); /* +/-10,000 act as default max/min bounds */
+	moveValue *bestMin = CreateMoveValue(NULL, -5, 10000);
 	moveValue *bestMove = calcABMax(piecePointer, piecePositions, enemyPositions, bestMax, bestMin, lookAhd, team, board);
 	movePiece(bestMove->piece, getCell(bestMove->next, board));
 	DeleteMoveValue(bestMax);
@@ -50,7 +51,7 @@ void aiChoice(int team, board *board, int lookAhd){
 	DeleteMoveValue(bestMove);
 }
 
-int oppTeam (int team) { /* Simple inversion function */
+int oppTeam(int team){ /* Simple inversion function */
 	return (team == 1) ? 0 : 1;
 }
 
@@ -73,7 +74,7 @@ void DeleteMoveValue(moveValue *move){
 }
 
 /* Compares the value of yoiur move with your previous best options (taking into consideration the opponent's moves as well)*/
-moveValue *calcABmax(int *piecePointer, int *piecePositions, int *enemyPositions, moveValue *bestMax, moveValue *bestMin, int lookAhd, int team, board *board){
+moveValue *calcABmax(int *piecePointer, int *movePointer, int *piecePositions, int *enemyPositions, moveValue *bestMax, moveValue *bestMin, int lookAhd, int team, board *board){
 	/*  
 	
 	param piecePointer : integer that points to the element of the piece position array so that we can evaluate the piece's moves
@@ -85,15 +86,17 @@ moveValue *calcABmax(int *piecePointer, int *piecePositions, int *enemyPositions
 	
 	*/
 	if (*(piecePositions+(*piecePointer)) != -2) {
+		int *moveList = checkAIAvailMoves(getCell( *(piecePositions + *piecePointer), board ) -> piece);
 		if(lookAhd == 0){
-			return calcMoveValue(team, board, getCell(*(piecePositions+(*piecePointer)),board)->cellID);
+			moveValue *newValue = calcMoveValue(team, board, getCell(*(piecePositions+(*piecePointer)),board), *(moveList + *movePointer));
+			*movePointer++;
+			return newValue;
 		}
 		int i;
 		moveValue *currMove = CreateMoveValue(NULL, -5, 0);
 		for(i=0; i < totalMoveCount(team, board); i++ ) {
-			currMove = calcABmin(piecePointer, piecePositions, enemyPositions, bestMax, bestMin, lookAhd-1, oppTeam(team), board);
+			currMove = calcABmin(piecePointer, movePointer, piecePositions, enemyPositions, bestMax, bestMin, lookAhd-1, oppTeam(team), board);
 			if (currMove->value >= bestMin->value) {
-				
 				DeleteMoveValue(currMove);
 				*piecePointer++;
 				return bestMin;
@@ -110,7 +113,7 @@ moveValue *calcABmax(int *piecePointer, int *piecePositions, int *enemyPositions
 }
 
 /*Compares the value of an opponent's move with the opponent's previous calculated worst move (taking into consideration the AI's moves as well)*/
-moveValue *calcABmin(int *piecePointer, int *piecePositions, int *enemyPositions, moveValue *bestMax, moveValue *bestMin, int lookAhd, int team, board *board){
+moveValue *calcABmin(int *piecePointer, int *movePointer, int *piecePositions, int *enemyPositions, moveValue *bestMax, moveValue *bestMin, int lookAhd, int team, board *board){
 	/*  
 	
 	param piecePointer : integer that points to the element of the piece position array so that we can evaluate the piece's moves
@@ -124,14 +127,15 @@ moveValue *calcABmin(int *piecePointer, int *piecePositions, int *enemyPositions
 	
 	if (*(piecePositions+(*piecePointer)) != -2) {
 		if(lookAhd == 0){
-			moveValue *nextMove = calcMoveValue(team, board, getCell(*(piecePositions+(*piecePointer)),board)-> cellID);
-			nextMove->value *= -1; /* Inverts value when accounting for opponent moves */
-			return nextMove;
+			moveValue *newValue = calcMoveValue(team, board, getCell(*(piecePositions+(*piecePointer)),board), *(moveList + *movePointer));
+			newValue->value *= -1;
+			*movePointer++;
+			return newValue;
 		}
 		int i;
 		moveValue *currMove = CreateMoveValue(NULL, -5, 0);
 		for(i=0; i < totalMoveCount(team, board); i++ ) {
-			currMove = calcABmax(piecePointer, piecePositions, enemyPositions, bestMax, bestMin, lookAhd-1, oppTeam(team), board);
+			currMove = calcABmax(piecePointer, movePointer, piecePositions, enemyPositions, bestMax, bestMin, lookAhd-1, oppTeam(team), board);
 			if (currMove->value <= bestMax->value){
 				DeleteMoveValue(currMove);
 				*piecePointer++;
@@ -149,30 +153,103 @@ moveValue *calcABmin(int *piecePointer, int *piecePositions, int *enemyPositions
 }
 
 /* Calculates the value of an individual move*/
-moveValue *calcMoveValue(int team, board *board, int moveLoc){
+moveValue *calcMoveValue(int team, board *board, cell *moveLoc, int nextCellLoc){
 	/*  1. Weigh the move based on an algorithm
-		2. Return the moveValue struct corresponding to that move*/
-	piece *p = getCell(moveLoc,board)->piece;
-	int pawnValue = 1;
-	int rookValue = 3;
-	int bishopValue = 2;
-	int knightValue = 3;
-	int queenValue = 5;
-	/* compare next moves */
-	/* can ai capture piece? */
-	/* how far piece is the piece moving */
-	/* how far will piece be from enemy king */
-	/* does move put piece in danger */
-	int *piecePos = checkPiecePos(team, board);
-	*(piecePos+i) /*  */
-	/*
-	if(would lose piece) points -= piece value
-	if(would capture) points += piece value
-	if (moves closer to center) + points
-	if (moves closer to enemy king) + points
-	if (moves away from center) -= points
-	if (moves away from your king) -points
-	*/
+		2. Return the moveValue struct corresponding to that move */
+	int value = 0;
+	cell *nextCell = getCell(nextCellLoc, board);
+	if (nextCell->piece != NULL) { /* Situation where the next move can capture an opposing piece */
+		switch(nextCell->piece->type){
+			case pawn:							  
+				value += 5;
+				break;
+			case knight:
+				value += 10;
+				break;
+			case king: 
+				value += 100;
+				break;
+			case queen:
+				value += 40;
+				break;
+			case rook:
+				value += 10;
+				break;
+			case bishop:
+				value += 20;
+				break;
+			default; /* Error */
+				value += 0;
+				break;
+		}
+	}
+	/* Will hold distance next move is left(-) or rigtht(+) from current position */
+	int leftrightComp = (nextCellLoc-(nextCellLoc-(nextCellLoc%8)))-(moveLoc->cellID-(moveLoc->cellID-(moveLoc->cellID%8)));
+	int distFromLeft = nextCellLoc % 8; /* Holds distance from leftmost row*/
+	int distFromBotRow = nextCellLoc / 8; /*Holds distance of next move from bottom row*/
+	int updownComp = nextCellLoc / 8 - moveLoc->cellID/ 8; /*Holds positive/negative distance of the move*/
+	int rng = -1; /* Make AI slightly less predictable */
+	switch(moveLoc->piece){ /* Points for forward movement */
+		case pawn: /* Pawn moves forward normally */
+			value += 10;
+			if(moveLoc->piece->hasMoved == false){ /* First turn move priority */
+				value += 1;
+			}
+			break;
+		case knight:
+			if((leftrightComp < 0 && nextCell%8 >= 4) || (leftrightComp > 0 && nextCell % 8  < 4 )){ /* If move would bring piece left/right toward center */
+				value += 5;
+			}
+			if ( (distFromBotRow <= 3 && updownComp > 0) || (distFromBotRow >= 4 && upDownComp < 0) ) { /* Forward movement */
+				value += 5;	
+			}
+			if(moveLoc->piece->hasMoved == false){
+				srand(time(NULL));
+				rng = rand()%3; 
+				if(rng == 1){ /* 33% for knight to have priority over unmoved pawn */
+					value += 2;
+				}
+				rng = 0; /* Resets rng */
+			}
+			break;
+		case king:
+			if((leftrightComp < 0 && nextCell%8 >= 4) || (leftrightComp > 0 && nextCell % 8  < 4 )){ /* If move would bring piece left/right toward center */
+				value -= 1;
+			}
+			if ( (distFromBotRow <= 3 && updownComp > 0) || (distFromBotRow >= 4 && upDownComp < 0) ) { 
+				value += 1;	
+			}
+			break;
+		case queen:
+			if((leftrightComp < 0 && nextCell%8 >= 4) || (leftrightComp > 0 && nextCell % 8  < 4 )){ /* If move would bring piece left/right toward center */
+				value += 10;
+			}
+			if ( (distFromBotRow <= 3 && updownComp > 0) || (distFromBotRow >= 4 && upDownComp < 0) ) { 
+				value += 10;	
+			}
+			break;
+		case rook:
+			if ( (distFromBotRow <= 3 && updownComp > 0) || (distFromBotRow >= 4 && upDownComp < 0) ) { /* If move would bring piece toward opponent's side */
+				value += 3;	
+			}
+			break;
+		case bishop:
+			if((leftrightComp < 0 && nextCell%8 < 4) || (leftrightComp > 0 && nextCell % 8 >= 4 )){ /* If move would bring piece left/right toward center */
+				value += 5;
+			}
+			if (updownComp > 0 && moveLoc->piece->player == white) { /* Movement vertically away from AI's side */
+				value += updownComp*3;	
+			}
+			else if(updownComp < 0 && moveLoc->piece->player == black){
+				value += updownComp*3;
+			}
+			break;
+		default: /* Error */
+			value += 0;
+			break;
+	}
+	moveValue *calcValue = CreateMoveValue(moveLoc->piece, nextCellLoc, value);
+	return calcValue;
 }
 
 /* Basic move decision to quickly see if movement functions at a base level */
@@ -223,7 +300,7 @@ void randomMove(int team, board *board){
 }
 
 /* Counts number of moves a piece can make */
-int pieceMoveCount(piece *p) {
+int pieceMoveCount(piece *p){
 	int moveCount = 0;
 	int *moveList = checkAIAvailMoves(p);
 	while (1) {
@@ -237,7 +314,7 @@ int pieceMoveCount(piece *p) {
 }
 
 /* Counts number of moves a player can make */
-int totalMoveCount(int team, board *board) {
+int totalMoveCount(int team, board *board){
 	int moveCount = 0;
 	int pieceCount = 0;
 	int *pieceList = checkPiecePos(team, board);

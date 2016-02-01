@@ -51,16 +51,22 @@ gameDisplay.o:
 	
 gameDisplay_DEBUG.o:
 	$(CC) $(CFLAGS) $(DEBUG) gameDisplay.c -o gameDisplay_DEBUG.o
-	
+
+ai.o:
+	$(CC) $(CFLAGS) ai.c -o ai.o
+
+ai_DEBUG.o:
+	$(CC) $(CFLAGS) $(DEBUG) ai.c -o ai_DEBUG.o
+
 #libraries
-libChess.a: errors.o piece.o cell.o board.o gameDisplay.o
-	$(AR) libChess.a errors.o piece.o cell.o board.o gameDisplay.o
+libChess.a: errors.o piece.o cell.o board.o gameDisplay.o ai.o
+	$(AR) libChess.a errors.o piece.o cell.o board.o gameDisplay.o ai.o
 	$(RANLIB) libChess.a
 	
-libChessDEBUG.a: errors.o piece_DEBUG.o cell_DEBUG.o board_DEBUG.o gameDisplay_DEBUG.o
-	$(AR) libChessDEBUG.a errors.o piece_DEBUG.o cell_DEBUG.o board_DEBUG.o gameDisplay_DEBUG.o
+libChessDEBUG.a: errors.o piece_DEBUG.o cell_DEBUG.o board_DEBUG.o gameDisplay_DEBUG.o ai_DEBUG.o
+	$(AR) libChessDEBUG.a errors.o piece_DEBUG.o cell_DEBUG.o board_DEBUG.o gameDisplay_DEBUG.o ai_DEBUG.o
 	$(RANLIB) libChessDEBUG.a
-	
+
 #executables
 Chess: main.o libChess.a
 	$(CC) $(LFLAGS) main.o -lChess -L. -o Chess

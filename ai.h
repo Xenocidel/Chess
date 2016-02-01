@@ -3,19 +3,8 @@
 #include "board.h"
 #include "piece.h"
 #include "cell.h"
-/*STUFF THAT IS FINISHED:
-	ALPHA BETA ALGORITHM
-	CHECKING/COUNTING PIECE POSITIONS AND MOVES
-	ACTUALLY MOVING THE PIECE (FROM AIMOVE FUNCTION)
-	FUNCTIONS THAT CREATE/FREE MEMORY FOR MOVEVALUE STRUCTURES*/
 	
-/*STUFF TO DO TOMORROW:
-	MOVE WEIGHING ALGORITHM
-	DEBUGGING
-	COMPILATION
-	TESTING*/
-	
-typedef struct moveValue{
+typedef struct moveValue{ /* Structure that groups piece, next cell ID, and value */
 	piece *piece;
 	int next; /* Cell ID for next move */
 	int value; /* Value of potential next move */
@@ -29,9 +18,9 @@ int oppTeam (int team);
 
 moveValue *CreateMoveValue(piece p, int next, int value);
 void DeleteMoveValue(moveValue *move);
-moveValue *calcABmax(int *piecePointer, int *piecePositions, int *enemyPositions, moveValue *bestMax, moveValue *bestMin, int lookAhd, int team, board *board);
-moveValue *calcABmin(int *piecePointer, int *piecePositions, int *enemyPositions, moveValue *bestMax, moveValue *bestMin, int lookAhd, int team, board *board);
-moveValue *calcMoveValue(int team, board *board, int moveLoc);
+moveValue *calcABmax(int *piecePointer, int *movePointer, int *piecePositions, int *enemyPositions, moveValue *bestMax, moveValue *bestMin, int lookAhd, int team, board *board);
+moveValue *calcABmin(int *piecePointer, int *movePointer, int *piecePositions, int *enemyPositions, moveValue *bestMax, moveValue *bestMin, int lookAhd, int team, board *board);
+moveValue *calcMoveValue(int team, board *board, cell *moveLoc, int nextCellLoc);
 
 void randomMove(int team, board *board); /* Probably not used. Just ignore */
 
