@@ -132,57 +132,30 @@ void handleInput(board *board){
 		loc -= loclen;
 		if (destCell == -2){
 			printe(entryFormat);
-			
-				if (loc) free(loc);
+			if (loc) free(loc);
 			return;
 		}
 		cell *tmp = getCell(cellID, board);
 		if (tmp->piece == NULL){
 			printe(emptyCell);
-			
-				if (loc) free(loc);
+			if (loc) free(loc);
 			return;
 		}
 		if (tmp->piece->player == black && board->turn % 2 == 0){
 			/* offSides black trying to move white */
 			printe(offSides);
-			
-				if (loc) free(loc);
+			if (loc) free(loc);
 			return;
 		}
 		else if (tmp->piece->player == white && board->turn % 2 == 1){
 			/* offSides white trying to move black */
 			printe(offSides);
-			
-				if (loc) free(loc);
+			if (loc) free(loc);
 			return;
 		}
 		
-		/* checkCode is 1 if in check */
+		/* checkCode is 1 if in check, 2 if checkmate, 3 if stalemate */
 		int checkCode = moveSwitch(tmp->piece, destCell);
-		
-		/* stalemate if all pieces have no available moves */
-		if (checkCode){
-			int x, y=1;
-			int *avail;
-			cell *tmp2;
-			while(y){
-				checkCode = 3; /* stalemate */
-				for (x=0; x<64; x++){
-					tmp2 = getCell(x, board);
-					if (tmp2->piece != NULL){
-						avail = checkAvailMoves(tmp2->piece);
-						if (avail != NULL && *avail == -2){
-							y=0;
-							checkCode = 1; /* standard check */
-							break;
-						}
-					}
-				}
-				y=0;
-			}
-		}
-		
 		switch (checkCode){
 			case 1:
 				printf("You are in check!\n\n");
@@ -197,7 +170,7 @@ void handleInput(board *board){
 				exit(0);
 		}
 		
-			if (loc) free(loc);
+		if (loc) free(loc);
 		return;
 	}
 	else if (strlen(loc) == 2){ /* segment for selecting a piece */
@@ -250,7 +223,7 @@ int moveSwitch(piece *piece, int destCell){
 	int capture = 0;
 	int promo = 0; /* 1-4 depending on piece selected */
 	int castle = 0; /* 2-3 depending on kingside or queenside */
-	int check = 0; /* 1 if check */
+	int check = 0; /* 1-3 depending on check, checkmate, or stalemate */
 	int mp = movePiece(piece, dest);
 	switch (mp){
 		case -2: /* no available moves */
@@ -282,17 +255,40 @@ int moveSwitch(piece *piece, int destCell){
 			castle = 3;
 			break;
 	}
-	int i;
-	cell *tmp;
-	for (i = 0; i < 63; i++){
-		tmp = getCell(i, piece->loc->board);
-		if (tmp ! = NULL && tmp->piece->type == king){
-			/* todo: checkKingCheck */
+
+	if (mp>=0){
+		int i;
+		cell *tmp;
+		for (i = 0; i < 63; i++){
+			tmp = getCell(i, piece->loc->board);
+			if (tmp ! = NULL && tmp->piece->type == king){
+				/* todo: if check, check=1, if checkmate=2 */
+			}
 		}
-	}
-	checkKingCheck(
-	if (mp>=0)
+		/* stalemate if all pieces have no available moves */
+		if (check){
+			int x, y=1;
+			int *avail;
+			cell *tmp2;
+			while(y){
+				check = 3; /* stalemate */
+				for (x=0; x<64; x++){
+					tmp2 = getCell(x, board);
+					if (tmp2->piece != NULL){
+						avail = checkAvailMoves(tmp2->piece);
+						if (avail != NULL && *avail == -2){
+							y=0;
+							break;
+						}
+					}
+				}
+				y=0;
+			}
+		}
+		
 		writeMoveLog(piece->loc->board->turn-1, piece, capture, promo, castle, check); /* turn-1 to log the move that just occurred */
+		
+	}
 	return check;
 }
 
