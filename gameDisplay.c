@@ -261,7 +261,7 @@ int moveSwitch(piece *piece, int destCell){
 		cell *tmp;
 		for (i = 0; i < 63; i++){
 			tmp = getCell(i, piece->loc->board);
-			if (tmp ! = NULL && tmp->piece->type == king){
+			if (tmp != NULL && tmp->piece->type == king){
 				/* todo: if check, check=1, if checkmate=2 */
 			}
 		}
@@ -273,7 +273,7 @@ int moveSwitch(piece *piece, int destCell){
 			while(y){
 				check = 3; /* stalemate */
 				for (x=0; x<64; x++){
-					tmp2 = getCell(x, board);
+					tmp2 = getCell(x, piece->loc->board);
 					if (tmp2->piece != NULL){
 						avail = checkAvailMoves(tmp2->piece);
 						if (avail != NULL && *avail == -2){
