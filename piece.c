@@ -2239,3 +2239,68 @@ int checkKingCheck(int k, piece *p){/* returns 0 if the move is legal and return
 	}
 	return 0;
 }
+int *checkCheckMoves(int *s, int k, int j, piece *p){/*loads the string of integer for possible moves = s, the int k to know where the piece currently is, the int j is where the king is, and p is the piece we are moving*/
+	board *board2 = createBoard();
+	cell *temp = getCell(*s, board2);
+	/*use this temp to make a cell that is in the spot of where you want to move to and to get the cell where the king is*/
+	cell *temp2 = getCell(k, board2);
+	/*This temp is used to get the Cell where the piece you want to move is*/
+	int f = 0;
+	/*Count the amount of legal moves you can make while in check*/
+	int count = 0;
+	/*Counts the amount of slots the pointer s had*/
+	int q;
+	/*An integer that is used as a placeholder for several different arbitrary digits*/
+	int m[5];
+	/*A an array to hold all of the legal in check moves*/
+	switch (p->type){
+		/*A switch depending on the piece that you are moving*/
+	case queen:
+		while (*s != -2){
+			/*Making a new board*/
+			board2 = p->loc->board;
+			temp = getCell(*s, board2);
+			/*Moves the queen*/
+			q = moveQueen(temp2->piece, temp, q);
+			temp = getCell(j, board2);
+			/*Checks if the move makes the king still be in check*/
+			q = checkKingCheck(j, temp->piece);
+			/*Declares that move to be valid if so, if not then does not allow the move*/
+			if (q == 0){
+				/*Inputs the move into an array*/
+				m[f] = *s;
+				f++;
+			}
+			s++;
+			count++;
+		}
+		/*Puts the "s" pointer back to its first pointer value*/
+		s -= count;
+		/*puts the values from the array onto "s" pointer*/
+		for (q = 0; q < f; q++){
+			*s = m[q];
+			s++;
+		}
+		/*Makes the last value of the pointer "-2"*/
+		*s = -2;
+		s -= f;
+		break;
+	case rook:
+
+		break;
+	case bishop:
+
+		break;
+	case king:
+
+		break;
+	case pawn:
+
+		break;
+	case knight:
+
+		break;
+	}
+	/*Returns the string of possible moves*/
+	return s;
+}

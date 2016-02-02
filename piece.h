@@ -60,5 +60,6 @@ int moveRook  (struct piece *p, cell *target, int *avail);
 int moveBishop(struct piece *p, cell *target, int *avail);
 int pawnPromotion(struct piece *p);
 int checkKingCheck(int k, struct piece *p);
+int *checkCheckMoves(int *s, int k, int j, struct piece *p);
 
 #endif
