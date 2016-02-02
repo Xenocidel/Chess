@@ -18,17 +18,17 @@ int enemyMovePointer;
 int aiTeam;
 
 void aiMove(int diff, int team, board *board){
-	int lookAhead = -1; /* Number of moves AI will account for */
+	int lookAhead = -1; /* Number of turns AI will account for when selecting */
 	switch(diff){
-		case(1): /* Easy, AI accounts for 1 move ahead */
+		case(1): /* Easy */
 			lookAhead = 3;
 			aiChoice(team, board, lookAhead);
 			break;
-		case(2): /* Medium, AI accounts for 2 additional moves */
+		case(2): /* Medium */
 			lookAhead = 4;
 			aiChoice(team, board, lookAhead);
 			break;
-		case(3): /* Hard, AI accounts for 3 additional moves */
+		case(3): /* Hard */
 			lookAhead = 5;
 			aiChoice(team, board, lookAhead);
 			break;
