@@ -1589,7 +1589,7 @@ int *checkBishopMoves(piece *p){ /* Calculate bishop piece's movement */
       }
       moves[count] = checkPos;
       count++;
-	  if(currentPos%8 == 0){
+	  if(checkPos%8 == 0){
 		  break;
 	  }
     }
@@ -1611,7 +1611,7 @@ int *checkBishopMoves(piece *p){ /* Calculate bishop piece's movement */
       }
       moves[count] = checkPos;
       count++;
-	  if(currentPos%8 == 0){
+	  if(checkPos%8 == 0){
 		  break;
 	  }
     }
@@ -1636,7 +1636,7 @@ int *checkBishopMoves(piece *p){ /* Calculate bishop piece's movement */
       }
       moves[count] = checkPos;
       count++;
-	  if(currentPos%8 == 7){
+	  if(checkPos%8 == 7){
 		  break;
 	  }
     }
@@ -1658,7 +1658,7 @@ int *checkBishopMoves(piece *p){ /* Calculate bishop piece's movement */
       }
       moves[count] = checkPos;
       count++;
-	  if(currentPos%8 == 7){
+	  if(checkPos%8 == 7){
 		  break;
 	  }
     }
@@ -1792,7 +1792,7 @@ int *checkQueenMoves(piece *p){
       }
       moves[count] = checkPos;
       count++;
-	  if(currentPos%8 == 0){
+	  if(checkPos%8 == 0){
 		  break;
 	  }
     }
@@ -1814,7 +1814,7 @@ int *checkQueenMoves(piece *p){
       }
       moves[count] = checkPos;
       count++;
-	  if(currentPos%8 == 0){
+	  if(checkPos%8 == 0){
 		  break;
 	  }
     }
@@ -1839,7 +1839,7 @@ int *checkQueenMoves(piece *p){
       }
       moves[count] = checkPos;
       count++;
-	  if(currentPos%8 == 7){
+	  if(checkPos%8 == 7){
 		  break;
 	  }
     }
@@ -1861,7 +1861,7 @@ int *checkQueenMoves(piece *p){
       }
       moves[count] = checkPos;
       count++;
-	  if(currentPos%8 == 7){
+	  if(checkPos%8 == 7){
 		  break;
 	  }
     }
