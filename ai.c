@@ -48,11 +48,11 @@ void aiChoice(int team, board *board, int lookAhd){
 	/*printf("First element in enemy pos: %d\n", *enemyPositions); DEBUG */
 	/* int *movePointer = 0; */ movePointer = 0;
 	moveValue *bestMax = CreateMoveValue(NULL, -1, -1000); /* +/-1000 act as default max/min bounds */
-	printf("content of value for bestMax is %d", bestMax->value); /* DEBUG */
+	printf("content of value for bestMax is %d\n", bestMax->value); /* DEBUG */
 	moveValue *bestMin = CreateMoveValue(NULL, -1, 1000);
-	printf("content of value for bestMin is %d", bestMin->value); /* DEBUG */
+	printf("content of value for bestMin is %d\n", bestMin->value); /* DEBUG */
 	moveValue *bestMove = calcABmax(/*piecePointer, movePointer,*/ piecePositions, enemyPositions, bestMax, bestMin, lookAhd, team, board);
-	printf("content of value for bestMove is %d", bestMove->value); /* DEBUG */
+	printf("content of value for bestMove is %d\n", bestMove->value); /* DEBUG */
 	movePiece(bestMove->piece, getCell(bestMove->next, board));
 	
 	free(piecePositions);
@@ -331,7 +331,12 @@ int pieceMoveCount(piece *p){
 	int *moveList = checkAIAvailMoves(p);
 	while (1) {
 		if (*(moveList) == -2 || moveList == NULL) {
-			free(moveList);
+			int j;
+			for(j=pieceCount; j>=0; j--){
+				pieceList = NULL;
+				pieceList--;
+			}
+			break;
 			return moveCount;
 		}
 		moveCount++;
@@ -347,7 +352,11 @@ int totalMoveCount(int team, board *board){
 	int *pieceList = checkPiecePos(team, board);
 	while (1) { /* Counts amount of pieces for specified player */
 		if (*(pieceList) == -2 || pieceList == NULL) {
-			free(pieceList);
+			int j;
+			for(j=pieceCount; j>=0; j--){
+				pieceList = NULL;
+				pieceList--;
+			}
 			break;
 		}
 		pieceCount++;
