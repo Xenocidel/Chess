@@ -2225,7 +2225,7 @@ int checkKingCheck(int k, piece *p){/* returns 0 if the move is legal and return
 		if (temp->piece && temp->piece->type != king && temp->piece->player != p->player){
 			s = checkAvailMoves(temp->piece);
 			if (s != NULL){
-				if (p->player != temp->piece->player && temp->piece->player!==p){
+				if (p->player != temp->piece->player && temp->piece!=p){
 					s = checkAvailMoves(temp->piece);
 					while (*s != -2){
 						if (*s == k){
