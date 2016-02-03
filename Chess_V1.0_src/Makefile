@@ -1,5 +1,5 @@
 #variable
-VPATH = ./src: ./inc: ./obj:
+VPATH = ./src: ./inc: ./obj: ./test:
 CFLAGS = -ansi -Wall -c
 CC     = gcc
 INCLUDE = -I inc
@@ -54,7 +54,7 @@ board_DEBUG.o: board.c $(HEADERS)
 	$(CC) $(CFLAGS) $(INCLUDE) $(DEBUG) -c src/board.c
 	
 moves_test.o: moves_test.c $(HEADERS)
-	$(CC) $(CFLAGS) $(INCLUDE) $(DEBUG) -c src/moves_test.c
+	$(CC) $(CFLAGS) $(INCLUDE) $(DEBUG) -c test/moves_test.c
 
 gameDisplay.o: gameDisplay.c $(HEADERS)
 	$(CC) $(CFLAGS) $(INCLUDE) -c src/gameDisplay.c
