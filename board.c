@@ -104,36 +104,36 @@ board *createNewGame(){
 	board *board = createBoard();
 	createPiece(white, rook, CELL0);
 	createPiece(white, knight, CELL1);
-	createPiece(white, bishop, CELL2);
-	createPiece(white, queen, CELL3);
-	createPiece(white, king, CELL4);
-	createPiece(white, bishop, CELL5);
-	createPiece(white, knight, CELL6);
-	createPiece(white, rook, CELL7);
-	createPiece(white, pawn, CELL8);
-	createPiece(white, pawn, CELL9);
-	createPiece(white, pawn, CELL10);
-	createPiece(white, pawn, CELL11);
-	createPiece(white, pawn, CELL12);
-	createPiece(white, pawn, CELL13);
-	createPiece(white, pawn, CELL14);
-	createPiece(white, pawn, CELL15);
+	createBoard(white, bishop, CELL2);
+	createBoard(white, queen, CELL3);
+	createBoard(white, king, CELL4);
+	createBoard(white, bishop, CELL5);
+	createBoard(white, knight, CELL6);
+	createBoard(white, rook, CELL7);
+	createBoard(white, pawn, CELL8);
+	createBoard(white, pawn, CELL9);
+	createBoard(white, pawn, CELL10);
+	createBoard(white, pawn, CELL11);
+	createBoard(white, pawn, CELL12);
+	createBoard(white, pawn, CELL13);
+	createBoard(white, pawn, CELL14);
+	createBoard(white, pawn, CELL15);
 	createPiece(black, rook, CELL56);
 	createPiece(black, knight, CELL57);
-	createPiece(black, bishop, CELL58);
-	createPiece(black, queen, CELL59);
-	createPiece(black, king, CELL60);
-	createPiece(black, bishop, CELL61);
-	createPiece(black, knight, CELL62);
-	createPiece(black, rook, CELL63);
-	createPiece(black, pawn, CELL48);
-	createPiece(black, pawn, CELL49);
-	createPiece(black, pawn, CELL50);
-	createPiece(black, pawn, CELL51);
-	createPiece(black, pawn, CELL52);
-	createPiece(black, pawn, CELL53);
-	createPiece(black, pawn, CELL54);
-	createPiece(black, pawn, CELL55);
+	createBoard(black, bishop, CELL58);
+	createBoard(black, queen, CELL59);
+	createBoard(black, king, CELL60);
+	createBoard(black, bishop, CELL61);
+	createBoard(black, knight, CELL62);
+	createBoard(black, rook, CELL63);
+	createBoard(black, pawn, CELL48);
+	createBoard(black, pawn, CELL49);
+	createBoard(black, pawn, CELL50);
+	createBoard(black, pawn, CELL51);
+	createBoard(black, pawn, CELL52);
+	createBoard(black, pawn, CELL53);
+	createBoard(black, pawn, CELL54);
+	createBoard(black, pawn, CELL55);
 	int i;
 	for (i=0; i<64; i++){
 		updatePrintPiece(getCell(i, board));
@@ -209,28 +209,44 @@ board *createBoard(){		/*creates an empty board*/
 	ans->cell62 = createCell(62, ans);
 	ans->cell63 = createCell(63, ans);
 
+	/*Populates the cells with pieces in their starting positions*/
+	ans->cell0->piece = createPiece(white, rook, ans->cell0);
+	ans->cell1->piece = createPiece(white, knight, ans->cell1);
+	ans->cell2->piece = createPiece(white, bishop, ans->cell2);
+	ans->cell3->piece = createPiece(white, queen, ans->cell3);
+	ans->cell4->piece = createPiece(white, king, ans->cell4);
+	ans->cell5->piece = createPiece(white, bishop, ans->cell5);
+	ans->cell6->piece = createPiece(white, knight, ans->cell6);
+	ans->cell7->piece = createPiece(white, rook, ans->cell7);
+	ans->cell8->piece = createPiece(white, pawn, ans->cell8);
+	ans->cell9->piece = createPiece(white, pawn, ans->cell9);
+	ans->cell10->piece = createPiece(white, pawn, ans->cell10);
+	ans->cell11->piece = createPiece(white, pawn, ans->cell11);
+	ans->cell12->piece = createPiece(white, pawn, ans->cell12);
+	ans->cell13->piece = createPiece(white, pawn, ans->cell13);
+	ans->cell14->piece = createPiece(white, pawn, ans->cell14);
+	ans->cell15->piece = createPiece(white, pawn, ans->cell15);
+
+	ans->cell56->piece = createPiece(black, rook, ans->cell56);
+	ans->cell57->piece = createPiece(black, knight, ans->cell57);
+	ans->cell58->piece = createPiece(black, bishop, ans->cell58);
+	ans->cell59->piece = createPiece(black, queen, ans->cell59);
+	ans->cell60->piece = createPiece(black, king, ans->cell60);
+	ans->cell61->piece = createPiece(black, bishop, ans->cell61);
+	ans->cell62->piece = createPiece(black, knight, ans->cell62);
+	ans->cell63->piece = createPiece(black, rook, ans->cell63);
+	ans->cell48->piece = createPiece(black, pawn, ans->cell48);
+	ans->cell49->piece = createPiece(black, pawn, ans->cell49);
+	ans->cell50->piece = createPiece(black, pawn, ans->cell50);
+	ans->cell51->piece = createPiece(black, pawn, ans->cell51);
+	ans->cell52->piece = createPiece(black, pawn, ans->cell52);
+	ans->cell53->piece = createPiece(black, pawn, ans->cell53);
+	ans->cell54->piece = createPiece(black, pawn, ans->cell54);
+	ans->cell55->piece = createPiece(black, pawn, ans->cell55);
+
 	return ans;
 }
 
 void updateBoard(){
 	/*Updates the board with pieces in their new positions*/
 }
-
-board *copyBoard(board *board){
-	board *ans = createBoard();
-	cell *fcell;
-	cell *tcell;
-	piece *fpiece;
-	int i;
-	for (i = -1; i < 64; i++){
-		fcell = getCell(i, board);
-		tcell = getCell(i, ans);
-		tcell->printPiece = fcell->printPiece;
-		if (fcell->piece){
-			fpiece = fcell->piece;
-			tcell->piece = createPiece(fpiece->player, fpiece->type, tcell);
-		}
-	}
-	return ans;
-}
-

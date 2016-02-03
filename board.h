@@ -163,6 +163,5 @@ struct board *createNewGame();
 struct board *createBoard();
 void updateBoard();
 void deleteBoard(struct board *board);
-struct board *copyBoard(struct board *board);
 
 #endif
