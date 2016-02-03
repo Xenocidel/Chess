@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+#include <time.h>
 #include "errors.h"
 #include "defs.h"
 #include "gameDisplay.h"
@@ -33,13 +34,19 @@ int main(){
 	int turnPre=0;
 	int mode=-1;	 	/*range 1-3*/
 	int diff=-1; 		/*range 0-3, 0 if pvp*/
-	int timer=0;		/*range 0, 5, 10, 20; todo: timer currently disabled*/
+	int timer=-1;		/*range 0, 5, 10, 20*/
 	int side=-1;        /*range '0' for white, '1' for black*/
 	char confirm='n';	/*range 'n', 'y'*/
 	char modeS[26];
 	char diffS[26];
 	char timerS[26];
 	board *board = createNewGame();
+	int timer1 = 0;
+	int timer2 = 0;
+	int timer3 = 0;
+	int timer4 = 0;
+	int timer5 = 0;
+	int altcounter = 1;
 	do{	/*game setup*/
 		printf("\nChess v1.0 by nøl / C Gets Degrees\n\n");
 		while (mode < 1){
@@ -114,18 +121,27 @@ int main(){
 			switch(timer){
 				case 0:
 					printf("No limit selected\n");
+					timer = 0;
 					break;
 				case 5:
 					printf("5 minutes selected\n");
+					timer1 = timer*60;
+					timer3 = timer*60;
 					break;
 				case 10:
 					printf("10 minutes selected\n");
+					timer1 = timer*60;
+					timer3 = timer*60;
 					break;
 				case 20:
 					printf("20 minutes selected\n");
+					timer1 = timer*60;
+					timer3 = timer*60;
 					break;
 				default:
 					printe(selection);
+					timer1 = 0;
+					timer3 = 0;
 					timer = -1;
 					break;
 			}
@@ -186,8 +202,7 @@ int main(){
 			mode = -1;
 			side = -1;
 			diff = -1;
-			/* todo: timer currently disabled
-			timer = -1; */
+			timer = -1;
 		}
 		else{
 			printe(selection);
@@ -205,25 +220,45 @@ int main(){
 		while(in_game){ /* if side = 1, player is black */
 			if (timer != 0){
 				/* set up timer */
+				if (altcounter % 2 != 0){
+					timer5 = timer4 - timer2;
+					timer1 = timer1 - timer5;
+					altcounter = altcounter+1;
+				}
+				else{
+					timer5 = timer4 - timer2;
+					timer3 = timer3 - timer5;
+					altcounter = altcounter+1;
+				}
+				if (timer1 <= 0){
+				printf("\nWhite has run out of time!\n");
+				exit(0);
+				}
+				if (timer3 <= 0){
+					printf("\nBlack has run out of time!\n");
+					exit(0);
+				}
 			}
+			
 			turnPre = board->turn;
+			timer2 = (int) time(NULL);
 			updateGameDisplay(board); /* display the entire board only when its a new turn */
 			while (turnPre == board->turn){
 				switch(mode){
 					case 1: /* PvP */ 
 						updateMessage(board);
-						board->turn++;
+						/*board->turn++;*/
 						break;
 					case 2: /* P vs AI */
 						if(board->turn%2 == aiTeam1){ /* AI's turn */
 							printMessage(board->turn);
 							aiMove(diff, aiTeam1, board);
-							board->turn++;
+							/*board->turn++;*/
 						}
 						else{
 							/* player's turn */
 							updateMessage(board);
-							board->turn++;
+							/*board->turn++;*/
 						}
 						break;
 					case 3: /* AI vs AI*/
@@ -231,17 +266,24 @@ int main(){
 							/* aiTeam1 goes */
 							printMessage(board->turn);
 							aiMove(diff, aiTeam1, board);
-							board->turn++;
+							/*board->turn++;*/
 						}
 						else{ /* Black's turn */
 							/* aiTeam2 goes */
 							printMessage(board->turn);
 							aiMove(diff, aiTeam2, board);
-							board->turn++;
+							/*board->turn++;*/
 						}
 						break;
 				}
 				/* Exits loop when turn is finished */
+			}
+			timer4 = (int) time(NULL);
+			if (timer != 0 && board->turn > 1){
+				printf("DEBUG: Current time: %d\n", timer4);
+				printf("DEBUG: Current time: %d\n", timer2);
+				printf("Time remaining for Player 1: %d seconds.\n", timer1);
+				printf("Time remaining for Player 2: %d seconds.\n", timer3);
 			}
 		}
 			
