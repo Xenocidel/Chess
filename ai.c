@@ -20,15 +20,15 @@ int aiTeam;
 void aiMove(int diff, int team, board *board){
 	int lookAhead = -1; /* Number of moves AI will account for */
 	switch(diff){
-		case(1): /* Easy, AI accounts for 1 move ahead */
+		case(1): /* Easy */
 			lookAhead = 3;
 			aiChoice(team, board, lookAhead);
 			break;
-		case(2): /* Medium, AI accounts for 2 additional moves */
+		case(2): /* Medium */
 			lookAhead = 4;
 			aiChoice(team, board, lookAhead);
 			break;
-		case(3): /* Hard, AI accounts for 3 additional moves */
+		case(3): /* Hard */
 			lookAhead = 5;
 			aiChoice(team, board, lookAhead);
 			break;
@@ -46,7 +46,6 @@ void aiMove(int diff, int team, board *board){
 void aiChoice(int team, board *board, int lookAhd){
 	/* runs calcABmax, which should determine the optimal piece & play */
 	/* moves piece after selecting optimal move */
-<<<<<<< HEAD
 	/* int *piecePointer = 0; */ piecePointer = 0;
 	int *piecePositions = checkPiecePos(team, board);
 	/* printf("First element in piece pos: %d\n", *piecePositions); DEBUG */
@@ -59,7 +58,6 @@ void aiChoice(int team, board *board, int lookAhd){
 	printf("content of value for bestMin is %d\n", bestMin->value); /* DEBUG */
 	moveValue *bestMove = calcABmax(/*piecePointer, movePointer,*/ piecePositions, enemyPositions, bestMax, bestMin, lookAhd, team, board);
 	printf("content of value for bestMove is %d\n", bestMove->value); /* DEBUG */
-=======
 	piecePointer = 0;
 	movePointer = 0;
 	aiTeam = team;
@@ -78,10 +76,9 @@ void aiChoice(int team, board *board, int lookAhd){
 	/*int *moveList = checkAIAvailMoves(getCell( *(piecePositions + piecePointer), board ) -> piece);
 	printf("\nThe piece for AIAvailMoves is %c", getCell( *(piecePositions + 8), board ) -> printPiece);
 	printf("\ncontent of first move for AIAvailMoves is %d", *moveList);*/
-	moveValue *bestMove = ABPrune (piecePositions, enemyPositions, bestMax, bestMin, lookAhd, team, 1, board);
+	moveValue *bestMove = ABPrune(piecePositions, enemyPositions, bestMax, bestMin, lookAhd, team, 1, board);
 	/*printf("\ncontent of value for bestMove is %d\n", bestMove->value);
 	printf("\ncontent of value for bestMove is %d", bestMove->value);  DEBUG */
->>>>>>> origin/ai-into-main-v1
 	movePiece(bestMove->piece, getCell(bestMove->next, board));
 	/*movePiece(getCell(8,board)->piece, getCell(16, board));*/
 	free(piecePositions);
@@ -293,7 +290,7 @@ moveValue *ABPrune(int *piecePositions, int *enemyPositions, moveValue *bestMax,
 	for (num = 0; num < pieceMoveCount(getCell(*(enemyPositions + enemyPointer), board)->piece); num++){
 		*enemyList++ = 0;
 	}
-	free(aiList);
+	free(aiList); 
 	free(enemyList);
 }
 
@@ -456,14 +453,6 @@ int pieceMoveCount(piece *p){
 	int moveCount = 0;
 	int *moveList = checkAIAvailMoves(p);
 	while (1) {
-<<<<<<< HEAD
-		if (*(moveList) == -2 || moveList == NULL) {
-			int j;
-			for(j=pieceCount; j>=0; j--){
-				pieceList = NULL;
-				pieceList--;
-			}
-=======
 		if (*(moveList) == -2 /*|| *moveList == NULL*/) {
 			int num;
 			assert(moveList);
@@ -471,7 +460,7 @@ int pieceMoveCount(piece *p){
 				*moveList++ = 0;
 			}
 			free(moveList);
->>>>>>> origin/ai-into-main-v1
+
 			break;
 			return moveCount;
 		}
@@ -486,7 +475,6 @@ int totalMoveCount(int team, board *board){
 	int moveCount = 0;
 	int pieceCount = 0;
 	int *pieceList = checkPiecePos(team, board);
-<<<<<<< HEAD
 	while (1) { /* Counts amount of pieces for specified player */
 		if (*(pieceList) == -2 || pieceList == NULL) {
 			int j;
@@ -496,15 +484,13 @@ int totalMoveCount(int team, board *board){
 			}
 			break;
 		}
-=======
 
 	int j; /* Counts amount of pieces for specified player */
 	for (j = 0; *pieceList != -2; j++) {
->>>>>>> origin/ai-into-main-v1
 		pieceCount++;
 		pieceList++;
 	}
-
+	/* I forget which for (above or below) is the one we want to use */
 	int num; /* Cleans the list when finished counting the amount of pieces*/
 	for (num = 0; num < pieceCount; num++) {
 		*pieceList++ = 0;
@@ -522,19 +508,19 @@ int totalMoveCount(int team, board *board){
 
 /* Version of checkAvailMoves modified for use with AI (will not display an error message) */
 int *checkAIAvailMoves(piece *p){ /* Remember to free memory after usage */
-	switch(p->type){
+	switch(p->type){ /* Returns -2 if a move check returns null (or if it returns that value anyway) */
 		case pawn:							  
-			return checkPawnMoves(p);
+			return checkPawnMoves(p) ? checkPawnMoves(p) : -2 ;
 		case knight:
-			return checkKnightMoves(p);
+			return checkKnightMoves(p) ? checkKnightMoves(p) : -2 ;
 		case king: 
-			return checkKingMoves(p);
+			return checkKingMoves(p) ? checkKingMoves(p) : -2 ;
 		case queen:
-			return checkQueenMoves(p);
+			return checkQueenMoves(p) ? checkQueenMoves(p) : -2 ;
 		case rook:
-			return checkRookMoves(p);
+			return checkRookMoves(p) ? checkRookMoves(p) : -2 ;
 		case bishop:
-			return checkBishopMoves(p);
+			return checkBishopMoves(p) ? checkBishopMoves(p) : -2 ;
 	}
 	return NULL;
 }
