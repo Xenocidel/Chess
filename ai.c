@@ -9,26 +9,35 @@
 #include "piece.h"
 #include "ai.h"
 
+/*Global pointer variables holds the value for index of piece and move pointers for AI Team*/
+int piecePointer;
+int movePointer;
+
+/*Global pointer variables holds the value for index of piece and move pointers for enemy team*/
+int enemyPointer;
+int enemyMovePointer;
+
+/*Global variable that allows us to reference what team the AI is on without passing the value into every function*/
+int aiTeam;
+
+/* Manages how the AI will function in main based on difficulty*/
 void aiMove(int diff, int team, board *board){
 	int lookAhead = -1; /* Number of moves AI will account for */
 	switch(diff){
-		case(1): /* Easy, AI accounts for 1 move ahead */
+		case(1): /* Easy */
 			lookAhead = 3;
 			aiChoice(team, board, lookAhead);
 			break;
-		case(2): /* Medium, AI accounts for 2 additional moves */
+		case(2): /* Medium */
 			lookAhead = 4;
 			aiChoice(team, board, lookAhead);
 			break;
-		case(3): /* Hard, AI accounts for 3 additional moves */
+		case(3): /* Hard */
 			lookAhead = 5;
 			aiChoice(team, board, lookAhead);
 			break;
-		/* case(4): Mainly to quickly test AI moving functionality. Unused. 
-			randomMove(team, board);
-			break; */
 		default:
-			printf("Missing difficulty parameter.\n");
+			printf("Missing difficulty parameter for AI.\n");
 			break;
 	}
 }
@@ -38,26 +47,38 @@ void aiMove(int diff, int team, board *board){
 void aiChoice(int team, board *board, int lookAhd){
 	/* runs calcABmax, which should determine the optimal piece & play */
 	/* moves piece after selecting optimal move */
-	int *piecePointer = 0;
+	piecePointer = 0;
+	movePointer = 0;
+	aiTeam = team;
+	/*Pointers for the positions of both the AI's pieces and the enemy's pieces*/
 	int *piecePositions = checkPiecePos(team, board);
 	int *enemyPositions = checkPiecePos(oppTeam(team), board);
-	int *movePointer = 0;
-	moveValue *bestMax = CreateMoveValue(NULL, -5, -10000); /* +/-10,000 act as default max/min bounds */
-	moveValue *bestMin = CreateMoveValue(NULL, -5, 10000);
-	moveValue *bestMove = calcABmax(piecePointer, movePointer, piecePositions, enemyPositions, bestMax, bestMin, lookAhd, team, board);
+	moveValue *bestMax = CreateMoveValue(NULL, 0, -1000); /* +/-1000 act as default max/min bounds */
+	moveValue *bestMin = CreateMoveValue(NULL, 0, 1000);
+	/*Calculates the best move for an individual piece using the ABPrune function*/
+	moveValue *bestMove = ABPrune (piecePositions, enemyPositions, bestMax, bestMin, lookAhd, team, 1, board);
 	movePiece(bestMove->piece, getCell(bestMove->next, board));
+	/*Free all the pointers and memory when finished with the function*/
+	free(piecePositions);
+	piecePositions = NULL;
+	free(enemyPositions);
+	enemyPositions = NULL;
 	DeleteMoveValue(bestMax);
+	bestMax = NULL;
 	DeleteMoveValue(bestMin);
-	DeleteMoveValue(bestMove);
+	bestMin = NULL;
 }
 
-int oppTeam(int team){ /* Simple inversion function */
+/* Simple inversion function for the team */
+int oppTeam(int team){ 
+	assert(team == 1 || team == 0); /* Handles invalid input */
 	return (team == 1) ? 0 : 1;
 }
 
 /* Allocates memory for a moveValue struct and assigns parameters as values */
 moveValue *CreateMoveValue(piece *p, int next, int value){ /*Check the syntax to see if malloc is correct*/
 	moveValue *m = malloc(sizeof(moveValue));
+	assert(m);
  	m->piece = p;
 	m->next = next;
 	m->value = value; 
@@ -67,102 +88,161 @@ moveValue *CreateMoveValue(piece *p, int next, int value){ /*Check the syntax to
 /*Frees the memory of a moveValue struct*/
 void DeleteMoveValue(moveValue *m){
 	assert(m);
+	free(m->piece);
 	m->piece = NULL;
 	m->next = 0;
 	m->value = 0;
 	free(m);
+	m = NULL;
 }
 
-/* Compares the value of yoiur move with your previous best options (taking into consideration the opponent's moves as well)*/
-moveValue *calcABmax(int *piecePointer, int *movePointer, int *piecePositions, int *enemyPositions, moveValue *bestMax, moveValue *bestMin, int lookAhd, int team, board *board){
-	/*  
-	
-	param piecePointer : integer that points to the element of the piece position array so that we can evaluate the piece's moves
-	param bestMax : moveValue struct that corresponds to the best move for the AI
-	param bestin : moveValue struct that corresponds to the worst move for the player
-	param lookAhd : number of additional turns to account for
-	param team : Player's team
-	param board: The board
-	
-	*/
-	if (*(piecePositions+(*piecePointer)) != -2) {
-		int *moveList = checkAIAvailMoves(getCell( *(piecePositions + *piecePointer), board ) -> piece);
-		if(lookAhd == 0){
-			moveValue *newValue = calcMoveValue(team, board, getCell(*(piecePositions+(*piecePointer)),board), *(moveList + *movePointer));
-			int dummy = *movePointer++; /*Prevents a warning while incrementing the content of the pointer*/
-			dummy++;
-			return newValue;
-		}
-		int i;
-		moveValue *currMove = CreateMoveValue(NULL, -5, 0);
-		for(i=0; i < totalMoveCount(team, board); i++ ) {
-			currMove = calcABmin(piecePointer, movePointer, piecePositions, enemyPositions, bestMax, bestMin, lookAhd-1, oppTeam(team), board);
-			if (currMove->value >= bestMin->value) {
-				DeleteMoveValue(currMove);
-				int dummy = *piecePointer++;
-				dummy++;
-				return bestMin;
-			}
-			if (currMove->value > bestMax->value) {
-				bestMax->piece = currMove->piece;
-				bestMax->next = currMove->next;
-				bestMax->value = currMove->value;
-				DeleteMoveValue(currMove);
-			} 
-		}
-	}
-	return bestMax;
-}
+/*Recursive Alpha-Beta pruning algorithm that calculates the most optimal move for the AI*/
+moveValue *ABPrune(int *piecePositions, int *enemyPositions, moveValue *bestMax, moveValue *bestMin, int lookahd, int team, int max, board *board) {
+	int value, i;
+	/*Create lists of available moves for a specified piece noted by its location on the board (from piecePositions/enemyPositions parameter)*/
+	int *aiList = checkAIAvailMoves(getCell(*(piecePositions + piecePointer), board)->piece);
+	int aiListCount = pieceMoveCount(getCell(*(piecePositions + piecePointer), board)->piece);
+	int *enemyList = checkAIAvailMoves(getCell(*(enemyPositions + enemyPointer), board)->piece);
+	int enemyListCount = pieceMoveCount(getCell(*(enemyPositions + enemyPointer), board)->piece);
 
-/*Compares the value of an opponent's move with the opponent's previous calculated worst move (taking into consideration the AI's moves as well)*/
-moveValue *calcABmin(int *piecePointer, int *movePointer, int *piecePositions, int *enemyPositions, moveValue *bestMax, moveValue *bestMin, int lookAhd, int team, board *board){
-	/*  
-	
-	param piecePointer : integer that points to the element of the piece position array so that we can evaluate the piece's moves
-	param bestMax : moveValue struct that corresponds to the best move for the AI
-	param bestin : moveValue struct that corresponds to the worst move for the player
-	param lookAhd : number of additional turns to account for
-	param team : Opponent's team
-	param board: The board
-	
-	*/
-	
-	if (*(piecePositions+(*piecePointer)) != -2) {
-		int *moveList = checkAIAvailMoves(getCell( *(piecePositions + *piecePointer), board ) -> piece);
-		if(lookAhd == 0){
-			moveValue *newValue = calcMoveValue(team, board, getCell(*(piecePositions+(*piecePointer)),board), *(moveList + *movePointer));
-			newValue->value *= -1;
-			int dummy = *movePointer++;
-			dummy++;
-			return newValue;
-		}
-		int i;
-		moveValue *currMove = CreateMoveValue(NULL, -5, 0);
-		for(i=0; i < totalMoveCount(team, board); i++ ) {
-			currMove = calcABmax(piecePointer, movePointer, piecePositions, enemyPositions, bestMax, bestMin, lookAhd-1, oppTeam(team), board);
-			if (currMove->value <= bestMax->value){
-				DeleteMoveValue(currMove);
-				int dummy = *piecePointer++;
-				dummy++;
-				return bestMax;
-			}
-			if (currMove->value < bestMin->value){ /*Replaces the BestMinimum with the newest calculated move (if the move is better)*/
-				bestMin->piece = currMove->piece;
-				bestMin->next = currMove->next;
-				bestMin->value = currMove->value;
-				DeleteMoveValue(currMove);
-			}
-		}
+	/*These two conditionals start calculating the value of moves when the look ahead to find next turn moves reaches zero
+	  and when the piece has a valid move to make (condition fails if the next cell location would be -2)*/
+	if (lookahd == 0 && team == aiTeam && *(aiList + movePointer) >= 0 && &*(aiList + movePointer) != NULL) {
+		piecePointer++;
+		return calcMoveValue(aiTeam, board, getCell(*(piecePositions + piecePointer), board), *(aiList + movePointer));
 	}
-	return bestMin;
+	else if (lookahd == 0 && team != aiTeam && *(enemyList + movePointer) >= 0 && &*(enemyList + enemyMovePointer) != NULL) {
+		enemyPointer++;
+		return calcMoveValue(oppTeam(aiTeam), board, getCell(*(enemyPositions + enemyPointer), board), *(enemyList + enemyMovePointer));
+	}
+
+	/*
+	  The first two conditionals run a maximizer and minimizer. The maximizer evaluates the maximum value of the node one level deeper and compares it to the
+	  value for the next move up (e.g. assesses three moves down the line and compares that move to two moves down the line).
+
+	  Maximizer moves are for the AI, minimizer moves are for the human player.
+
+	  If the value for bestMinimum is assessed to be less than the value of the bestMaximum, that means the human player has a move that is better than
+	  what the AI can play if the AI chose to make that particular move.
+
+	  This means that the move that the human can play would cause more damage to the AI's pieces than the potential move that the AI
+	  would make if it decided to make that move. In this situation, the loop is broken out of and no further moves throughout the node are assessed.
+	*/
+
+	if (max == 1 && *(aiList + movePointer) != -2 && *(piecePositions + piecePointer) != -2 && piecePointer < 17) {
+		value = -1000;
+		for (i = 0; i != -1; i++) {
+			int newValue = ABPrune(piecePositions, enemyPositions, bestMax, bestMin, lookahd - 1, team, 0, board)->value;
+			value = (value > newValue) ? value : newValue;
+			/*If the node's value is greater than the current bestMax value, then it will set the values to of the bestMax moveValue to the piece and its next move*/
+			if (value > bestMax->value) {
+				bestMax->value = value;
+				bestMax->piece = getCell(*(piecePositions + piecePointer), board)->piece;
+				bestMax->next = *(aiList + movePointer);
+			}
+			if (lookahd != 0 && bestMin->value <= bestMax->value) { /* No more moves left to look at for this piece */
+				piecePointer++;
+				free(aiList);
+				free(enemyList);
+				break;
+			}
+			if (bestMin->value <= bestMax->value) {
+				free(aiList);
+				free(enemyList);
+				break; /* If there are still moves worth looking at for same piece */
+			}
+		}
+		int nextLocAI = *(aiList + movePointer);
+		if (aiList) {
+			free(aiList);
+		}
+		return CreateMoveValue(getCell(*(piecePositions + piecePointer), board)->piece, nextLocAI, value);
+	}
+
+	else if (max == 0 && *(enemyList + enemyMovePointer) != -2 && *(enemyPositions + enemyPointer) != -2 && enemyPointer < 17) {
+		value = 1000;
+		for (i = 0; i != -1; i++) {
+			int newValue = ABPrune(piecePositions, enemyPositions, bestMax, bestMin, lookahd - 1, team, 1, board)->value;
+			value = (value < newValue) ? value : newValue;
+			if (newValue < bestMin->value) {
+				bestMin->value = newValue;
+				bestMin->piece = getCell(*(enemyPositions + enemyPointer), board)->piece;
+				bestMin->next = *(enemyList + enemyMovePointer);
+			}
+			if (lookahd == 1 && bestMin->value <= bestMax->value) {
+				enemyPointer++;
+				free(aiList);
+				free(enemyList);
+				break;
+			}
+			if (bestMin->value <= bestMax->value) {
+				free(aiList);
+				free(enemyList);
+				break;
+			}
+		}
+		int nextLocEnemy = *(enemyList + movePointer);
+		if (enemyList) {
+			free(enemyList);
+		}
+		return CreateMoveValue(getCell(*(piecePositions + piecePointer), board)->piece, nextLocEnemy, value);
+	}
+
+	/*
+		This conditional will run if the piece in contention does not have any moves that it can make
+		If this is the case, the piecePointer will increment, moving onto the next piece of the same team and evaluates the validity of that piece's moves.
+	*/
+	else if (max == 1 && *(aiList + movePointer) == -2) {
+		piecePointer++;
+		free(enemyList);
+		free(aiList);
+		return ABPrune( piecePositions, enemyPositions, bestMax, bestMin, lookahd, team, max, board);
+	}
+	else if (max == 0 && *(enemyList + enemyMovePointer) == -2) {
+		enemyPointer++;
+		free(enemyList);
+		free(aiList);
+		return ABPrune(piecePositions, enemyPositions, bestMax, bestMin, lookahd, team, max, board);
+	}
+
+	int num; /* Set all elements of both lists to NULL to prevent anything being carried over unintentionally */
+	for (num = 0; num < pieceMoveCount( getCell( *(piecePositions + piecePointer), board)->piece ); num++){
+		*aiList = 0;
+		aiList++;
+	}
+	num = 0;
+	for (num = 0; num < pieceMoveCount(getCell(*(enemyPositions + enemyPointer), board)->piece); num++){
+		*enemyList = 0;
+		enemyList++;
+	}
+	num = 0;
+	for (num = aiListCount - 1; num >= 0; num--) {
+		free(aiList + num);
+	}
+	aiList = NULL;
+	num = 0;
+	for (num = enemyListCount - 1; num >= 0; num--) {
+		free(enemyList + num);
+	}
+	enemyList = NULL;
+	return calcMoveValue(aiTeam, board, getCell(*(piecePositions + piecePointer), board), *(aiList + movePointer))
 }
 
 /* Calculates the value of an individual move*/
 moveValue *calcMoveValue(int team, board *board, cell *moveLoc, int nextCellLoc){
 	/*  1. Weigh the move based on an algorithm
 		2. Return the moveValue struct corresponding to that move */
+
 	int value = 0;
 	cell *nextCell = getCell(nextCellLoc, board);
+
+	/* Checks if the piece can move. If it cannot, then it will return an empty moveValue*/
+	if ( !(nextCellLoc >= 0 && nextCellLoc <= 63) ) {
+		value = 0;
+		moveValue *calcValue = CreateMoveValue(NULL, -2, 0);
+		return calcValue;
+	}
+
 	if (nextCell->piece != NULL) { /* Situation where the next move can capture an opposing piece */
 		switch(nextCell->piece->type){
 			case pawn:							  
@@ -192,7 +272,7 @@ moveValue *calcMoveValue(int team, board *board, cell *moveLoc, int nextCellLoc)
 	int distFromBotRow = nextCellLoc / 8; /*Holds distance of next move from bottom row*/
 	int updownComp = distFromBotRow - moveLoc->cellID/ 8; /*Holds positive/negative distance of the move*/
 	int rng = -1; /* Make AI slightly less predictable */
-	switch(moveLoc->piece->type){ /* Points for forward movement */
+	switch(moveLoc->piece->type){ /* Points for movement */
 		case pawn: /* Pawn moves forward normally */
 			value += 10;
 			if(moveLoc->piece->hasMoved == false){ /* First turn move priority */
@@ -212,7 +292,7 @@ moveValue *calcMoveValue(int team, board *board, cell *moveLoc, int nextCellLoc)
 				if(rng == 1){ /* 33% for knight to have priority over unmoved pawn */
 					value += 2;
 				}
-				rng = 0; /* Resets rng */
+				rng = -1; /* Resets rng */
 			}
 			break;
 		case king:
@@ -252,138 +332,82 @@ moveValue *calcMoveValue(int team, board *board, cell *moveLoc, int nextCellLoc)
 			break;
 	}
 	moveValue *calcValue = CreateMoveValue(moveLoc->piece, nextCellLoc, value);
+	movePointer++;
 	return calcValue;
 }
-
-/* Basic move decision to quickly see if movement functions at a base level. Noted out and unused. */
-/* void randomMove(int team, board *board){
-	int *aiTeamPos = checkPiecePos(team, board); Reads team locations 
-	int opTeam = (team == 1) ? 0 : 1;
-	int *opTeamPos = checkPiecePos(opTeam, board); Reads enemy locations 
-	
-	 Check moves cell by cell. Currently unused, saving just in case. 
-	int entry = 0;
-	while(aiTeamPos){
-		cell *read = getCell(*(aiTeamPos+entry), board)
-		int *aiList = checkAvailMoves(read->piece);
-		if(*(aiTeamPos+entry) == -2){
-			break;
-		}
-		entry++;
-	} 
-	
-	srand(time(NULL));
-	int *pieceMoves;
-	cell *moveCell;
-	while(1){  Selects a random piece to move, and gets corresponding available moves 
-		int rNum = rand()%17;
-		cell *rCell = getCell(*(aiTeamPos+rNum), board);
-		if(*(aiTeamPos+rNum) != -2){
-			pieceMoves = checkAvailMoves(rCell->piece);
-			moveCell = rCell;
-			break;
-		}
-	}
-	int count = 0;
-	while(1){  Count number of available moves 
-		if(*(pieceMoves+count) == -2){
-			break;
-		}
-		count++;
-	}
-	int selNum = rand()%count;
-	int m = *(pieceMoves+selNum);
-	cell *nextCell = getCell(m, board);
-	replacePiece(nextCell, moveCell->piece);
-	
-	 Freeing memory
-	free(aiTeamPos); free(opTeamPos);
-	deleteCell(nextCell);
-} */
 
 /* Counts number of moves a piece can make */
 int pieceMoveCount(piece *p){
 	int moveCount = 0;
 	int *moveList = checkAIAvailMoves(p);
-	while (1) {
-		if (*(moveList) == -2 ) {
-			free(moveList);
-			return moveCount;
-		}
-		moveCount++;
-		moveList++;
-	}
-	return moveCount;
-}
-
-/* Counts number of moves a player can make */
-int totalMoveCount(int team, board *board){
-	int moveCount = 0;
-	int pieceCount = 0;
-	int *pieceList = checkPiecePos(team, board);
-	while (1) { /* Counts amount of pieces for specified player */
-		if (*(pieceList) == -2) {
-			free(pieceList);
-			break;
-		}
-		pieceCount++;
-		pieceList++;
-	}
 	int i;
-	for (i = 0; i < pieceCount; i++) { /* For loop goes through all of the pieces for one player on his/her 
-										side of the board and calculates the total moves of all the pieces combined*/
-		moveCount += pieceMoveCount( getCell(*pieceList,board)->piece );
-		pieceList++;
+	for (i = 0; *(moveList+i) != -2 || moveList != NULL; i++) {
+		moveCount++;
 	}
-	/*Return the total number of moves available to one player*/
-	return moveCount;
+	free(moveList);
+	return moveCount; 
 }
 
 /* Version of checkAvailMoves modified for use with AI (will not display an error message) */
 int *checkAIAvailMoves(piece *p){ /* Remember to free memory after usage */
 	switch(p->type){
-		case pawn:							  
-			return checkPawnMoves(p);
+		case pawn:
+			if (checkPawnMoves(p)) return checkPawnMoves(p);
 		case knight:
-			return checkKnightMoves(p);
+			if (checkKnightMoves(p)) return checkKnightMoves(p);
 		case king: 
-			return checkKingMoves(p);
+			if (checkKingMoves(p)) return checkKingMoves(p);
 		case queen:
-			return checkQueenMoves(p);
+			if (checkQueenMoves(p)) return checkQueenMoves(p);
 		case rook:
-			return checkRookMoves(p);
+			if (checkRookMoves(p)) return checkRookMoves(p);
 		case bishop:
-			return checkBishopMoves(p);
+			if (checkBishopMoves(p)) return checkBishopMoves(p);
 	}
 	return NULL;
 }
 
-
 /* Returns pointer to list of specified team's piece locations */
 int *checkPiecePos(int team, board *board){ 
-	int *cellList = malloc(sizeof(int)*17);
+	
+	/*Creates a cellList with as many values as there are pieces per side*/
+	int cellList[17];
+	int j;
+	for (j = 0; j<17; j++) { /* fills entries with -2 */
+		cellList[j] = -2;
+	}
+
 	int entry = 0;
 	int checkTeam = -1;
-	int i;
+	int i = 0;
+	cell *read = getCell(0, board);
+	/*Goes through the entire board and stores the cell number into the cellList*/
 	for(i=0; i<64; i++){
-		cell *read = getCell(i, board);
+		read = getCell(i, board);
 		if(read->piece != NULL){
 			if(read->piece->player == white){ /* 0 = white, 1 = black */
 				checkTeam = 0;
 			}
-			else{
+			else if (read->piece->player == black){
 				checkTeam = 1;
 			}
 			if(checkTeam == team){ /* If the piece corresponds to the input team, add the cellID Number to the end of the cellList*/
-				*(cellList+entry) = i;
+				cellList[entry] = i;
 				entry++;
 			}
+
 		}
+		read = NULL;
 	}
-	int j;
-	for(j=entry; j<17; j++){ /* fills last (and any extra) entries with -2 */
-		*(cellList+entry) = -2; /* this num signals there's nothing left to read */
+	i = 0; /* Resets i for next use */
+	int *ans = malloc(sizeof(int)*17);
+	while (i < 17)
+	{
+		*ans = cellList[i];
+		ans++;
+		i++;
 	}
-	return cellList;
+	ans -= i;
+	return ans;
 	/* Make sure to free memory after using this function */
 }
