@@ -282,41 +282,55 @@ int moveSwitch(piece *piece, int destCell){
 			break;
 	}
 
-	if (mp>=0){
+	if (mp>=0){ /* runs through this checkChecking every time a move occurs */
 		int i;
 		cell *tmp;
-		for (i = 0; i < 63; i++){
+		int x, y=1;
+		int *avail;
+		cell *tmp2;
+		for (i = 0; i <= 63; i++){
 			tmp = getCell(i, piece->loc->board);
-			if (tmp->piece != NULL && tmp->piece->type == king){
+			if (tmp->piece != NULL && tmp->piece->type == king){ /* finds a king */
 				check = checkKingCheck(tmp->piece->loc->cellID, tmp->piece);
-				int x, y=1;
-				int *avail;
-				cell *tmp2;
-				while(y){
-					/* if there are any available moves, it is a standard check */
-					/* otherwise, checkmate if in check, stalemate if not */
-					if (check == 1){
-						check = 2; /* checkmate */
+				if (check){
+					while(y){
+						/* if there are available moves for any piece, it is a standard check */
+						/* otherwise, checkmate */
+						check = 2;
+						for (x=0; x<64; x++){
+							tmp2 = getCell(x, piece->loc->board);
+							if (tmp2->piece != NULL){
+								avail = checkAvailMoves(tmp2->piece);
+								if (avail != NULL && *avail == -2){
+									y=0;
+									check = 1;
+									break;
+								}
+							}
+						}
+						y=0;
 					}
-					else if (check == 0){
-						check = 3; /* stalemate */
-					}
-					for (x=0; x<64; x++){
-						tmp2 = getCell(x, piece->loc->board);
-						if (tmp2->piece != NULL){
-							avail = checkAvailMoves(tmp2->piece);
-							if (avail != NULL && *avail == -2){
-								y=0;
-								check = 1;
-								break;
+					break;
+				}
+				else {
+					y=1;
+					while(y){
+						check = 3;
+						for (x=0; x<64; x++){
+							tmp2 = getCell(x, piece->loc->board);
+							if (tmp2->piece != NULL){
+								avail = checkAvailMoves(tmp2->piece);
+								if (avail != NULL && *avail == -2){
+									y=0;
+									check = 0;
+									break;
+								}
 							}
 						}
 					}
-					y=0;
 				}
 			}
 		}
-
 		
 		writeMoveLog(piece->loc->board->turn-1, piece, capture, promo, castle, check); /* turn-1 to log the move that just occurred */
 		

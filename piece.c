@@ -28,6 +28,7 @@
 #include "errors.h"
 #include "board.h"
 #include "gameDisplay.h"
+#include "gameDisplay.c"
 
 piece *createPiece(enum player player, enum type type, cell *cell){
 	piece *ans = malloc(sizeof(piece));
