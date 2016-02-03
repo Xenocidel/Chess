@@ -23,6 +23,7 @@
 #define BOARD_H_INCLUDED_
 #include "cell.h"
 
+
 #define MINUS1 board->minus1
 #define CELL0  board->cell0
 #define CELL1  board->cell1
@@ -163,5 +164,6 @@ struct board *createNewGame();
 struct board *createBoard();
 void updateBoard();
 void deleteBoard(struct board *board);
+
 
 #endif

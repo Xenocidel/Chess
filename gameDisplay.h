@@ -40,5 +40,6 @@ void writeMoveLog(int turn, piece *piece, int capture, int promo, int castle, in
 const char * returnCell(int cellID);
 void loadGame(char *fname, board *board);
 void loadUndo(char *fname, char *fname2, board *board, int undoTurns);
+int *checkCheckMoves(int *s, int k, int j, board *board);
 
 #endif

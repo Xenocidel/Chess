@@ -201,6 +201,21 @@ void handleInput(board *board){
 
 void checkAvailMovesSwitch(piece *piece){
 	int *tmp = checkAvailMoves(piece);
+	int x;
+	cell *temp = getCell(0, piece->loc->board);
+	if (check==1){
+		for (x = 0; x < 64; x++){
+			temp = getCell(x, piece->loc->board);
+			if (temp->piece){
+				if (temp->piece->type == king){
+					if (temp->piece->player == piece->player){
+						break;
+					}
+				}
+			}
+		}
+		tmp = checkCheckMoves(tmp, piece->loc->cellID, x, piece->loc->board);
+	}
 	if (tmp == NULL || *tmp == -2){
 		printp(available, piece);
 		return;
@@ -960,5 +975,186 @@ void loadUndo(char *fname, char *fname2, board *board, int undoTurns){
 	printf("Move undone.\n");
 	free(loc);
 	fclose(file);
+}
+int *checkCheckMoves(int *s, int k, int j, board *board){/*s is the string of possible moves, k is the cell where the piece you want to move is, j is the cell where the king is, p is the piece you want to move*/
+	int m[5];
+	cell *temp = getCell(k, board);
+	cell *temp2 = getCell(j, board);
+	int undoTurns = 0;
+	int q;
+	int count = 0;
+	int f = 0;
+	switch (temp->piece->type){
+	case queen:
+		while (*s != 2){
+			temp = getCell(*s, board);
+			temp2 = getCell(k, board);
+			q = moveQueen(temp->piece, temp, s);
+			temp2 = getCell(j, board);
+			q = checkKingCheck(j, temp2->piece);
+			if (q == 0 || q == 1){
+				m[f] = *s;
+				f++;
+			}
+			s++;
+			count++;
+			undoTurns = board->turn;
+			undoTurns -= 1;
+			deleteAllCells(board);
+			deleteBoard(board);
+			board = createNewGame();
+			loadUndo("log_loadable.txt", "log_loadable2.txt", board, undoTurns);
+		}
+		m[f] = -2;
+		s -= count;
+		for (q = 0; q < f + 1; q++){
+			*s = m[q];
+			s++;
+		}
+		s -= f;
+		break;
+	case rook:
+		while (*s != 2){
+			temp = getCell(*s, board);
+			temp2 = getCell(k, board);
+			q = moveRook(temp->piece, temp, s);
+			temp2 = getCell(j, board);
+			q = checkKingCheck(j, temp2->piece);
+			if (q == 0 || q == 1){
+				m[f] = *s;
+				f++;
+			}
+			s++;
+			count++;
+			undoTurns = board->turn;
+			undoTurns -= 1;
+			deleteAllCells(board);
+			deleteBoard(board);
+			board = createNewGame();
+			loadUndo("log_loadable.txt", "log_loadable2.txt", board, undoTurns);
+		}
+		m[f] = -2;
+		s -= count;
+		for (q = 0; q < f + 1; q++){
+			*s = m[q];
+			s++;
+		}
+		s -= f;
+		break;
+	case knight:
+		while (*s != 2){
+			temp = getCell(*s, board);
+			temp2 = getCell(k, board);
+			q = moveKnight(temp->piece, temp, s);
+			temp2 = getCell(j, board);
+			q = checkKingCheck(j, temp2->piece);
+			if (q == 0 || q == 1){
+				m[f] = *s;
+				f++;
+			}
+			s++;
+			count++;
+			undoTurns = board->turn;
+			undoTurns -= 1;
+			deleteAllCells(board);
+			deleteBoard(board);
+			board = createNewGame();
+			loadUndo("log_loadable.txt", "log_loadable2.txt", board, undoTurns);
+		}
+		m[f] = -2;
+		s -= count;
+		for (q = 0; q < f + 1; q++){
+			*s = m[q];
+			s++;
+		}
+		s -= f;
+		break;
+	case king:
+		while (*s != 2){
+			temp = getCell(*s, board);
+			temp2 = getCell(k, board);
+			q = moveKing(temp->piece, temp, s);
+			temp2 = getCell(j, board);
+			q = checkKingCheck(j, temp2->piece);
+			if (q == 0 || q == 1){
+				m[f] = *s;
+				f++;
+			}
+			s++;
+			count++;
+			undoTurns = board->turn;
+			undoTurns -= 1;
+			deleteAllCells(board);
+			deleteBoard(board);
+			board = createNewGame();
+			loadUndo("log_loadable.txt", "log_loadable2.txt", board, undoTurns);
+		}
+		m[f] = -2;
+		s -= count;
+		for (q = 0; q < f + 1; q++){
+			*s = m[q];
+			s++;
+		}
+		s -= f;
+		break;
+	case pawn:
+		while (*s != 2){
+			temp = getCell(*s, board);
+			temp2 = getCell(k, board);
+			q = movePawn(temp->piece, temp, s);
+			temp2 = getCell(j, board);
+			q = checkKingCheck(j, temp2->piece);
+			if (q == 0 || q == 1){
+				m[f] = *s;
+				f++;
+			}
+			s++;
+			count++;
+			undoTurns = board->turn;
+			undoTurns -= 1;
+			deleteAllCells(board);
+			deleteBoard(board);
+			board = createNewGame();
+			loadUndo("log_loadable.txt", "log_loadable2.txt", board, undoTurns);
+		}
+		m[f] = -2;
+		s -= count;
+		for (q = 0; q < f + 1; q++){
+			*s = m[q];
+			s++;
+		}
+		s -= f;
+		break;
+	case bishop:
+		while (*s != 2){
+			temp = getCell(*s, board);
+			temp2 = getCell(k, board);
+			q = moveBishop(temp->piece, temp, s);
+			temp2 = getCell(j, board);
+			q = checkKingCheck(j, temp2->piece);
+			if (q == 0 || q == 1){
+				m[f] = *s;
+				f++;
+			}
+			s++;
+			count++;
+			undoTurns = board->turn;
+			undoTurns -= 1;
+			deleteAllCells(board);
+			deleteBoard(board);
+			board = createNewGame();
+			loadUndo("log_loadable.txt", "log_loadable2.txt", board, undoTurns);
+		}
+		m[f] = -2;
+		s -= count;
+		for (q = 0; q < f + 1; q++){
+			*s = m[q];
+			s++;
+		}
+		s -= f;
+		break;
+
+	}
+	return s;
 }
 

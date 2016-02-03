@@ -27,6 +27,7 @@
 #include "defs.h"
 #include "errors.h"
 #include "board.h"
+#include "gameDisplay.h"
 
 piece *createPiece(enum player player, enum type type, cell *cell){
 	piece *ans = malloc(sizeof(piece));
@@ -197,6 +198,7 @@ int *checkAvailMoves(piece *p){
 		case rook: return checkRookMoves(p);
 		case bishop: return checkBishopMoves(p);
 	}
+
 	return NULL;
 }
 
@@ -1892,11 +1894,26 @@ int movePiece(piece *p, cell *target){
 	assert(target->cellID <= 63);
 	assert(target->cellID >= 0);
 	int *avail = checkAvailMoves(p);
+
 	if (avail == NULL || (avail != NULL && *avail == -2)){
 		return -2;
 	}
 	int ans;
-		
+	int x;
+	cell *temp = getCell(0, p->loc->board);
+	if (check == 1){
+		for (x = 0; x < 64; x++){
+			temp = getCell(x, p->loc->board);
+			if (temp->piece){
+				if (temp->piece->type == king){
+					if (temp->piece->player == p->player){
+						break;
+					}
+				}
+			}
+		}
+		avail = checkCheckMoves(avail, p->loc->cellID, x, p->loc->board);
+	}
 	switch (p->type){
 		case pawn:
 			ans = movePawn(p, target, avail);
