@@ -29,6 +29,8 @@
 #include "errors.h"
 #include "defs.h"
 
+int check = 0; /* 1-3 depending on check, checkmate, or stalemate */
+
 void updateGameDisplay(board *board){
 	printf("\n");
 	printf("    a   b   c   d   e   f   g   h\n");
@@ -233,7 +235,6 @@ int moveSwitch(piece *piece, int destCell){
 	int capture = 0;
 	int promo = 0; /* 1-4 depending on piece selected */
 	int castle = 0; /* 2-3 depending on kingside or queenside */
-	int check = 0; /* 1-3 depending on check, checkmate, or stalemate */
 	int mp = movePiece(piece, dest);
 	switch (mp){
 		case -2: /* no available moves */
@@ -271,30 +272,36 @@ int moveSwitch(piece *piece, int destCell){
 		cell *tmp;
 		for (i = 0; i < 63; i++){
 			tmp = getCell(i, piece->loc->board);
-			if (tmp != NULL && tmp->piece->type == king){
-				/* todo: if check, check=1, if checkmate=2 */
-			}
-		}
-		/* stalemate if all pieces have no available moves */
-		if (check){
-			int x, y=1;
-			int *avail;
-			cell *tmp2;
-			while(y){
-				check = 3; /* stalemate */
-				for (x=0; x<64; x++){
-					tmp2 = getCell(x, piece->loc->board);
-					if (tmp2->piece != NULL){
-						avail = checkAvailMoves(tmp2->piece);
-						if (avail != NULL && *avail == -2){
-							y=0;
-							break;
+			if (tmp->piece != NULL && tmp->piece->type == king){
+				check = checkKingCheck(tmp->piece->loc->cellID, tmp->piece);
+				int x, y=1;
+				int *avail;
+				cell *tmp2;
+				while(y){
+					/* if there are any available moves, it is a standard check */
+					/* otherwise, checkmate if in check, stalemate if not */
+					if (check == 1){
+						check = 2; /* checkmate */
+					}
+					else if (check == 0){
+						check = 3; /* stalemate */
+					}
+					for (x=0; x<64; x++){
+						tmp2 = getCell(x, piece->loc->board);
+						if (tmp2->piece != NULL){
+							avail = checkAvailMoves(tmp2->piece);
+							if (avail != NULL && *avail == -2){
+								y=0;
+								check = 1;
+								break;
+							}
 						}
 					}
+					y=0;
 				}
-				y=0;
 			}
 		}
+
 		
 		writeMoveLog(piece->loc->board->turn-1, piece, capture, promo, castle, check); /* turn-1 to log the move that just occurred */
 		
