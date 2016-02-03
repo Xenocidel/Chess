@@ -46,8 +46,11 @@ void replacePiece(cell *cell, piece *p){
 void deleteCell(cell *cell){	/*used at program shutdown, be sure to delete board separately*/
 	if(cell->piece != NULL){	/*deletes all pieces as well*/
 		deletePiece(cell->piece);
+		cell->piece = NULL;
 	}
+	cell->board = NULL;
 	free(cell);
+	cell = NULL;
 }
 
 void deleteAllCells(board *board){

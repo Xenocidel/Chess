@@ -102,7 +102,17 @@ void handleInput(board *board){
 	}
 	if (cellID == -4){
 		/* undo */
-		printf("Undo move functionality is currently unavailable.\n");
+		int undoTurns = board->turn;
+		undoTurns -= 2;
+		if (undoTurns < 0){
+			printf("You have not made a move yet!\n\n");
+			if (loc) free(loc);
+			return;
+		}
+		deleteAllCells(board);
+		deleteBoard(board);
+		board = createNewGame();
+		loadUndo("log_loadable.txt", "log_loadable2.txt", board, undoTurns);
 		if (loc) free(loc);
 		return;
 	}
@@ -292,6 +302,46 @@ int moveSwitch(piece *piece, int destCell){
 	return check;
 }
 
+int moveSwitchSilent(piece *piece, int destCell){
+	cell *dest = getCell(destCell, piece->loc->board);
+	int capture = 0;
+	int promo = 0; /* 1-4 depending on piece selected */
+	int castle = 0; /* 2-3 depending on kingside or queenside */
+	int check = 0; /* 1-3 depending on check, checkmate, or stalemate */
+	int mp = movePiece(piece, dest);
+	switch (mp){
+		case -2: /* no available moves */
+			printp(available, piece); 
+			break;
+		case -1: /* invalid move */
+			printe(move);
+			break;
+		case 0: /* standard move or capture */
+		{	cell *prison = getCell(-1, piece->loc->board);
+			if (prison->piece != NULL && prison->piece->prev == dest){
+				capture = 1;
+			}
+			break;
+		}
+		case 1: /* pawn promotion */
+		{	cell *prison = getCell(-1, piece->loc->board);	
+			promo = pawnPromotion(piece);
+			if (prison->piece != NULL && prison->piece->prev == dest){
+				capture = 1;
+			}
+			fgetc(stdin); /* absorb the \n produced by scanf */
+			break;
+		}
+		case 2: /*kingside castle*/
+			castle = 2;
+			break;
+		case 3: /*queenside castle*/
+			castle = 3;
+			break;
+	}
+	return check;
+}
+
 int toID(char *loc){ 
 	
 	if (strncmp("quit", loc, 4) == 0){ 
@@ -401,6 +451,17 @@ void createMoveLog(){
 	fclose(moveLog);
 }
 
+void createLoadableLog(){
+	FILE * moveLogLoadable;
+	moveLogLoadable = fopen("log_loadable.txt", "w");
+	if (moveLogLoadable == NULL){
+		printf("Error writing to move log. Skipping...\n\n");
+		return;
+	}
+	fclose(moveLogLoadable);
+}
+
+
 /*  promo 1-4 depending on piece selected (queen, knight, rook, bishop)
  *	castle 2-3 depending on kingside or queenside
  *	check 1-3 depending on check, checkmate, or stalemate
@@ -409,15 +470,28 @@ void writeMoveLog(int turn, piece *p, int capture, int promo, int castle, int ch
 	assert(p);
 	int len=0;
 	FILE * moveLog;
+	FILE * moveLogLoadable;
+	moveLogLoadable = fopen("log_loadable.txt", "a");
+
+	if (moveLogLoadable == NULL){
+		printf("Error writing to move log. Skipping...\n\n");
+		return;
+	}
+	/* loadable move log */
+	fprintf(moveLogLoadable, "%s", returnCell(p->prev->cellID));
+	fprintf(moveLogLoadable, "%s\n", returnCell(p->loc->cellID));
+	fclose(moveLogLoadable);
+	
+	/* formatted move log */
 	moveLog = fopen("movelog.txt", "a");
 	if (moveLog == NULL){
 		printf("Error writing to move log. Skipping...\n\n");
 		return;
 	}
+	
 	if (turn%2 == 0){
 		fprintf(moveLog, "%d. ", turn/2+1);
-	}
-	
+	}	
 	if (!promo){
 		switch (p->type){
 		case pawn:
@@ -626,7 +700,7 @@ void loadGame(char *fname, board *board){
 	char *loc = malloc(sizeof(char)*7);
 	char *tmp;
 	while (fgets(loc, 7, file)){
-		if ((tmp = strchr(loc, '\r')) != NULL){ /*cuts off \r at the end of each input*/
+		if ((tmp = strchr(loc, '\r')) != NULL || (tmp = strchr(loc, '\n')) != NULL){ /*cuts off \r or \n at the end of each input*/
 			*tmp = '\0';
 		}
 		int cellID = toID(loc);
@@ -643,7 +717,7 @@ void loadGame(char *fname, board *board){
 		}
 		if (cellID == -4){
 			/* undo */
-			printf("Undo move functionality is currently unavailable.\n");
+			printf("You may not recursively undo. Stopping...\n");
 			
 			return;
 		}
@@ -666,8 +740,6 @@ void loadGame(char *fname, board *board){
 			loc -= loclen;
 			if (destCell == -2){
 				printe(entryFormat);
-				
-					
 				return;
 			}
 			cell *tmp = getCell(cellID, board);
@@ -743,3 +815,150 @@ void loadGame(char *fname, board *board){
 	printf("Game loaded!\n");
 	free(loc);
 }
+
+void loadUndo(char *fname, char *fname2, board *board, int undoTurns){
+	FILE *file = fopen(fname, "r");
+	if (!file){
+		printf("\nCan't open file \"%s\" for reading!\n", fname);
+		return;
+	}
+	FILE *backup = fopen(fname2, "w");
+	if (!backup){
+		printf("\nCan't open file \"%s\" for reading!\n", fname);
+		return;
+	}
+	char *loc = malloc(sizeof(char)*7);
+	char *tmp;
+	int num=0;
+	while (num < undoTurns){ /* copy file (fname) contents to backup (fname2) */
+		fprintf(backup, fgets(loc, 7, file));
+		num++;
+	}
+	
+	fclose(file);
+	fclose(backup);
+	backup = fopen(fname, "w"); /* empty out fname and switch it w/ fname2 */
+	fclose(backup);
+	file = fopen(fname2, "r");
+	num=0;
+	
+	createMoveLog();
+	
+	while (num < undoTurns && fgets(loc, 7, file)){
+		if ((tmp = strchr(loc, '\r')) != NULL || (tmp = strchr(loc, '\n')) != NULL){ /*cuts off \r or \n at the end of each input*/
+			*tmp = '\0';
+		}
+		int cellID = toID(loc);
+		if (cellID == -2){
+			printe(command);
+			printf("Error occured while loading. Stopping...\n");
+			
+			return;
+		}
+		if (cellID == -3){
+			/* todo: maybe deleteBoard and deleteAllCells? */
+			
+			exit(0);
+		}
+		if (cellID == -4){
+			/* undo */
+			printf("You may not recursively undo. Stopping...\n");
+			return;
+		}
+		if (cellID == -5){ /* display help */
+			if (board->turn != 0){
+				printf("White pieces are displayed in CAPITALS. Black pieces are displayed in lowercase\n\nMove a piece by typing its location and its destination like: a2 a3 or a2a3\nYou can also see a piece's available moves by typing its location like: a1\n\nLoad a game by typing load (see user manual for more instructions)\n\nTo bring up these instructions again, type help\nExit the game by typing exit or quit\n\n");
+			}
+			
+			return;
+		}
+		if (cellID == -6){
+			printf("You may not recursively load. Stopping...\n");
+			return;
+		}
+
+		if (strlen(loc) == 5 || strlen(loc) == 4){ /* segment for direct move */
+			int loclen = strlen(loc)-2;
+			loc += loclen;
+			int destCell = toID(loc);
+			loc -= loclen;
+			if (destCell == -2){
+				printe(entryFormat);
+				return;
+			}
+			cell *tmp = getCell(cellID, board);
+			if (tmp->piece == NULL){
+				printe(emptyCell);
+				
+					
+				return;
+			}
+			if (tmp->piece->player == black && board->turn % 2 == 0){
+				/* offSides black trying to move white */
+				printe(offSides);
+				
+					
+				return;
+			}
+			else if (tmp->piece->player == white && board->turn % 2 == 1){
+				/* offSides white trying to move black */
+				printe(offSides);
+				
+					
+				return;
+			}
+			int checkCode = moveSwitch(tmp->piece, destCell); /*silent?*/
+			num++;
+			if (checkCode){
+				/* if all pieces have no available moves, stalemate */
+				int x;
+				cell *tmp2;
+				int *avail;
+				for (x=0; x<64; x++){
+					tmp2 = getCell(x, board);
+					if (tmp2->piece != NULL){
+						avail = checkAvailMoves(tmp2->piece);
+						if (!(avail == NULL || (avail != NULL && *avail == -2))){
+							break;
+						}
+					}
+					checkCode = 2;
+				}
+				checkCode = 0;
+			}
+			switch (checkCode){
+				case 1:
+					printf("You are in check!\n\n");
+					continue;
+				case 2:
+					printf("Checkmate! Game over!\n\n");
+					/* todo: deleteBoard and deleteAllCells? */
+					exit(0);
+				case 3:
+					printf("Stalemate! Game over!\n\n");
+					/* todo: deleteBoard and deleteAllCells? */
+					exit(0);
+			}
+			
+			continue;
+		}
+		else if (strlen(loc) == 2){ /* segment for selecting a piece */
+			cell *tmp = getCell(cellID, board);
+			if (tmp->piece == NULL){
+				printe(emptyCell);
+				
+				continue;
+			}
+			checkAvailMovesSwitch(tmp->piece);
+			
+			continue;
+		}
+		printe(entryFormat);
+		
+		continue;
+	}
+	printf("Move undone.\n");
+	free(loc);
+	fclose(file);
+}
+

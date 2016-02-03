@@ -180,6 +180,7 @@ int main(){
 			in_game = 1;
 			fgetc(stdin); /* absorb the /n produced by the last scanf */
 			createMoveLog();
+			createLoadableLog();
 		}
 		else if (confirm == 'n' || confirm == 'N'){
 			mode = -1;
