@@ -31,11 +31,14 @@ void printMessage();
 void handleInput(board *board);
 int toID(char *loc);
 int moveSwitch(piece *piece, int destCell);
+int moveSwitchSilent(piece *piece, int destCell);
 void checkAvailMovesSwitch(piece *piece);
 
 void createMoveLog();
+void createLoadableLog();
 void writeMoveLog(int turn, piece *piece, int capture, int promo, int castle, int check);
 const char * returnCell(int cellID);
 void loadGame(char *fname, board *board);
+void loadUndo(char *fname, char *fname2, board *board, int undoTurns);
 
 #endif
