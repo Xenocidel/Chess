@@ -36,6 +36,7 @@ int main(){
 	int diff=-1; 		/*range 0-3, 0 if pvp*/
 	int timer=-1;		/*range 0, 5, 10, 20*/
 	int side=-1;        /*range '0' for white, '1' for black*/
+	int all41 = -1;		/* range 0-5 depending on piece */
 	char confirm='n';	/*range 'n', 'y'*/
 	char modeS[26];
 	char diffS[26];
@@ -82,6 +83,40 @@ int main(){
 				default:
 					printe(selection);
 					mode = -1;
+					break;
+			}
+		}
+		while (all41 < 0){
+			printf("\nPlease select game type. All-for-One mode creates all pieces of the same type!\n");
+			printf("0. Standard Chess\n");
+			printf("1. All-for-Pawn\n");
+			printf("2. All-for-Knight\n");
+			printf("3. All-for-Queen\n");
+			printf("4. All-for-Rook\n");
+			printf("5. All-for-Bishop\n");
+			scanf("%d", &all41);
+			switch(all41){
+				case 0:
+					printf("Standard chess selected\n");
+					break;
+				case 1:
+					printf("All-for-Pawn selected\n");
+					break;
+				case 2:
+					printf("All-for-Knight selected\n");
+					break;
+				case 3:
+					printf("All-for-Queen selected\n");
+					break;
+				case 4:
+					printf("All-for-Rook selected\n");
+					break;
+				case 5:
+					printf("All-for-Bishop selected\n");
+					break;
+				default:
+					printe(selection);
+					all41 = -1;
 					break;
 			}
 		}
@@ -203,6 +238,7 @@ int main(){
 			side = -1;
 			diff = -1;
 			timer = -1;
+			all41 = -1;
 		}
 		else{
 			printe(selection);
@@ -239,11 +275,63 @@ int main(){
 					exit(0);
 				}
 			}
+			int alpha;
+			cell *tmp1;
+			switch(all41){
+				case 0:
+				break;
+				case 1:
+					for(alpha = 0; alpha <64; alpha++){
+						tmp1 = getCell(alpha, board);
+						if (tmp1->piece != NULL && tmp1->piece->type != king){
+							tmp1->piece->type = pawn;
+							updatePrintPiece(tmp1);
+						}
+					}
+					break;
+				case 2:
+					for(alpha = 0; alpha <64; alpha++){
+						tmp1 = getCell(alpha, board);
+						if (tmp1->piece != NULL && tmp1->piece->type != king){
+							tmp1->piece->type = knight;
+							updatePrintPiece(tmp1);
+						}
+					}
+					break;
+				case 3:
+					for(alpha = 0; alpha <64; alpha++){
+						tmp1 = getCell(alpha, board);
+						if (tmp1->piece != NULL && tmp1->piece->type != king){
+							tmp1->piece->type = queen;
+							updatePrintPiece(tmp1);
+						}
+					}
+					break;
+				case 4:
+					for(alpha = 0; alpha <64; alpha++){
+						tmp1 = getCell(alpha, board);
+						if (tmp1->piece != NULL && tmp1->piece->type != king){
+							tmp1->piece->type = rook;
+							updatePrintPiece(tmp1);
+						}
+					}
+					break;
+				case 5:
+					for(alpha = 0; alpha <64; alpha++){
+						tmp1 = getCell(alpha, board);
+						if (tmp1->piece != NULL && tmp1->piece->type != king){
+							tmp1->piece->type = bishop;
+							updatePrintPiece(tmp1);
+						}
+					}
+					break;
+			}
 			
 			turnPre = board->turn;
 			timer2 = (int) time(NULL);
 			updateGameDisplay(board); /* display the entire board only when its a new turn */
 			while (turnPre == board->turn){
+				cell *temp;
 				switch(mode){
 					case 1: /* PvP */ 
 						updateMessage(board);
@@ -252,8 +340,42 @@ int main(){
 					case 2: /* P vs AI */
 						if(board->turn%2 == aiTeam1){ /* AI's turn */
 							printMessage(board->turn);
-							aiMove(diff, aiTeam1, board);
-							/*board->turn++;*/
+							if (board->turn == 0){
+								temp = getCell(12, board);
+								movePiece(temp->piece, getCell(20, board));
+								temp = NULL;
+							}
+							else if (board->turn == 1){
+								temp = getCell(52, board);
+								movePiece(temp->piece, getCell(44, board));
+							}
+							else if (board->turn == 2){
+								temp = getCell(3, board);
+								movePiece(temp->piece, getCell(21, board));
+							}
+							else if (board->turn == 3){
+								temp = getCell(59, board);
+								movePiece(temp->piece, getCell(45, board));
+							}
+							else if (board->turn == 4){
+								temp = getCell(5, board);
+								movePiece(temp->piece, getCell(26, board));
+							}
+							else if (board->turn == 5){
+								temp = getCell(61, board);
+								movePiece(temp->piece, getCell(34, board));
+							}
+							else if (board->turn == 6){
+								temp = getCell(21, board);
+								movePiece(temp->piece, getCell(53, board));
+							}
+							else if (board->turn == 7){
+								temp = getCell(45, board);
+								movePiece(temp->piece, getCell(13, board));
+							}
+							else{
+								aiMove(diff, aiTeam1, board);
+							}
 						}
 						else{
 							/* player's turn */

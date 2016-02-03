@@ -341,28 +341,28 @@ int pieceMoveCount(piece *p){
 	int moveCount = 0;
 	int *moveList = checkAIAvailMoves(p);
 	int i;
-	for (i = 0; *(moveList+i) != -2 || moveList != NULL; i++) {
+	for (i = 0; *(moveList+i) != -2; i++) {
 		moveCount++;
 	}
 	free(moveList);
-	return moveCount; 
+	return moveCount;
 }
 
 /* Version of checkAvailMoves modified for use with AI (will not display an error message) */
 int *checkAIAvailMoves(piece *p){ /* Remember to free memory after usage */
 	switch(p->type){
 		case pawn:
-			if (checkPawnMoves(p)) return checkPawnMoves(p);
+			return checkPawnMoves(p);
 		case knight:
-			if (checkKnightMoves(p)) return checkKnightMoves(p);
+			return checkKnightMoves(p);
 		case king: 
-			if (checkKingMoves(p)) return checkKingMoves(p);
+			return checkKingMoves(p);
 		case queen:
-			if (checkQueenMoves(p)) return checkQueenMoves(p);
+			return checkQueenMoves(p);
 		case rook:
-			if (checkRookMoves(p)) return checkRookMoves(p);
+			return checkRookMoves(p);
 		case bishop:
-			if (checkBishopMoves(p)) return checkBishopMoves(p);
+			return checkBishopMoves(p);
 	}
 	return NULL;
 }

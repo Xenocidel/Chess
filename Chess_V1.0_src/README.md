@@ -9,8 +9,8 @@ COPYRIGHT.txt
 ==================================================
 
 Authors: nøl / C Gets Degrees
-Version: Alpha (20160127.1)
-Date: 2016-01-27
+Version: 1.0
+Date: 2016-02-03
 
 Please see the user manual for system requirements
 and more information about the game!
